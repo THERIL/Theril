@@ -1,6 +1,5 @@
 const { TeaHouse } = require("../logic/Tiles");
 const t = new TeaHouse();
-
 const Player = require("../logic/Player");
 const player = new Player("Wyrdhn", true);
 const player2 = new Player("Hehe", false);
@@ -22,6 +21,17 @@ describe("Tea House", () => {
   });
   test("should not have any visitor at first", (done) => {
     expect(t.tileStatus).toBeFalsy();
+    done();
+  });
+
+  test("gambling win", (done) => {
+    if (t.gamblingResult === "Player One") {
+      expect(player2.gold).toBe(13);
+    } else if (t.gamblingResult === "AI") {
+      expect(player2.gold).toBe(3);
+    } else if ((t.gamblingResult = "Draw")) {
+      expect(player2.gold).toBe(8);
+    }
     done();
   });
 

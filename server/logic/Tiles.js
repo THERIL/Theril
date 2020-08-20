@@ -144,11 +144,13 @@ class TeaHouse extends Tiles {
         ).reduce((x, y) => x + y, 0);
 
         if (dicePlayer > diceAI) {
+          this.gamblingResult = "Player One";
           player.gold += 5;
         } else if (dicePlayer < diceAI) {
+          this.gamblingResult = "AI";
           player.gold -= 5;
         } else if (dicePlayer === diceAI) {
-          return { msg: "Draw" };
+          this.gamblingResult = "Draw";
         }
       } else return { msg: "You dont have enough gold" };
     } else return { msg: "You dont have free assistant to do this" };

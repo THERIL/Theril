@@ -7,6 +7,8 @@ const { LuxuryShop, Market } = require("../logic/Tiles");
 const ls = new LuxuryShop();
 const m = new Market();
 
+const itif = (moveFrom, moveTo) => (moveFrom === "" && moveTo ? it : it.skip);
+
 player.move("", ls);
 
 player2.move(ls, m);
@@ -24,18 +26,21 @@ player3.assistants[0].onDuty = true;
 player3.assistants[1].onDuty = true;
 
 describe("movement", () => {
-  test("move from none location (starting) to any location", () => {
+  test("move from none location (starting) to any location", (done) => {
     expect(player.currentLocation).toBe("Luxury Shop");
+    done();
   });
 
-  test("move from one location to another location", () => {
+  test("move from one location to another location", (done) => {
     expect(player2.currentLocation).toBe("Market");
+    done();
   });
 
-  test("should not move if there are no free assistant", () => {
+  test("should not move if there are no free assistant", (done) => {
     expect(player3.move("", ls)).toEqual({
       msg: "You dont have free assistant to do this",
     });
+    done();
   });
 });
 
@@ -44,11 +49,8 @@ describe("steal", () => {
     if (player.assistants[0].stolenItem) {
       expect(player.diamond).toBe(1);
       expect(player2.diamond).toBe(0);
-    } else {
-      if (player.assistants[0].jailed) {
-        expect(player.assistants[0].jailedDuration).toBe(6);
-      }
     }
+
     done();
   });
 });

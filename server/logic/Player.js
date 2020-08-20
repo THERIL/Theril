@@ -101,7 +101,7 @@ class Assistant {
       if (isJailed) {
         this.jailed = true;
         this.jailedDuration = this.potentialDuration;
-      } else return { msg: "That was close was it" };
+      }
     }
   }
 
