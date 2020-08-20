@@ -7,6 +7,8 @@
     - Cart upgrades
     - Golds
     - Diamonds
+    - Resources
+    - Luxury Items
 
     - Per player...
         - 2 Assistants
