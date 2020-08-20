@@ -22,8 +22,8 @@ class Horns extends LuxuryItems {
   }
   use(player) {
     for (let i = 0; i < player.assistants.length; i++) {
-      if (player.assistants[i].onDuty === true) {
-        player.assistants.onDuty = false;
+      if (player.assistants[i].onDuty) {
+        player.assistants[i].onDuty = false;
       }
     }
   }

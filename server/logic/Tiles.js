@@ -19,7 +19,7 @@ class LuxuryShop extends Tiles {
       player.diamond += 1;
       player.gold -= 40;
     } else {
-      console.log("You dont have enough money");
+      return { msg: "You dont have enough money" };
     }
   }
 
@@ -32,9 +32,8 @@ class LuxuryShop extends Tiles {
   transaction(player, whichItem) {
     let allowed = player.assistants.filter((assistant) => !assistant.onDuty);
     if (allowed.length) {
-      allowed[0].work();
+      allowed[0].work(this.tileName);
       let targetItem = this.items.filter((item) => item.name === whichItem)[0];
-      console.log(targetItem);
       if (player.gold >= targetItem.price) {
         player.gold -= targetItem.price;
         player.items.push({ name: targetItem.name });
@@ -45,8 +44,8 @@ class LuxuryShop extends Tiles {
         ) {
           targetItem.use(player);
         }
-      } else console.log("You dont have enough money");
-    } else console.log("You need an assistant to do this");
+      } else return { msg: "You dont have enough money" };
+    } else return { msg: "You need free assistant to do this" };
   }
 }
 
@@ -77,6 +76,7 @@ class Market extends Tiles {
   transaction(player) {
     let allowed = player.assistants.filter((assistant) => !assistant.onDuty);
     if (allowed.length) {
+      allowed[0].work(this.tileName);
       for (let i = 0; i < this.requests.length; i++) {
         if (
           this.requests[i].type === player.resources[i].type &&
@@ -90,7 +90,7 @@ class Market extends Tiles {
           player.resources[i].amount = 0;
         }
       }
-    }
+    } else return { msg: "You dont have free assistant to do this" };
   }
 }
 
@@ -114,9 +114,12 @@ class Warehouse extends Tiles {
   transaction(player) {
     let allowed = player.assistants.filter((assistant) => !assistant.onDuty);
     if (allowed.length) {
-      this.stock -= player.capacity - player.resources[i];
-      player.resources[i] = player.capacity;
-    }
+      allowed[0].work(this.tileName);
+      for (let i = 0; i < this.stock.length; i++) {
+        this.stock[i] -= player.capacity - player.resources[i];
+        player.resources[i] = player.capacity;
+      }
+    } else return { msg: "You dont have free assistant to do this" };
   }
 }
 
@@ -124,11 +127,32 @@ class TeaHouse extends Tiles {
   constructor(tileStatus) {
     super(tileStatus);
     this.tileName = "Tea House";
+    this.gamblingResult = "";
   }
 
-  throwDice() {}
+  throwDice(player) {
+    let allowed = player.assistants.filter((assistant) => !assistant.onDuty);
+    if (allowed.length) {
+      if (player.gold >= 5) {
+        allowed[0].work(this.tileName);
+        let dicePlayer = Array.from({ length: 3 }, (x, y) =>
+          Math.ceil(Math.random() * 6)
+        ).reduce((x, y) => x + y, 0);
 
-  gamble(player) {}
+        let diceAI = Array.from({ length: 3 }, (x, y) =>
+          Math.ceil(Math.random() * 6)
+        ).reduce((x, y) => x + y, 0);
+
+        if (dicePlayer > diceAI) {
+          player.gold += 5;
+        } else if (dicePlayer < diceAI) {
+          player.gold -= 5;
+        } else if (dicePlayer === diceAI) {
+          return { msg: "Draw" };
+        }
+      } else return { msg: "You dont have enough gold" };
+    } else return { msg: "You dont have free assistant to do this" };
+  }
 }
 
 class PoliceOffice extends Tiles {
@@ -137,7 +161,7 @@ class PoliceOffice extends Tiles {
     this.tileName = "Police Office";
   }
 
-  arrest(player, assistant) {
+  arrest(assistant) {
     assistant.jailed = true;
     assistant.jailedDuration = assistant.potentialDuration;
   }
@@ -146,16 +170,21 @@ class PoliceOffice extends Tiles {
 class WainWright extends Tiles {
   constructor(tileStatus) {
     super(tileStatus);
+    this.tileName = "Wain Wright";
   }
 
   upgrade(player) {
+    let allowed = player.assistants.filter((assistant) => !assistant.onDuty);
     if (player.cart < 4) {
-      if (player.gold >= 7) {
-        player.cart += 1;
-        player.gold -= 8;
-        player.cartCapacity();
-      }
-    } else console.log("Your cart is at MAX level");
+      if (allowed.length) {
+        allowed[0].work();
+        if (player.gold >= 7) {
+          player.cart += 1;
+          player.gold -= 8;
+          player.cartCapacity(this.tileName);
+        } else return { msg: "You dont have money to do this" };
+      } else return { msg: "You dont have free assistant to do this" };
+    } else return { msg: "Your cart is at max level" };
   }
 }
 

@@ -12,7 +12,7 @@ class Player {
     this.assistants = [new Assistant(), new Assistant()];
     this.resources = [];
     this.items = [];
-    this.diamond = 1;
+    this.diamond = 0;
     this.movement = 1;
     this.amount();
     this.startGold();
@@ -32,10 +32,15 @@ class Player {
   move(moveFrom, moveTo) {
     let cartDuty = this.assistants.filter((assistant) => !assistant.onDuty);
     if (cartDuty.length) {
-      moveTo.tileStatus = true;
-      moveFrom.tileStatus = false;
-      this.currentLocation = moveTo.tileName;
-    }
+      if (moveFrom.name === undefined || typeof moveFrom === "string") {
+        moveTo.tileStatus = true;
+        this.currentLocation = moveTo.tileName;
+      } else {
+        moveFrom.tileStatus = false;
+        moveTo.tileStatus = true;
+        this.currentLocation = moveTo.tileName;
+      }
+    } else return { msg: "You dont have free assistant to do this" };
   }
 
   startGold() {
@@ -54,8 +59,8 @@ class Player {
       : (this.capacity = 6);
   }
 
-  sendSteal(assistant, target, player) {
-    assistant.steal(target, player);
+  sendSteal(assistant, target) {
+    assistant.steal(target);
     this.getStolenItems();
   }
 
@@ -63,7 +68,7 @@ class Player {
     for (let i = 0; i < this.assistants.length; i++) {
       if (this.assistants[i].stolenItem) {
         this.diamond += 1;
-        this.assistants[i].stolenItem = null;
+        this.assistants[i].stolenItem = false;
       }
     }
   }
@@ -81,6 +86,7 @@ class Assistant {
     this.onDuty = false;
     this.stealChance = 0.25;
     this.stolenItem = false;
+    this.workLocation = "";
   }
 
   steal(target) {
@@ -95,12 +101,13 @@ class Assistant {
       if (isJailed) {
         this.jailed = true;
         this.jailedDuration = this.potentialDuration;
-      }
+      } else return { msg: "That was close was it" };
     }
   }
 
-  work() {
+  work(location) {
     this.onDuty = true;
+    this.workLocation = location;
   }
 }
 
