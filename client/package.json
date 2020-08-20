@@ -1,0 +1,26 @@
+{
+  "name": "vue-phaser3",
+  "version": "1.0.0",
+  "description": "Template for working with Phaser 3 in a Vue project",
+  "author": "Angga Wijaya",
+  "scripts": {
+    "serve": "serve dist",
+    "build": "vue-cli-service build --modern",
+    "dev": "vue-cli-service serve"
+  },
+  "dependencies": {
+    "core-js": "^3.6.5",
+    "phaser": "^3.24.1",
+    "vue": "^2.6.11",
+    "vue-router": "^3.4.3"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^4.4.6",
+    "@vue/cli-plugin-router": "^4.5.4",
+    "@vue/cli-service": "^4.4.6",
+    "node-sass": "^4.14.1",
+    "sass-loader": "^9.0.2",
+    "serve": "^11.3.2",
+    "vue-template-compiler": "^2.6.11"
+  }
+}
