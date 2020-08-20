@@ -9,6 +9,9 @@ app.use(cors());
 let rooms = [];
 
 io.on("connection", (socket) => {
+  socket.on("clear-room", () => {
+    rooms = [];
+  });
   socket.on("create-room", (data) => {
     let room = {
       name: data.roomName,
@@ -28,11 +31,12 @@ io.on("connection", (socket) => {
         rooms[index].users.push(data.username);
         io.sockets.in(data.roomName).emit("room-detail", rooms[index]);
       }
+      // console.log(rooms[index], "dari join room");
     });
   });
 
   socket.on("start-game", (data) => {
-    console.log(data);
+    // console.log(data);
     io.to(data.name).emit("start-game", data);
   });
 });

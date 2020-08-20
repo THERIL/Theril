@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --coverage --watch"
+    "test": "jest --detectOpenHandles --coverage --watchAll=false"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +17,6 @@
     "socket.io-client": "^2.3.0"
   },
   "devDependencies": {
-    "jest": "^26.4.0"
+    "jest": "^26.4.1"
   }
 }
