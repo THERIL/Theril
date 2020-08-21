@@ -14,24 +14,24 @@
 </template>
 
 <script>
-import socket from '../config/socket.js'
+import socket from "../config/socket.js";
 export default {
-      name: 'LoginForm',
-      data: function () {
-            return {
-                  nameInput: ''
-            }
-      },
-      methods: {
-        login (event) {
-          event.preventDefault();
-          socket.emit('submit-username',this.nameInput)
-          localStorage.setItem('theril-username',this.nameInput)
-          this.nameInput = ''
-          this.$router.push({name: 'Lobby'})
-        }
-      }
-}
+  name: "LoginForm",
+  data: function () {
+    return {
+      nameInput: "",
+    };
+  },
+  methods: {
+    login(event) {
+      event.preventDefault();
+      socket.emit("submit-username", this.nameInput);
+      // localStorage.setItem('theril-username',this.nameInput)
+      this.nameInput = "";
+      this.$router.push({ name: "Lobby" });
+    },
+  },
+};
 </script>
 
 <style>
