@@ -22,9 +22,7 @@ class Horns extends LuxuryItems {
   }
   use(player) {
     for (let i = 0; i < player.assistants.length; i++) {
-      if (player.assistants[i].onDuty) {
-        player.assistants[i].onDuty = false;
-      }
+      player.assistants[i].onDuty = false;
     }
   }
 }

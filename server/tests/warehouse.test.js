@@ -2,8 +2,9 @@ const { Warehouse } = require("../logic/Tiles");
 const w = new Warehouse();
 
 const Player = require("../logic/Player");
-const player = new Player("Wyrdhn", true);
-const player2 = new Player("Hehe", false);
+const player = new Player("Wyrdhn");
+const player2 = new Player("Hehe");
+const player3 = new Player("Wuehehehe");
 
 w.transaction(player);
 
@@ -11,6 +12,8 @@ player2.assistants[0].work();
 player2.assistants[1].work();
 
 w.transaction(player2);
+
+player3.hasDone = 2;
 
 describe("Warehouse", () => {
   test("should have name", (done) => {
@@ -39,4 +42,13 @@ describe("Warehouse", () => {
     });
     done();
   });
+
+  test("should reject if it's not player's turn", (done) => {
+    expect(w.transaction(player3)).toEqual({ msg: "It's not your turn" });
+    done();
+  });
+
+  {
+    msg: "It's not your turn";
+  }
 });

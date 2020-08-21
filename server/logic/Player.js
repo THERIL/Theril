@@ -1,10 +1,9 @@
 const { itemArr } = require("./Module");
-const { PoliceOffice } = require("./Tiles");
 
 class Player {
-  constructor(name, isPlayerOne) {
+  constructor(name) {
     this.name = name;
-    this.isPlayerOne = isPlayerOne;
+    this.isPlayerOne = false;
     this.currentLocation = "";
     this.gold = 0;
     this.cart = 0;
@@ -14,8 +13,8 @@ class Player {
     this.items = [];
     this.diamond = 0;
     this.movement = 1;
+    this.hasDone = 0;
     this.amount();
-    this.startGold();
     this.cartCapacity();
   }
 
@@ -30,21 +29,20 @@ class Player {
   }
 
   move(moveFrom, moveTo) {
-    let cartDuty = this.assistants.filter((assistant) => !assistant.onDuty);
-    if (cartDuty.length) {
-      if (moveFrom.name === undefined || typeof moveFrom === "string") {
-        moveTo.tileStatus = true;
-        this.currentLocation = moveTo.tileName;
-      } else {
-        moveFrom.tileStatus = false;
-        moveTo.tileStatus = true;
-        this.currentLocation = moveTo.tileName;
-      }
-    } else return { msg: "You dont have free assistant to do this" };
-  }
-
-  startGold() {
-    this.isPlayerOne ? (this.gold = 5) : (this.gold = 8);
+    if (this.hasDone < 2) {
+      let cartDuty = this.assistants.filter((assistant) => !assistant.onDuty);
+      if (cartDuty.length) {
+        if (moveFrom.tileName === undefined || moveFrom === "") {
+          moveTo.tileStatus = true;
+          this.currentLocation = moveTo.tileName;
+        } else {
+          moveFrom.tileStatus = false;
+          moveTo.tileStatus = true;
+          this.currentLocation = moveTo.tileName;
+        }
+        this.hasDone += 1;
+      } else return { msg: "You dont have free assistant to do this" };
+    } else return { msg: "It's not your turn" };
   }
 
   cartCapacity() {
@@ -60,8 +58,11 @@ class Player {
   }
 
   sendSteal(assistant, target) {
-    assistant.steal(target);
-    this.getStolenItems();
+    if (this.hasDone < 2) {
+      assistant.steal(target);
+      this.getStolenItems();
+      this.hasDone += 1;
+    } else return { msg: "It's not your turn" };
   }
 
   getStolenItems() {

@@ -2,8 +2,9 @@ const { Market } = require("../logic/Tiles");
 const m = new Market();
 
 const Player = require("../logic/Player");
-const player = new Player("Wyrdhn", true);
-const player2 = new Player("Hehe", false);
+const player = new Player("Wyrdhn");
+const player2 = new Player("Hehe");
+const player3 = new Player("wuehehe");
 
 m.transaction(player);
 
@@ -11,6 +12,8 @@ player2.assistants[0].work();
 player2.assistants[1].work();
 
 m.transaction(player2);
+
+player3.hasDone = 2;
 
 describe("Market", () => {
   test('should have name "Market', (done) => {
@@ -39,4 +42,13 @@ describe("Market", () => {
     });
     done();
   });
+
+  test("should reject if it's not player's turn", (done) => {
+    expect(m.transaction(player3)).toEqual({ msg: "It's not your turn" });
+    done();
+  });
+
+  {
+    msg: "It's not your turn";
+  }
 });

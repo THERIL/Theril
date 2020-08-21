@@ -15,12 +15,17 @@ class LuxuryShop extends Tiles {
   }
 
   sellDiamond(player) {
-    if (player.gold >= 40) {
-      player.diamond += 1;
-      player.gold -= 40;
-    } else {
-      return { msg: "You dont have enough money" };
-    }
+    if (player.hasDone < 2) {
+      let allowed = player.assistants.filter((assistant) => !assistant.onDuty);
+      if (allowed.length) {
+        if (player.gold >= 40) {
+          allowed[0].work(this.tileName);
+          player.diamond += 1;
+          player.gold -= 40;
+          player.hasDone += 1;
+        } else return { msg: "You dont have enough money" };
+      } else return { msg: "You need free assistant to do this" };
+    } else return { msg: "It's not your turn" };
   }
 
   setItems() {
@@ -30,22 +35,27 @@ class LuxuryShop extends Tiles {
   }
 
   transaction(player, whichItem) {
-    let allowed = player.assistants.filter((assistant) => !assistant.onDuty);
-    if (allowed.length) {
-      allowed[0].work(this.tileName);
-      let targetItem = this.items.filter((item) => item.name === whichItem)[0];
-      if (player.gold >= targetItem.price) {
-        player.gold -= targetItem.price;
-        player.items.push({ name: targetItem.name });
+    if (player.hasDone < 2) {
+      let allowed = player.assistants.filter((assistant) => !assistant.onDuty);
+      if (allowed.length) {
+        let targetItem = this.items.filter(
+          (item) => item.name === whichItem
+        )[0];
+        if (player.gold >= targetItem.price) {
+          allowed[0].work(this.tileName);
+          player.gold -= targetItem.price;
+          player.items.push({ name: targetItem.name });
+          player.hasDone += 1;
 
-        if (
-          targetItem.name === "Strider" ||
-          targetItem.name === "Golden Whistle"
-        ) {
-          targetItem.use(player);
-        }
-      } else return { msg: "You dont have enough money" };
-    } else return { msg: "You need free assistant to do this" };
+          if (
+            targetItem.name === "Strider" ||
+            targetItem.name === "Golden Whistle"
+          ) {
+            targetItem.use(player);
+          }
+        } else return { msg: "You dont have enough money" };
+      } else return { msg: "You need free assistant to do this" };
+    } else return { msg: "It's not your turn" };
   }
 }
 
@@ -74,23 +84,26 @@ class Market extends Tiles {
   }
 
   transaction(player) {
-    let allowed = player.assistants.filter((assistant) => !assistant.onDuty);
-    if (allowed.length) {
-      allowed[0].work(this.tileName);
-      for (let i = 0; i < this.requests.length; i++) {
-        if (
-          this.requests[i].type === player.resources[i].type &&
-          this.requests[i].request &&
-          this.requests[i].request - player.resources[i].amount >= 0 &&
-          player.resources[i].amount
-        ) {
-          this.requests[i].request -= player.resources[i].amount;
-          player.gold +=
-            this.requests[i].type.price * player.resources[i].amount;
-          player.resources[i].amount = 0;
+    if (player.hasDone < 2) {
+      let allowed = player.assistants.filter((assistant) => !assistant.onDuty);
+      if (allowed.length) {
+        allowed[0].work(this.tileName);
+        for (let i = 0; i < this.requests.length; i++) {
+          if (
+            this.requests[i].type === player.resources[i].type &&
+            this.requests[i].request &&
+            this.requests[i].request - player.resources[i].amount >= 0 &&
+            player.resources[i].amount
+          ) {
+            this.requests[i].request -= player.resources[i].amount;
+            player.gold +=
+              this.requests[i].type.price * player.resources[i].amount;
+            player.resources[i].amount = 0;
+            player.hasDone += 1;
+          }
         }
-      }
-    } else return { msg: "You dont have free assistant to do this" };
+      } else return { msg: "You dont have free assistant to do this" };
+    } else return { msg: "It's not your turn" };
   }
 }
 
@@ -112,14 +125,17 @@ class Warehouse extends Tiles {
   }
 
   transaction(player) {
-    let allowed = player.assistants.filter((assistant) => !assistant.onDuty);
-    if (allowed.length) {
-      allowed[0].work(this.tileName);
-      for (let i = 0; i < this.stock.length; i++) {
-        this.stock[i] -= player.capacity - player.resources[i];
-        player.resources[i] = player.capacity;
-      }
-    } else return { msg: "You dont have free assistant to do this" };
+    if (player.hasDone < 2) {
+      let allowed = player.assistants.filter((assistant) => !assistant.onDuty);
+      if (allowed.length) {
+        allowed[0].work(this.tileName);
+        for (let i = 0; i < this.stock.length; i++) {
+          this.stock[i] -= player.capacity - player.resources[i];
+          player.resources[i] = player.capacity;
+        }
+        player.hasDone += 1;
+      } else return { msg: "You dont have free assistant to do this" };
+    } else return { msg: "It's not your turn" };
   }
 }
 
@@ -131,29 +147,33 @@ class TeaHouse extends Tiles {
   }
 
   throwDice(player) {
-    let allowed = player.assistants.filter((assistant) => !assistant.onDuty);
-    if (allowed.length) {
-      if (player.gold >= 5) {
-        allowed[0].work(this.tileName);
-        let dicePlayer = Array.from({ length: 3 }, (x, y) =>
-          Math.ceil(Math.random() * 6)
-        ).reduce((x, y) => x + y, 0);
+    if (player.hasDone < 2) {
+      let allowed = player.assistants.filter((assistant) => !assistant.onDuty);
+      if (allowed.length) {
+        if (player.gold >= 5) {
+          allowed[0].work(this.tileName);
+          let dicePlayer = Array.from({ length: 3 }, (x, y) =>
+            Math.ceil(Math.random() * 6)
+          ).reduce((x, y) => x + y, 0);
 
-        let diceAI = Array.from({ length: 3 }, (x, y) =>
-          Math.ceil(Math.random() * 6)
-        ).reduce((x, y) => x + y, 0);
+          let diceAI = Array.from({ length: 3 }, (x, y) =>
+            Math.ceil(Math.random() * 6)
+          ).reduce((x, y) => x + y, 0);
 
-        if (dicePlayer > diceAI) {
-          this.gamblingResult = "Player One";
-          player.gold += 5;
-        } else if (dicePlayer < diceAI) {
-          this.gamblingResult = "AI";
-          player.gold -= 5;
-        } else if (dicePlayer === diceAI) {
-          this.gamblingResult = "Draw";
-        }
-      } else return { msg: "You dont have enough gold" };
-    } else return { msg: "You dont have free assistant to do this" };
+          if (dicePlayer > diceAI) {
+            this.gamblingResult = "Player One";
+            player.gold += 5;
+          } else if (dicePlayer < diceAI) {
+            this.gamblingResult = "AI";
+            player.gold -= 5;
+          } else if (dicePlayer === diceAI) {
+            this.gamblingResult = "Draw";
+          }
+
+          player.hasDone += 1;
+        } else return { msg: "You dont have enough gold" };
+      } else return { msg: "You dont have free assistant to do this" };
+    } else return { msg: "It's not your turn" };
   }
 }
 
@@ -176,17 +196,20 @@ class WainWright extends Tiles {
   }
 
   upgrade(player) {
-    let allowed = player.assistants.filter((assistant) => !assistant.onDuty);
-    if (player.cart < 4) {
-      if (allowed.length) {
-        allowed[0].work();
-        if (player.gold >= 7) {
-          player.cart += 1;
-          player.gold -= 8;
-          player.cartCapacity(this.tileName);
-        } else return { msg: "You dont have money to do this" };
-      } else return { msg: "You dont have free assistant to do this" };
-    } else return { msg: "Your cart is at max level" };
+    if (player.hasDone < 2) {
+      let allowed = player.assistants.filter((assistant) => !assistant.onDuty);
+      if (player.cart < 4) {
+        if (allowed.length) {
+          if (player.gold >= 7) {
+            allowed[0].work();
+            player.cart += 1;
+            player.gold -= 8;
+            player.cartCapacity(this.tileName);
+            player.hasDone += 1;
+          } else return { msg: "You dont have money to do this" };
+        } else return { msg: "You dont have free assistant to do this" };
+      } else return { msg: "Your cart is at max level" };
+    } else return { msg: "It's not your turn" };
   }
 }
 

@@ -1,6 +1,28 @@
+const Game = require("../logic/Turns");
+const g = new Game();
 const Player = require("../logic/Player");
-const player = new Player("Wyrdhn", true);
-const player2 = new Player("Hehe", false);
+const player = new Player("Wyrdhn");
+const player2 = new Player("Hehe");
+const player3 = new Player("Wuehehe");
+const { LuxuryShop, Market } = require("../logic/Tiles");
+const ls = new LuxuryShop();
+const m = new Market();
+
+g.assign(player);
+g.assign(player2);
+g.assign(player3);
+
+g.setPlays();
+g.setGolds();
+g.initialize();
+
+g.changeTurn();
+
+player2.move("", m);
+g.checkTurn();
+player2.move(m, ls);
+g.checkTurn();
+
 const assist = player.assistants[0];
 
 describe("game starts", () => {
@@ -126,6 +148,51 @@ describe("game starts", () => {
 
   test("starting movement should be 1", (done) => {
     expect(player.movement).toBe(1);
+    done();
+  });
+
+  test("should reject player if room is already full", (done) => {
+    expect(g.assign(player3)).toEqual({ msg: "Game is already full" });
+    done();
+  });
+
+  test("should change turn", (done) => {
+    expect(g.activeCharacter).toBe(player.name);
+    done();
+  });
+
+  test("should change turn back", (done) => {
+    function asd() {
+      return new Promise((_resolve) => {
+        g.changeTurn();
+      })
+        .then((_) => {
+          expect(g.activeCharacter).toBe(player.name);
+          resolve(true);
+        })
+        .catch(console.log);
+    }
+    asd();
+    done();
+  });
+
+  test("should change turn back (else)", (done) => {
+    function asd() {
+      return new Promise((_resolve) => {
+        g.changeTurn();
+      })
+        .then((_) => {
+          expect(g.activeCharacter).toBe(player2.name);
+          resolve(true);
+        })
+        .catch(console.log);
+    }
+    asd();
+    done();
+  });
+
+  test("should not allow player to move if it's not their turn", (done) => {
+    expect(player2.move(ls, m)).toEqual({ msg: "It's not your turn" });
     done();
   });
 });

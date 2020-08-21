@@ -2,10 +2,11 @@ const { WainWright } = require("../logic/Tiles");
 const ww = new WainWright();
 
 const Player = require("../logic/Player");
-const player = new Player("Wyrdhn", true);
-const player2 = new Player("Hehe", false);
-const player3 = new Player("Wuehehe", false);
-const player4 = new Player("ASDASD", false);
+const player = new Player("Wyrdhn");
+const player2 = new Player("Hehe");
+const player3 = new Player("Wuehehe");
+const player4 = new Player("ASDASD");
+const player5 = new Player("345345345");
 
 player.gold = 10;
 player2.gold = 0;
@@ -20,6 +21,8 @@ ww.upgrade(player3);
 
 player4.cart = 4;
 ww.upgrade(player4);
+
+player5.hasDone = 2;
 
 describe("Wain Wright", () => {
   test("should have names", (done) => {
@@ -53,6 +56,13 @@ describe("Wain Wright", () => {
 
   test("should reject actions if player cart is already at max level", (done) => {
     expect(ww.upgrade(player4)).toEqual({ msg: "Your cart is at max level" });
+    done();
+  });
+
+  test("should reject actions if it's not player's turn", (done) => {
+    expect(ww.upgrade(player5)).toEqual({
+      msg: "It's not your turn",
+    });
     done();
   });
 });

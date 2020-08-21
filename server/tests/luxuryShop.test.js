@@ -3,26 +3,32 @@ const { Horns, ShadowHand } = require("../logic/LuxuryItems");
 const ls = new LuxuryShop();
 
 const Player = require("../logic/Player");
-const player = new Player("Wyrdhn", true);
-const player2 = new Player("Hehe", false);
-const player3 = new Player("Wuehehe", false);
+const player = new Player("Wyrdhn");
+const player2 = new Player("Hehe");
+const player3 = new Player("Wuehehe");
+const player4 = new Player("asdasd");
 const h = new Horns();
 const sh = new ShadowHand();
 
 player.gold = 200;
+player4.hasDone = 2;
 
 player2.assistants[0].work();
 player2.assistants[1].work();
 
 ls.sellDiamond(player);
-ls.transaction(player, "Horns");
-ls.transaction(player, "Golden Whistle");
 
+ls.transaction(player, "Horns");
+
+player.hasDone = 0;
 h.use(player);
+
+ls.transaction(player, "Golden Whistle");
 
 ls.transaction(player, "Strider");
 
 h.use(player);
+
 sh.use(player);
 
 describe("luxury shop", () => {
@@ -41,9 +47,21 @@ describe("luxury shop", () => {
     done();
   });
 
-  test("should reject player if their money is not enough", (done) => {
-    expect(ls.sellDiamond(player2)).toEqual({
+  test("should reject selling diamond if player dont have enough money", (done) => {
+    expect(ls.sellDiamond(player3)).toEqual({
       msg: "You dont have enough money",
+    });
+    done();
+  });
+
+  test("should reject selling diamond if it's not the player's turn", (done) => {
+    expect(ls.sellDiamond(player4)).toEqual({ msg: "It's not your turn" });
+    done();
+  });
+
+  test("should reject player if they dont have free assistants", (done) => {
+    expect(ls.sellDiamond(player2)).toEqual({
+      msg: "You need free assistant to do this",
     });
     done();
   });
@@ -70,6 +88,13 @@ describe("luxury shop", () => {
   test("should reject if player dont have free assistant", (done) => {
     expect(ls.transaction(player2, "Strider")).toEqual({
       msg: "You need free assistant to do this",
+    });
+    done();
+  });
+
+  test("should if it's not player's turn", (done) => {
+    expect(ls.transaction(player4, "Strider")).toEqual({
+      msg: "It's not your turn",
     });
     done();
   });
