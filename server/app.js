@@ -8,9 +8,21 @@ const Player = require("./logic/Player");
 app.use(cors());
 
 let rooms = [],
-  players = [];
+  players = [],
+  usernames = [];
 
 io.on("connection", (socket) => {
+  console.log(socket)
+  console.log('User connected: ' + socket.id)
+
+  socket.on('submit-username', (name) => {
+    const user = {
+      name,
+      id: socket.id
+    }
+    usernames.push(user)
+    socket.emit('emit-username', usernames)
+  })
   socket.on("clear-room", () => {
     rooms = [];
   });
