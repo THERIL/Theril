@@ -20,7 +20,26 @@ describe("test socket", () => {
     socket.emit("clear-room");
   });
 
+  afterAll(function (done) {
+    if (socket.connected) {
+      console.log("disconnecting...");
+      socket.disconnect();
+    } else {
+      // There will not be a connection unless you have done() in beforeEach, socket.on('connect'...)
+      console.log("no connection to break...");
+    }
+    done();
+  });
+
   describe("Test room", () => {
+    test("get list room", (done) => {
+      socket.emit("get-all-room");
+      socket.on("get-list-room", (data) => {
+        expect(data).toBeInstanceOf(Array);
+        done();
+      });
+    });
+
     test("create room", (done) => {
       const payload = {
         roomName: "Test",
@@ -31,7 +50,18 @@ describe("test socket", () => {
         done();
       });
     });
+  });
 
+  describe("Player Test", () => {
+    // test("Player Login", (done) => {
+    //   const player = "Angga";
+    //   socket.emit("login", player);
+    //   socket.on("login-success", (data) => {
+    //     // console.log(data);
+    //     expect(data).toBeInstanceOf(Array);
+    //     done();
+    //   });
+    // });
     test("user 1 join room", (done) => {
       const payload = {
         roomName: "Test",
@@ -73,25 +103,19 @@ describe("test socket", () => {
         done();
       });
     });
+  });
 
+  describe("Test start game", () => {
     test("start play", (done) => {
       const room = {
         name: "Test",
         users: ["Alfonso", "Sakra"],
       };
       socket.emit("start-game", room);
-      socket.on("start-game", (room) => {
-        expect(room).toBeDefined();
+      socket.on("start-game", (data) => {
+        expect(data).toBeDefined();
         done();
       });
     });
-  });
-
-  afterAll(function (done) {
-    if (socket.connected) {
-      console.log("disconnecting...");
-      socket.disconnect();
-    }
-    done();
   });
 });

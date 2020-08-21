@@ -6,12 +6,35 @@ const cors = require("cors");
 
 app.use(cors());
 
-let rooms = [];
+let rooms = [],
+  players = [];
 
 io.on("connection", (socket) => {
   socket.on("clear-room", () => {
     rooms = [];
   });
+  // socket.on("login", (data) => {
+  //   let player = {
+  //     name: data,
+  //     isPlayerOne: false,
+  //     currentLocation: "",
+  //     gold: 0,
+  //     cart: 0,
+  //     capacity: 0,
+  //     assistants: [],
+  //     resources: [],
+  //     items: [],
+  //     diamond: 0,
+  //     movement: 1,
+  //     hasDone: 0,
+  //   };
+  //   players.push(player);
+  //   socket.emit("login-success", players);
+  // });
+  socket.on("get-all-room", () => {
+    socket.emit("get-list-room", rooms);
+  });
+
   socket.on("create-room", (data) => {
     let room = {
       name: data.roomName,
@@ -31,12 +54,10 @@ io.on("connection", (socket) => {
         rooms[index].users.push(data.username);
         io.sockets.in(data.roomName).emit("room-detail", rooms[index]);
       }
-      // console.log(rooms[index], "dari join room");
     });
   });
 
   socket.on("start-game", (data) => {
-    // console.log(data);
     io.to(data.name).emit("start-game", data);
   });
 });
