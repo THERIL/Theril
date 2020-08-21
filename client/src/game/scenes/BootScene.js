@@ -6,6 +6,7 @@ import thudMp3 from '@/game/assets/thud.mp3'
 import thudOgg from '@/game/assets/thud.ogg'
 import button from '../assets/button-1.png'
 import alien from '../assets/bsquadron3.png'
+import dude from '../assets/dude.png'
 
 
 export default class BootScene extends Scene {
@@ -22,6 +23,12 @@ export default class BootScene extends Scene {
     this.load.spritesheet('alien', alien, { frameWidth: 192, frameHeight: 160 });
     // this.load.atlas('cards', '../assets/atlas/cards.png', '../assets/atlas/card.json');
     this.load.audio('thud', [thudMp3, thudOgg])
+
+    ///////=====
+    this.load.image('ground', '../assets/platform.png');
+    this.load.image('star', '../assets/star.png');
+    this.load.image('bomb', '../assets/bomb.png');
+    this.load.spritesheet('dude', dude, { frameWidth: 32, frameHeight: 48 });
     
   }
 
