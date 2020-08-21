@@ -25,7 +25,8 @@ export default {
       methods: {
         login (event) {
           event.preventDefault();
-          localStorage.setItem('username', this.nameInput)
+          socket.emit('submit-username',this.nameInput)
+          localStorage.setItem('theril-username',this.nameInput)
           this.nameInput = ''
           this.$router.push({name: 'Lobby'})
         }

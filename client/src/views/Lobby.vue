@@ -24,8 +24,15 @@ export default {
   },
   created : function() {
     socket.on('connect', () => {
+      console.log(socket.id)
+      this.id = socket.id
     console.log('Connected to server.')
+    this.username = localStorage.getItem('theril-username')
   })
+    socket.on('emit-username', (usernames) => {
+      const user = usernames.filter(username => username.id === socket.id)
+
+    })
   }
 }
 </script>
