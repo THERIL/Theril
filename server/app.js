@@ -12,7 +12,6 @@ let rooms = [],
   usernames = [];
 
 io.on("connection", (socket) => {
-  console.log(socket)
   console.log('User connected: ' + socket.id)
 
   socket.on('submit-username', (name) => {
@@ -63,7 +62,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("start-game", (data) => {
-    io.to(data.name).emit("start-game", data);
+    socket.broadcast.to(data.name).emit("start-game", data);
   });
   // socket
 });
