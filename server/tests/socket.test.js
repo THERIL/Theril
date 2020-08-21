@@ -53,15 +53,6 @@ describe("test socket", () => {
   });
 
   describe("Player Test", () => {
-    // test("Player Login", (done) => {
-    //   const player = "Angga";
-    //   socket.emit("login", player);
-    //   socket.on("login-success", (data) => {
-    //     // console.log(data);
-    //     expect(data).toBeInstanceOf(Array);
-    //     done();
-    //   });
-    // });
     test("user 1 join room", (done) => {
       const payload = {
         roomName: "Test",
@@ -81,7 +72,9 @@ describe("test socket", () => {
         username: "Sakra",
       };
       socket.emit("join-room", payload);
-      socket.on("room-detail", (data) => {
+      socket.on("room-detail", (data, players) => {
+        // console.log(data);
+        // console.dir(players, { depth: null });
         console.log("masuk 2");
         expect(data).toBeInstanceOf(Object);
         done();

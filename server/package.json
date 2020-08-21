@@ -2,9 +2,12 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
   "scripts": {
-    "test": "jest --detectOpenHandles --coverage --watchAll"
+    "test": "jest --verbose --coverage"
   },
   "keywords": [],
   "author": "",

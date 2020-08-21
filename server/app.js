@@ -3,7 +3,8 @@ const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 const port = process.env.PORT || 3000;
 const cors = require("cors");
-
+const Game = require("./logic/Turns");
+const Player = require("./logic/Player");
 app.use(cors());
 
 let rooms = [],
@@ -13,24 +14,6 @@ io.on("connection", (socket) => {
   socket.on("clear-room", () => {
     rooms = [];
   });
-  // socket.on("login", (data) => {
-  //   let player = {
-  //     name: data,
-  //     isPlayerOne: false,
-  //     currentLocation: "",
-  //     gold: 0,
-  //     cart: 0,
-  //     capacity: 0,
-  //     assistants: [],
-  //     resources: [],
-  //     items: [],
-  //     diamond: 0,
-  //     movement: 1,
-  //     hasDone: 0,
-  //   };
-  //   players.push(player);
-  //   socket.emit("login-success", players);
-  // });
   socket.on("get-all-room", () => {
     socket.emit("get-list-room", rooms);
   });
@@ -52,7 +35,17 @@ io.on("connection", (socket) => {
         io.emit("updated-room", rooms);
       } else {
         rooms[index].users.push(data.username);
-        io.sockets.in(data.roomName).emit("room-detail", rooms[index]);
+        const game = new Game();
+        const p1 = new Player(rooms[index].users[0]);
+        const p2 = new Player(rooms[index].users[1]);
+        game.assign(p1);
+        game.assign(p2);
+        game.setPlays();
+        game.setGolds();
+        game.initialize();
+        players.push(game);
+        console.dir(game, { depth: null });
+        io.sockets.in(data.roomName).emit("room-detail", rooms[index], players);
       }
     });
   });
@@ -60,6 +53,7 @@ io.on("connection", (socket) => {
   socket.on("start-game", (data) => {
     io.to(data.name).emit("start-game", data);
   });
+  // socket
 });
 
 server.listen(port, () => console.log(`Running on port ${port}`));
