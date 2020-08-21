@@ -12,18 +12,24 @@ export default {
   data() {
     return {
       pemain: {},
+      room: {},
     };
   },
   methods: {
     changeCart() {
-      this.pemain.players[0].gold += 1;
+      socket.emit("updated-data", this.room.name, this.pemain);
+      // this.pemain.players[0].gold += 1;
     },
   },
   created() {
-    socket.on("start-game", (game) => {
-      console.log(game, "-------------------------gas ga?");
+    socket.on("start-game", (data, game) => {
+      console.log(data, "-------------------------gas ga?");
       // this.$store.commit("GAME_DATA", game);
       // console.log(this.pemain);
+      this.pemain = game;
+      this.room = data;
+    });
+    socket.on("updated-game", (game) => {
       this.pemain = game;
     });
   },
