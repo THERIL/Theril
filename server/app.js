@@ -60,7 +60,7 @@ io.on("connection", (socket) => {
     game.setPlays();
     game.setGolds();
     game.initialize();
-    socket.broadcast.emit("gas-game", game);
+    socket.broadcast.to(data.name).emit("gas-game", data, game);
   });
 });
 

@@ -21,6 +21,9 @@ export default {
     socket.on("room-detail", (room) => {
       this.room = room;
     });
+    socket.on("gas-game", (data, game) => {
+      this.$router.push(`/game/${this.data.name}`);
+    })
   },
   methods: {
     startGame() {
