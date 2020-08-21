@@ -107,8 +107,8 @@ describe("test socket", () => {
       socket.emit("start-game", room);
       socket.on("start-game", (data) => {
         expect(data).toBeDefined();
-        done();
       });
+      done();
     });
   });
 });
