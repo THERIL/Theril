@@ -20,6 +20,7 @@ io.on("connection", (socket) => {
       id: socket.id,
     };
     usernames.push(user);
+    console.log(usernames);
     socket.emit("emit-username", usernames);
   });
   socket.on("clear-room", () => {
@@ -52,6 +53,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("start-game", (data) => {
+    console.log(data);
     const game = new Game();
     const p1 = new Player(data.users[0]);
     const p2 = new Player(data.users[1]);
@@ -60,7 +62,8 @@ io.on("connection", (socket) => {
     game.setPlays();
     game.setGolds();
     game.initialize();
-    socket.broadcast.emit("gas-game", game);
+    io.in(data.name).emit("start-game", game);
+    // io.to(data.name).emit("start-game", data);
   });
 });
 
