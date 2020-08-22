@@ -22,8 +22,8 @@ export default new Vuex.Store({
       socket.emit("join-room", payload);
     },
     GAME_DATA(state, game) {
-      console.log(game, "dari store");
-      // state.players = game;
+      // console.log(game, "dari store");
+      state.players = game;
     },
   },
   actions: {},

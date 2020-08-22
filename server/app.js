@@ -67,6 +67,19 @@ io.on("connection", (socket) => {
     }
     rooms = [];
   });
+
+  socket.on("leave-room", (roomName, id) => {
+    socket.leave(roomName, () => {
+      let index = rooms.findIndex((item) => item.name == roomName);
+      rooms[index].users.splice(
+        rooms[index].users.findIndex((user) => user.id == id),
+        1
+      );
+      io.to(roomName).emit("room-detail", rooms[index]);
+      console.log(rooms);
+    });
+  });
+
   socket.on("get-all-room", () => {
     socket.emit("get-list-room", rooms);
   });
@@ -82,6 +95,7 @@ io.on("connection", (socket) => {
 
   socket.on("join-room", (data) => {
     socket.join(data.roomName, () => {
+      console.log(socket.rooms, "dari join ____________");
       let index = rooms.findIndex((item) => item.name == data.roomName);
       if (rooms[index].users.length === 2) {
         socket.emit("errorFull", "Player Already full");
@@ -102,18 +116,19 @@ io.on("connection", (socket) => {
     g.setPlays();
     g.setGolds();
     g.initialize();
-
+    // p1.release
     objGame.players = [g.players[0], g.players[1]];
     objGame.active = g.activeCharacter;
 
     players.push(p1, p2);
 
-    io.in(data.name).emit("start-game", data, objGame, tiles);
-    // io.to(data.name).emit("start-game", data);
+    io.to(data.name).emit("start-game");
+    io.in(data.name).emit("inisiate-game", data, objGame, tiles);
   });
+
   socket.on("updated-data", (data) => {
     player = players.filter((x) => x.name === g.activeCharacter);
-    player[0].gold += 1;
+    player[0].gold += 100;
     player[0].hasDone += 1;
 
     if (player[0].hasDone === 2) {
@@ -140,7 +155,118 @@ io.on("connection", (socket) => {
     objGame.active = g.activeCharacter;
     objGame.currentLocation = player[0].currentLocation;
 
-    io.in(data).emit("move-game", objGame);
+    io.in(data).emit("updated-game", objGame);
+  });
+
+  socket.on("market", (data) => {
+    const market = new Market();
+    player = players.filter((x) => x.name === g.activeCharacter);
+    market.transaction(player[0]);
+    if (player[0].hasDone === 2) {
+      g.checkTurn();
+      player[0].hasDone = 0;
+    }
+
+    objGame.players = [players[0], g.players[1]];
+    objGame.active = g.activeCharacter;
+    objGame.currentLocation = player[0].currentLocation;
+    io.in(data).emit("updated-game", objGame);
+  });
+
+  socket.on("tea-house", (data) => {
+    const teaHouse = new TeaHouse();
+    player = players.filter((x) => x.name === g.activeCharacter);
+    teaHouse.throwDice(player[0]);
+    if (player[0].hasDone === 2) {
+      g.checkTurn();
+      player[0].hasDone = 0;
+    }
+
+    objGame.players = [players[0], g.players[1]];
+    objGame.active = g.activeCharacter;
+    objGame.currentLocation = player[0].currentLocation;
+    io.in(data).emit("updated-game", objGame);
+  });
+
+  socket.on("ware-house", (data) => {
+    const wareHouse = new Warehouse();
+    player = players.filter((x) => x.name === g.activeCharacter);
+    wareHouse.transaction(player[0]);
+    if (player[0].hasDone === 2) {
+      g.checkTurn();
+      player[0].hasDone = 0;
+    }
+
+    objGame.players = [players[0], g.players[1]];
+    objGame.active = g.activeCharacter;
+    objGame.currentLocation = player[0].currentLocation;
+    io.in(data).emit("updated-game", objGame);
+  });
+
+  socket.on("wain-wright", (data) => {
+    const wainWright = new WainWright();
+    player = players.filter((x) => x.name === g.activeCharacter);
+    wainWright.upgrade(player[0]);
+    if (player[0].hasDone === 2) {
+      g.checkTurn();
+      player[0].hasDone = 0;
+    }
+
+    objGame.players = [players[0], g.players[1]];
+    objGame.active = g.activeCharacter;
+    objGame.currentLocation = player[0].currentLocation;
+    io.in(data).emit("updated-game", objGame);
+  });
+
+  socket.on("luxury-diamond", (data) => {
+    console.log("masuk sini -----------------------------------------");
+
+    const luxuryShop = new LuxuryShop();
+    player = players.filter((x) => x.name === g.activeCharacter);
+    luxuryShop.sellDiamond(player[0]);
+    if (player[0].hasDone === 2) {
+      g.checkTurn();
+      player[0].hasDone = 0;
+    }
+
+    objGame.players = [players[0], g.players[1]];
+    objGame.active = g.activeCharacter;
+    objGame.currentLocation = player[0].currentLocation;
+    io.in(data).emit("updated-game", objGame);
+  });
+
+  socket.on("luxury-item", (data, item) => {
+    console.log("masuk sini -----------------------------------------");
+
+    const luxuryShop = new LuxuryShop();
+    player = players.filter((x) => x.name === g.activeCharacter);
+    luxuryShop.transaction(player[0], item);
+    if (player[0].hasDone === 2) {
+      g.checkTurn();
+      player[0].hasDone = 0;
+    }
+
+    objGame.players = [players[0], g.players[1]];
+    objGame.active = g.activeCharacter;
+    objGame.currentLocation = player[0].currentLocation;
+    io.in(data).emit("updated-game", objGame);
+  });
+
+  socket.on("free", (data) => {
+    player = players.filter((x) => x.name === g.activeCharacter);
+    console.log(player[0]);
+    // luxuryShop.transaction(player[0], item);
+    player[0].release(player[0].assistants[0]);
+    player[0].release(player[0].assistants[1]);
+    if (player[0].hasDone === 2) {
+      g.checkTurn();
+      player[0].hasDone = 0;
+    }
+
+    objGame.players = [players[0], g.players[1]];
+    objGame.active = g.activeCharacter;
+    objGame.currentLocation = player[0].currentLocation;
+    io.in(data).emit("updated-game", objGame);
   });
 
   socket.on("disconnect", () => {
