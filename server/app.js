@@ -3,14 +3,44 @@ const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 const port = process.env.PORT || 3000;
 const cors = require("cors");
+<<<<<<< HEAD
 const Game = require("./logic/Turns");
 const Player = require("./logic/Player");
 
+=======
+const {
+  Game,
+  Player,
+  Market,
+  LuxuryShop,
+  PoliceOffice,
+  TeaHouse,
+  WainWright,
+  Warehouse,
+} = require("./game_data");
+>>>>>>> 301addd0e11491c07f684cff6b716a011e7eeaaf
 app.use(cors());
 
 let rooms = [],
+  playersToBe = [],
   players = [],
-  users = [];
+  tiles = [
+    new Market(false),
+    new LuxuryShop(false),
+    new PoliceOffice(false),
+    new TeaHouse(false),
+    new WainWright(false),
+    new Warehouse(false),
+  ];
+users = [];
+
+let objGame = {
+  players: [],
+  active: "",
+  currentLocation: "",
+};
+
+const g = new Game();
 
 io.on("connection", (socket) => {
   console.log("User connected: " + socket.id);
@@ -82,12 +112,14 @@ io.on("connection", (socket) => {
         io.emit("updated-room", rooms);
       } else {
         rooms[index].users.push(data.username);
+        playersToBe.push(data.username);
         io.sockets.in(data.roomName).emit("room-detail", rooms[index]);
       }
     });
   });
 
   socket.on("start-game", (data) => {
+<<<<<<< HEAD
     // console.log(data);
     const game = new Game();
     const p1 = new Player(data.users[0]);
@@ -98,13 +130,54 @@ io.on("connection", (socket) => {
     game.setGolds();
     game.initialize();
     socket.broadcast.in(data.name).emit("start-game", data, game);
+=======
+    const p1 = new Player(playersToBe[0].name);
+    const p2 = new Player(playersToBe[1].name);
+    g.assign(p1);
+    g.assign(p2);
+    g.setPlays();
+    g.setGolds();
+    g.initialize();
+
+    objGame.players = [g.players[0], g.players[1]];
+    objGame.active = g.activeCharacter;
+
+    players.push(p1, p2);
+
+    io.in(data.name).emit("start-game", data, objGame, tiles);
+>>>>>>> 301addd0e11491c07f684cff6b716a011e7eeaaf
     // io.to(data.name).emit("start-game", data);
   });
-  socket.on("updated-data", (data, game) => {
-    console.log(data);
-    console.log(game);
-    game.players[0].gold += 1;
-    io.in(data).emit("updated-game", game);
+  socket.on("updated-data", (data) => {
+    player = players.filter((x) => x.name === g.activeCharacter);
+    player[0].gold += 1;
+    player[0].hasDone += 1;
+
+    if (player[0].hasDone === 2) {
+      g.checkTurn();
+      player[0].hasDone = 0;
+    }
+
+    objGame.players = [players[0], g.players[1]];
+    objGame.active = g.activeCharacter;
+
+    io.in(data).emit("updated-game", objGame);
+  });
+
+  socket.on("move", (data, moveFrom, moveTo) => {
+    player = players.filter((x) => x.name === g.activeCharacter);
+    player[0].move((moveFrom = ""), moveTo);
+
+    if (player[0].hasDone === 2) {
+      g.checkTurn();
+      player[0].hasDone = 0;
+    }
+
+    objGame.players = [players[0], g.players[1]];
+    objGame.active = g.activeCharacter;
+    objGame.currentLocation = player[0].currentLocation;
+
+    io.in(data).emit("move-game", objGame);
   });
 
   socket.on("disconnect", () => {

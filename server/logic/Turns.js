@@ -38,7 +38,8 @@ class Game {
     );
     if (current[0].hasDone === 2) {
       this.changeTurn();
-    }
+    } else return { msg: "Check berhasil" };
+    return current;
   }
 }
 
