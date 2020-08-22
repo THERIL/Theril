@@ -1,8 +1,18 @@
 <template>
   <div class="div">
     <h1>{{ pemain }}</h1>
-    <h2>LKXJFLSDKJFLSDKFJLSDK;FJKL;</h2>
+    <h2>Playing: {{ activePlayer }}</h2>
+    <h2>Location: {{ currentLocation }}</h2>
     <button @click="changeCart">change value</button>
+
+    <button
+      class="garmin"
+      v-for="(tile, index) in tiles"
+      @click="move(pemain.currentLocation, tile)"
+      :key="index"
+    >
+      {{ tile.tileName }}
+    </button>
   </div>
 </template>
 
@@ -12,25 +22,40 @@ export default {
   data() {
     return {
       pemain: {},
+      activePlayer: "",
       room: {},
+      game: {},
+      tiles: [],
+      currentLocation: "",
     };
   },
   methods: {
     changeCart() {
-      socket.emit("updated-data", this.room.name, this.pemain);
+      socket.emit("updated-data", this.room.name, this.game);
       // this.pemain.players[0].gold += 1;
+    },
+
+    move(target, moveFrom, moveTo) {
+      socket.emit("move", this.room.name, this.game, moveFrom, moveTo);
     },
   },
   created() {
-    socket.on("start-game", (data, game) => {
-      console.log(data, "-------------------------gas ga?");
-      // this.$store.commit("GAME_DATA", game);
-      // console.log(this.pemain);
-      this.pemain = game;
+    socket.on("start-game", (data, game, tiles) => {
+      this.pemain = game.players;
+      this.activePlayer = game.active;
       this.room = data;
+      this.game = game;
+      this.tiles = tiles;
     });
     socket.on("updated-game", (game) => {
-      this.pemain = game;
+      this.pemain = game.players;
+      this.activePlayer = game.active;
+    });
+
+    socket.on("move-game", (game) => {
+      this.pemain = game.players;
+      this.activePlayer = game.active;
+      this.currentLocation = game.currentLocation;
     });
   },
   // computed: {
@@ -41,4 +66,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.garmin {
+  margin-right: 15px;
+}
+</style>

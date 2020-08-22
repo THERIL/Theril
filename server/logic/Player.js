@@ -35,12 +35,14 @@ class Player {
         if (moveFrom.tileName === undefined || moveFrom === "") {
           moveTo.tileStatus = true;
           this.currentLocation = moveTo.tileName;
+          this.hasDone += 1;
         } else {
           moveFrom.tileStatus = false;
           moveTo.tileStatus = true;
           this.currentLocation = moveTo.tileName;
+          this.hasDone += 1;
         }
-        this.hasDone += 1;
+        // this.hasDone += 1;
       } else return { msg: "You dont have free assistant to do this" };
     } else return { msg: "It's not your turn" };
   }
