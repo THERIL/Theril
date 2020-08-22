@@ -29,20 +29,16 @@ export default {
       name: 'ChatMenu',
       data: function() {
             return {
-                  user: {
-                        id: '',
-                        username: ''
-                  },
                   messageInput: '',
                   allMessages: []
             }
       },
-      props: ['username','id'],
+      props: ['user'],
       methods: {
             sendMessage: function (event) {
                   event.preventDefault();
                   const payload= {
-                        username: this.username,
+                        username: this.user.name,
                         message: this.messageInput
                   }
                   socket.emit('sendMessage', payload)
