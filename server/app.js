@@ -3,11 +3,6 @@ const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 const port = process.env.PORT || 3000;
 const cors = require("cors");
-<<<<<<< HEAD
-const Game = require("./logic/Turns");
-const Player = require("./logic/Player");
-
-=======
 const {
   Game,
   Player,
@@ -18,7 +13,6 @@ const {
   WainWright,
   Warehouse,
 } = require("./game_data");
->>>>>>> 301addd0e11491c07f684cff6b716a011e7eeaaf
 app.use(cors());
 
 let rooms = [],
@@ -119,18 +113,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("start-game", (data) => {
-<<<<<<< HEAD
-    // console.log(data);
-    const game = new Game();
-    const p1 = new Player(data.users[0]);
-    const p2 = new Player(data.users[1]);
-    game.assign(p1);
-    game.assign(p2);
-    game.setPlays();
-    game.setGolds();
-    game.initialize();
-    socket.broadcast.in(data.name).emit("start-game", data, game);
-=======
     const p1 = new Player(playersToBe[0].name);
     const p2 = new Player(playersToBe[1].name);
     g.assign(p1);
@@ -145,7 +127,6 @@ io.on("connection", (socket) => {
     players.push(p1, p2);
 
     io.in(data.name).emit("start-game", data, objGame, tiles);
->>>>>>> 301addd0e11491c07f684cff6b716a011e7eeaaf
     // io.to(data.name).emit("start-game", data);
   });
   socket.on("updated-data", (data) => {
