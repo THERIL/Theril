@@ -4,10 +4,24 @@
       <router-link to="/">Login</router-link>|
       <router-link to="/lobby">Lobby</router-link>|
       <router-link to="/board">Board</router-link>
+      <button @click="logout">Logout</button>
     </div>
     <router-view />
   </div>
 </template>
+
+<script>
+import socket from "./config/socket";
+export default {
+  methods: {
+    logout() {
+      socket.emit("logout");
+      this.$store.state.user = {}
+      this.$router.push("/");
+    },
+  },
+};
+</script>
 
 <style lang="scss">
 #app {

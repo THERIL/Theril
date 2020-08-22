@@ -33,7 +33,9 @@ const wh = new Warehouse(false);
 // console.time("Meow");
 
 player2.gold = 0;
-console.log(th.throwDice(player2));
+wh.transaction(player2);
+console.dir(player2, { depth: null });
+// console.log(th.throwDice(player2));
 
 // ww.upgrade(player);
 // ww.upgrade(player);

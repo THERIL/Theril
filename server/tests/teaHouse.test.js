@@ -1,12 +1,14 @@
 const { TeaHouse } = require("../logic/Tiles");
 const Game = require("../logic/Turns");
 const g = new Game();
+const g2 = new Game();
 const t = new TeaHouse();
 const Player = require("../logic/Player");
 const player = new Player("Wyrdhn");
 const player2 = new Player("Hehe");
 const player3 = new Player("Wuehehe");
-const player4 = new Player("Wuehehe, asdasdasd");
+const player4 = new Player("asdasdasd");
+const player5 = new Player("546456456");
 
 g.assign(player);
 g.assign(player2);
@@ -15,16 +17,26 @@ g.setPlays();
 g.setGolds();
 g.initialize();
 
+g2.assign(player3);
+g2.assign(player4);
+
+g2.setPlays();
+g2.setGolds();
+g2.initialize();
+
 player.gold = 0;
 
 player3.assistants[0].work();
 player3.assistants[1].work();
 
 t.throwDice(player);
-t.throwDice(player2);
+t.throwDice(player2, 11, 5);
 t.throwDice(player3);
+t.throwDice(player4, 5, 11);
 
 player4.hasDone = 2;
+
+player5.gold = 5;
 
 describe("Tea House", () => {
   test("should have names", (done) => {
@@ -36,14 +48,18 @@ describe("Tea House", () => {
     done();
   });
 
-  test("gambling", (done) => {
-    if (t.gamblingResult === "Player One") {
-      expect(player2.gold).toBe(13);
-    } else if (t.gamblingResult === "AI") {
-      expect(player2.gold).toBe(3);
-    } else if ((t.gamblingResult = "Draw")) {
-      expect(player2.gold).toBe(8);
-    }
+  it("case: player win gamble", (done) => {
+    expect(player2.gold).toBe(13);
+    done();
+  });
+
+  it("case: player lose gamble", (done) => {
+    expect(player4.gold).toBe(3);
+    done();
+  });
+
+  it("case: player draw", (done) => {
+    expect(t.throwDice(player5, 10, 10)).toEqual({ msg: "Draw" });
     done();
   });
 

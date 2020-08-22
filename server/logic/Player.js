@@ -35,12 +35,14 @@ class Player {
         if (moveFrom.tileName === undefined || moveFrom === "") {
           moveTo.tileStatus = true;
           this.currentLocation = moveTo.tileName;
+          this.hasDone += 1;
         } else {
           moveFrom.tileStatus = false;
           moveTo.tileStatus = true;
           this.currentLocation = moveTo.tileName;
+          this.hasDone += 1;
         }
-        this.hasDone += 1;
+        // this.hasDone += 1;
       } else return { msg: "You dont have free assistant to do this" };
     } else return { msg: "It's not your turn" };
   }
@@ -57,11 +59,14 @@ class Player {
       : (this.capacity = 6);
   }
 
-  sendSteal(assistant, target) {
+  sendSteal(assistant, target, value, value2) {
     if (this.hasDone < 2) {
-      assistant.steal(target);
-      this.getStolenItems();
-      this.hasDone += 1;
+      let cartDuty = this.assistants.filter((assistant) => !assistant.onDuty);
+      if (cartDuty.length) {
+        assistant.steal(target, value, value2);
+        this.getStolenItems();
+        this.hasDone += 1;
+      } else return { msg: "You dont have free assistant to do this" };
     } else return { msg: "It's not your turn" };
   }
 
@@ -90,15 +95,17 @@ class Assistant {
     this.workLocation = "";
   }
 
-  steal(target) {
-    const randomizer = Math.random();
-    let isSuccess = randomizer > this.stealChance ? false : true;
+  randomizer() {
+    return Math.random();
+  }
+
+  steal(target, value = this.randomizer(), value2 = this.randomizer()) {
+    let isSuccess = value > this.stealChance ? false : true;
     if (isSuccess) {
       target.diamond -= 1;
       this.stolenItem = true;
     } else {
-      const jailRand = Math.random();
-      let isJailed = jailRand > 0.25 ? false : true;
+      let isJailed = value2 > 0.25 ? false : true;
       if (isJailed) {
         this.jailed = true;
         this.jailedDuration = this.potentialDuration;
