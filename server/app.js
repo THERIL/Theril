@@ -5,6 +5,7 @@ const port = process.env.PORT || 3000;
 const cors = require("cors");
 const Game = require("./logic/Turns");
 const Player = require("./logic/Player");
+
 app.use(cors());
 
 let rooms = [],
@@ -13,28 +14,52 @@ let rooms = [],
 
 io.on("connection", (socket) => {
   console.log("User connected: " + socket.id);
-  if (users.some(user => user.id === socket.id)) console.log('sudah ada username')
+  if (users.some((user) => user.id === socket.id))
+    console.log("sudah ada username");
 
   socket.on("submit-username", (name) => {
-    if (users.some(user => user.id === socket.id)) {
-      console.log('Splice user dengan id yang sama (Handle double-data)')
-      users.splice(users.findIndex(user => user.id === socket.id), 1)
+    if (users.some((user) => user.id === socket.id)) {
+      console.log("Splice user dengan id yang sama (Handle double-data)");
+      users.splice(
+        users.findIndex((user) => user.id === socket.id),
+        1
+      );
     }
     const user = {
       name,
       id: socket.id,
     };
     users.push(user);
-    console.log(users)
+    console.log(users);
     socket.emit("get-username", user);
   });
   socket.on("logout", () => {
-    if (users.some(user => user.id === socket.id)) {
-      console.log('Splice user dengan id yang disconnect (Handle logout)')
-      users.splice(users.findIndex(user => user.id === socket.id), 1)
+    if (users.some((user) => user.id === socket.id)) {
+      console.log("Splice user dengan id yang disconnect (Handle logout)");
+      users.splice(
+        users.findIndex((user) => user.id === socket.id),
+        1
+      );
     }
     rooms = [];
   });
+
+  socket.on("leave-room", (roomName, id) => {
+    socket.leave(roomName, () => {
+      // for (let i = 0; i < rooms.users.length; i++) {
+      //   const element = array[i];
+
+      // }
+      let index = rooms.findIndex((item) => item.name == roomName);
+      rooms[index].users.splice(
+        rooms[index].users.findIndex((user) => user.id == id),
+        1
+      );
+      io.to(roomName).emit("room-detail", rooms[index]);
+      console.log(rooms);
+    });
+  });
+
   socket.on("get-all-room", () => {
     socket.emit("get-list-room", rooms);
   });
@@ -50,6 +75,7 @@ io.on("connection", (socket) => {
 
   socket.on("join-room", (data) => {
     socket.join(data.roomName, () => {
+      console.log(socket.rooms, "dari join ____________");
       let index = rooms.findIndex((item) => item.name == data.roomName);
       if (rooms[index].users.length === 2) {
         socket.emit("errorFull", "Player Already full");
@@ -71,7 +97,7 @@ io.on("connection", (socket) => {
     game.setPlays();
     game.setGolds();
     game.initialize();
-    io.in(data.name).emit("start-game", data, game);
+    socket.broadcast.in(data.name).emit("start-game", data, game);
     // io.to(data.name).emit("start-game", data);
   });
   socket.on("updated-data", (data, game) => {
@@ -81,13 +107,16 @@ io.on("connection", (socket) => {
     io.in(data).emit("updated-game", game);
   });
 
-  socket.on('disconnect', () => {
-    if (users.some(user => user.id === socket.id)) {
-      console.log('Splice user dengan id yang disconnect (Handle disconnect)')
-      users.splice(users.findIndex(user => user.id === socket.id), 1)
+  socket.on("disconnect", () => {
+    if (users.some((user) => user.id === socket.id)) {
+      console.log("Splice user dengan id yang disconnect (Handle disconnect)");
+      users.splice(
+        users.findIndex((user) => user.id === socket.id),
+        1
+      );
     }
-    console.log((`User ${socket.id} disconnected.`))
-  })
+    console.log(`User ${socket.id} disconnected.`);
+  });
 });
 
 server.listen(port, () => console.log(`Running on port ${port}`));

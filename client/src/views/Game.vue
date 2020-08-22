@@ -1,6 +1,6 @@
 <template>
   <div class="div">
-    <h1>{{ pemain }}</h1>
+    <h1>{{ game }}</h1>
     <h2>LKXJFLSDKJFLSDKFJLSDK;FJKL;</h2>
     <button @click="changeCart">change value</button>
   </div>
@@ -33,11 +33,11 @@ export default {
       this.pemain = game;
     });
   },
-  // computed: {
-  //   game() {
-  //     return this.$store.state.players;
-  //   },
-  // },
+  computed: {
+    game() {
+      return this.$store.state.players;
+    },
+  },
 };
 </script>
 
