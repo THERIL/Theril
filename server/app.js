@@ -54,7 +54,6 @@ io.on("connection", (socket) => {
       id: socket.id,
     };
     users.push(user);
-    console.log(users);
     socket.emit("get-username", user);
   });
   socket.on("logout", () => {
@@ -76,7 +75,6 @@ io.on("connection", (socket) => {
         1
       );
       io.to(roomName).emit("room-detail", rooms[index]);
-      console.log(rooms);
     });
   });
 
@@ -95,7 +93,6 @@ io.on("connection", (socket) => {
 
   socket.on("join-room", (data) => {
     socket.join(data.roomName, () => {
-      console.log(socket.rooms, "dari join ____________");
       let index = rooms.findIndex((item) => item.name == data.roomName);
       if (rooms[index].users.length === 2) {
         socket.emit("errorFull", "Player Already full");
@@ -219,8 +216,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("luxury-diamond", (data) => {
-    console.log("masuk sini -----------------------------------------");
-
     const luxuryShop = new LuxuryShop();
     player = players.filter((x) => x.name === g.activeCharacter);
     luxuryShop.sellDiamond(player[0]);
@@ -236,8 +231,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("luxury-item", (data, item) => {
-    console.log("masuk sini -----------------------------------------");
-
     const luxuryShop = new LuxuryShop();
     player = players.filter((x) => x.name === g.activeCharacter);
     luxuryShop.transaction(player[0], item);
@@ -254,8 +247,6 @@ io.on("connection", (socket) => {
 
   socket.on("free", (data) => {
     player = players.filter((x) => x.name === g.activeCharacter);
-    console.log(player[0]);
-    // luxuryShop.transaction(player[0], item);
     player[0].release(player[0].assistants[0]);
     player[0].release(player[0].assistants[1]);
     if (player[0].hasDone === 2) {
