@@ -1,6 +1,6 @@
 <template>
   <div class="w-full home">
-    <h1>Lobby {{username}}</h1>
+    <h1>Lobby {{user.name}}</h1>
     <div class="flex flex-wrap">
       <RoomCard v-for="(room,idx) in rooms" :key="idx" :room="room" />
     </div>
@@ -8,7 +8,7 @@
       <input type="text" v-model="roomInput" />
       <button type="submit">CREATE ROOM</button>
     </form>
-    <ChatMenu :username="username" :id="id" />
+    <ChatMenu :user="user" :id="id" />
   </div>
 </template>
 
@@ -43,17 +43,19 @@ export default {
       this.roomInput = "";
     },
   },
-  computed: mapGetters(["username"]),
+  computed: mapGetters(["user"]),
   created: function () {
+    if(!this.$store.state.user.name) {
+      this.$router.push('/')
+    }
     socket.on("connect", () => {
       console.log(socket.id);
       this.id = socket.id;
       console.log("Connected to server.");
       // this.username = localStorage.getItem('theril-username')
     });
-    socket.on("emit-username", (usernames) => {
-      const user = usernames.filter((username) => username.id === socket.id);
-      this.$store.commit("SET_USERNAME", user[0].name);
+    socket.on("get-username", (user) => {
+      this.$store.commit("SET_USER", user);
     });
     socket.emit("get-all-room");
     socket.on("get-list-room", (data) => {

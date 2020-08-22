@@ -15,7 +15,8 @@ import socket from "./config/socket";
 export default {
   methods: {
     logout() {
-      socket.emit("clear-room");
+      socket.emit("logout");
+      this.$store.state.user = {}
       this.$router.push("/");
     },
   },
