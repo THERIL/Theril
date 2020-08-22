@@ -129,7 +129,7 @@ class Warehouse extends Tiles {
         allowed[0].work(this.tileName);
         for (let i = 0; i < this.stock.length; i++) {
           this.stock[i] -= player.capacity - player.resources[i];
-          player.resources[i] = player.capacity;
+          player.resources[i].amount = player.capacity;
         }
         player.hasDone += 1;
       } else return { msg: "You dont have free assistant to do this" };
