@@ -28,10 +28,16 @@ export default {
     socket.on("room-detail", (room) => {
       this.room = room;
     });
+<<<<<<< HEAD
+    socket.on("gas-game", (data, game) => {
+      this.$router.push(`/game/${this.data.name}`);
+    })
+=======
     socket.on("start-game", () => {
       this.$router.push(`/game/${this.room.name}`);
       // this.$store.commit("GAME_DATA", data);
     });
+>>>>>>> b155a93d16571eafbe6a043befb6b668f93ef5b0
   },
   methods: {
     startGame() {

@@ -109,6 +109,17 @@ io.on("connection", (socket) => {
   });
 
   socket.on("start-game", (data) => {
+<<<<<<< HEAD
+    const game = new Game();
+    const p1 = new Player(data.users[0]);
+    const p2 = new Player(data.users[1]);
+    game.assign(p1);
+    game.assign(p2);
+    game.setPlays();
+    game.setGolds();
+    game.initialize();
+    socket.broadcast.to(data.name).emit("gas-game", data, game);
+=======
     const p1 = new Player(playersToBe[0].name);
     const p2 = new Player(playersToBe[1].name);
     g.assign(p1);
@@ -278,6 +289,7 @@ io.on("connection", (socket) => {
       );
     }
     console.log(`User ${socket.id} disconnected.`);
+>>>>>>> b155a93d16571eafbe6a043befb6b668f93ef5b0
   });
 });
 
