@@ -8,9 +8,21 @@ const Player = require("./logic/Player");
 app.use(cors());
 
 let rooms = [],
-  players = [];
+  players = [],
+  usernames = [];
 
 io.on("connection", (socket) => {
+  console.log("User connected: " + socket.id);
+
+  socket.on("submit-username", (name) => {
+    const user = {
+      name,
+      id: socket.id,
+    };
+    usernames.push(user);
+    // console.log(usernames);
+    socket.emit("emit-username", usernames);
+  });
   socket.on("clear-room", () => {
     rooms = [];
   });
@@ -35,25 +47,30 @@ io.on("connection", (socket) => {
         io.emit("updated-room", rooms);
       } else {
         rooms[index].users.push(data.username);
-        const game = new Game();
-        const p1 = new Player(rooms[index].users[0]);
-        const p2 = new Player(rooms[index].users[1]);
-        game.assign(p1);
-        game.assign(p2);
-        game.setPlays();
-        game.setGolds();
-        game.initialize();
-        players.push(game);
-        console.dir(game, { depth: null });
-        io.sockets.in(data.roomName).emit("room-detail", rooms[index], players);
+        io.sockets.in(data.roomName).emit("room-detail", rooms[index]);
       }
     });
   });
 
   socket.on("start-game", (data) => {
-    io.to(data.name).emit("start-game", data);
+    // console.log(data);
+    const game = new Game();
+    const p1 = new Player(data.users[0]);
+    const p2 = new Player(data.users[1]);
+    game.assign(p1);
+    game.assign(p2);
+    game.setPlays();
+    game.setGolds();
+    game.initialize();
+    io.in(data.name).emit("start-game", data, game);
+    // io.to(data.name).emit("start-game", data);
   });
-  // socket
+  socket.on("updated-data", (data, game) => {
+    console.log(data);
+    console.log(game);
+    game.players[0].gold += 1;
+    io.in(data).emit("updated-game", game);
+  });
 });
 
 server.listen(port, () => console.log(`Running on port ${port}`));
