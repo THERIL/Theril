@@ -20,14 +20,14 @@ player3.assistants[1].onDuty = true;
 
 player2.diamond = 1;
 
-player.sendSteal(player.assistants[0], player2, 0.15);
-player2.sendSteal(player2.assistants[0], player, 0.5, 0.5);
+player.sendSteal(player2, 0.15);
+player2.sendSteal(player, 0.5, 0.5);
 
 player3.release(player3.assistants[0]);
 player3.release(player3.assistants[1]);
 
-player3.sendSteal(player3.assistants[0], player, 0.5, 0.15);
-player4.sendSteal(player2.assistants[0], player);
+player3.sendSteal(player, 0.5, 0.15);
+player4.sendSteal(player);
 
 player3.assistants[0].onDuty = true;
 player3.assistants[1].onDuty = true;
@@ -92,14 +92,14 @@ describe("steal", () => {
   });
 
   test("should reject action if it's not player's turn", (done) => {
-    expect(player4.sendSteal(player4.assistants[0], player2)).toEqual({
+    expect(player4.sendSteal(player2)).toEqual({
       msg: "It's not your turn",
     });
     done();
   });
 
   test("should reject action if there are no assistant left", (done) => {
-    expect(player5.sendSteal(player5.assistants[0], player4)).toEqual({
+    expect(player5.sendSteal(player4)).toEqual({
       msg: "You dont have free assistant to do this",
     });
     done();

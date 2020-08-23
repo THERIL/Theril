@@ -90,7 +90,6 @@ io.on("connection", (socket) => {
         1
       );
       console.log(rooms[index], "exit button dari game.vue");
-      // io.to(roomName).emit("user-win", rooms[index]);
       io.to(rooms[index].users[0].id).emit("user-win", rooms[index]);
       io.emit("updated-room", rooms);
     });
@@ -114,7 +113,6 @@ io.on("connection", (socket) => {
     objGame = {};
     socket.join(data.roomName, () => {
       let index = rooms.findIndex((item) => item.name == data.roomName);
-      // rooms[index].users = [];
       if (rooms[index].users.length === 2) {
         socket.emit("errorFull", "Player Already full");
         io.emit("updated-room", rooms);
@@ -186,7 +184,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("market", (data) => {
-    const market = new Market();
+    const market = new Market(false);
     player = players.filter((x) => x.name === g.activeCharacter);
     market.transaction(player[0]);
     if (player[0].hasDone === 2) {
@@ -201,7 +199,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("tea-house", (data) => {
-    const teaHouse = new TeaHouse();
+    const teaHouse = new TeaHouse(false);
     player = players.filter((x) => x.name === g.activeCharacter);
     teaHouse.throwDice(player[0]);
     if (player[0].hasDone === 2) {
@@ -216,7 +214,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("ware-house", (data) => {
-    const wareHouse = new Warehouse();
+    const wareHouse = new Warehouse(false);
     player = players.filter((x) => x.name === g.activeCharacter);
     wareHouse.transaction(player[0]);
     if (player[0].hasDone === 2) {
@@ -231,7 +229,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("wain-wright", (data) => {
-    const wainWright = new WainWright();
+    const wainWright = new WainWright(false);
     player = players.filter((x) => x.name === g.activeCharacter);
     wainWright.upgrade(player[0]);
     if (player[0].hasDone === 2) {
@@ -246,7 +244,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("luxury-diamond", (data) => {
-    const luxuryShop = new LuxuryShop();
+    const luxuryShop = new LuxuryShop(false);
     player = players.filter((x) => x.name === g.activeCharacter);
     luxuryShop.sellDiamond(player[0]);
     if (player[0].hasDone === 2) {
@@ -261,7 +259,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("luxury-item", (data, item) => {
-    const luxuryShop = new LuxuryShop();
+    const luxuryShop = new LuxuryShop(false);
     player = players.filter((x) => x.name === g.activeCharacter);
     luxuryShop.transaction(player[0], item);
     if (player[0].hasDone === 2) {
