@@ -4,13 +4,9 @@
     <button
       class="bg-blue-900 text-gray-100 p-2"
       @click="startGame"
-      v-if="room.users[0].id == id"
-    >
-      START GAME
-    </button>
-    <button class="bg-blue-900 text-gray-100 p-2" @click="leaveRoom">
-      Leave Room
-    </button>
+      v-if="room.users[0].id == id && room.users.length === 2"
+    >START GAME</button>
+    <button class="bg-blue-900 text-gray-100 p-2" @click="leaveRoom">Leave Room</button>
   </div>
 </template>
 
@@ -19,12 +15,12 @@ import socket from "../config/socket.js";
 
 export default {
   name: "Room",
-  data: function() {
+  data: function () {
     return {
       room: {},
     };
   },
-  created: function() {
+  created: function () {
     socket.on("room-detail", (room) => {
       this.room = room;
     });
@@ -32,6 +28,10 @@ export default {
       // this.$router.push(`/game/${this.room.name}`);
       // this.$store.commit("GAME_DATA", data); gak dipake
       this.$router.push(`/board/${this.room.name}`);
+    });
+    socket.on("errorFull", (message) => {
+      this.$router.push({ name: "Lobby" });
+      alert(message);
     });
   },
   methods: {

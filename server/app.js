@@ -19,7 +19,6 @@ let dataToPhaser = ''
 app.use(cors());
 
 let rooms = [],
-  playersToBe = [],
   players = [],
   tiles = [
     new Market(false),
@@ -28,8 +27,8 @@ let rooms = [],
     new TeaHouse(false),
     new WainWright(false),
     new Warehouse(false),
-  ];
-users = [];
+  ],
+  users = [];
 
 let objGame = {
   players: [],
@@ -57,9 +56,9 @@ io.on("connection", (socket) => {
       id: socket.id,
     };
     users.push(user);
-    console.log(users);
     socket.emit("get-username", user);
   });
+
   socket.on("logout", () => {
     if (users.some((user) => user.id === socket.id)) {
       console.log("Splice user dengan id yang disconnect (Handle logout)");
@@ -68,7 +67,10 @@ io.on("connection", (socket) => {
         1
       );
     }
+    objGame.players = [];
+    players = [];
     rooms = [];
+    users = [];
   });
 
   socket.on("leave-room", (roomName, id) => {
@@ -79,7 +81,19 @@ io.on("connection", (socket) => {
         1
       );
       io.to(roomName).emit("room-detail", rooms[index]);
-      console.log(rooms);
+    });
+  });
+
+  socket.on("exit-game", (roomName, id) => {
+    socket.leave(roomName, () => {
+      let index = rooms.findIndex((item) => item.name == roomName);
+      rooms[index].users.splice(
+        rooms[index].users.findIndex((user) => user.id == id),
+        1
+      );
+      console.log(rooms[index], "exit button dari game.vue");
+      io.to(roomName).emit("user-win", rooms[index]);
+      io.emit("updated-room", rooms);
     });
   });
 
@@ -98,28 +112,28 @@ io.on("connection", (socket) => {
 
   socket.on("join-room", (data) => {
     socket.join(data.roomName, () => {
-      console.log(socket.rooms, "dari join ____________");
       let index = rooms.findIndex((item) => item.name == data.roomName);
       if (rooms[index].users.length === 2) {
         socket.emit("errorFull", "Player Already full");
         io.emit("updated-room", rooms);
       } else {
         rooms[index].users.push(data.username);
-        playersToBe.push(data.username);
         io.sockets.in(data.roomName).emit("room-detail", rooms[index]);
       }
     });
   });
 
   socket.on("start-game", (data) => {
-    const p1 = new Player(playersToBe[0].name);
-    const p2 = new Player(playersToBe[1].name);
+    console.log(data);
+    g.players = [];
+    const p1 = new Player(data.users[0].name, data.users[0].id);
+    const p2 = new Player(data.users[1].name, data.users[1].id);
     g.assign(p1);
     g.assign(p2);
     g.setPlays();
     g.setGolds();
     g.initialize();
-    // p1.release
+
     objGame.players = [g.players[0], g.players[1]];
     objGame.active = g.activeCharacter;
 
@@ -224,8 +238,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("luxury-diamond", (data) => {
-    console.log("masuk sini -----------------------------------------");
-
     const luxuryShop = new LuxuryShop();
     player = players.filter((x) => x.name === g.activeCharacter);
     luxuryShop.sellDiamond(player[0]);
@@ -241,8 +253,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("luxury-item", (data, item) => {
-    console.log("masuk sini -----------------------------------------");
-
     const luxuryShop = new LuxuryShop();
     player = players.filter((x) => x.name === g.activeCharacter);
     luxuryShop.transaction(player[0], item);
@@ -259,8 +269,6 @@ io.on("connection", (socket) => {
 
   socket.on("free", (data) => {
     player = players.filter((x) => x.name === g.activeCharacter);
-    console.log(player[0]);
-    // luxuryShop.transaction(player[0], item);
     player[0].release(player[0].assistants[0]);
     player[0].release(player[0].assistants[1]);
     if (player[0].hasDone === 2) {
