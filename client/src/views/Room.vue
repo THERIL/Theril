@@ -5,8 +5,12 @@
       class="bg-blue-900 text-gray-100 p-2"
       @click="startGame"
       v-if="room.users[0].id == id && room.users.length === 2"
-    >START GAME</button>
-    <button class="bg-blue-900 text-gray-100 p-2" @click="leaveRoom">Leave Room</button>
+    >
+      START GAME
+    </button>
+    <button class="bg-blue-900 text-gray-100 p-2" @click="leaveRoom">
+      Leave Room
+    </button>
   </div>
 </template>
 
@@ -25,9 +29,11 @@ export default {
       this.room = room;
     });
     socket.on("start-game", () => {
-      // this.$router.push(`/game/${this.room.name}`);
-      // this.$store.commit("GAME_DATA", data); gak dipake
-      this.$router.push(`/board/${this.room.name}`);
+      this.$router.push(`/game/${this.room.name}`);
+    });
+    socket.on("errorFull", (message) => {
+      this.$router.push({ name: "Lobby" });
+      alert(message);
     });
     socket.on("errorFull", (message) => {
       this.$router.push({ name: "Lobby" });
@@ -36,12 +42,8 @@ export default {
   },
   methods: {
     startGame() {
-      // console.log(this.room)
       socket.emit("start-game", this.room);
-      // this.$router.push(`/game/${this.room.name}`);
-      this.$router.push(`/board/${this.room.name}`);
-
-      // this.$store.commit("GAME_DATA", this.room);
+      this.$router.push(`/game/${this.room.name}`);
     },
     leaveRoom() {
       socket.emit("leave-room", this.room.name, this.id);

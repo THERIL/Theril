@@ -14,7 +14,7 @@ const {
   Warehouse,
 } = require("./game_data");
 
-let dataToPhaser = ''
+let dataToPhaser = "";
 
 app.use(cors());
 
@@ -86,6 +86,26 @@ io.on("connection", (socket) => {
 
   socket.on("exit-game", (roomName, id) => {
     socket.leave(roomName, () => {
+      console.log(id);
+    });
+  });
+
+  socket.on("leave-room", (roomName, id) => {
+    socket.leave(roomName, () => {
+      let index = rooms.findIndex((item) => item.name == roomName);
+      rooms[index].users.splice(
+        rooms[index].users.findIndex((user) => user.id == id),
+        1
+      );
+
+      io.to(rooms[index].users[0].id).emit("user-win", rooms[index]);
+      io.emit("updated-room", rooms);
+      io.to(roomName).emit("room-detail", rooms[index]);
+    });
+  });
+
+  socket.on("exit-game", (roomName, id) => {
+    socket.leave(roomName, () => {
       let index = rooms.findIndex((item) => item.name == roomName);
       rooms[index].users.splice(
         rooms[index].users.findIndex((user) => user.id == id),
@@ -102,6 +122,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("create-room", (data) => {
+    objGame = {};
     let room = {
       name: data.roomName,
       users: [],
@@ -111,6 +132,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("join-room", (data) => {
+    objGame = {};
     socket.join(data.roomName, () => {
       let index = rooms.findIndex((item) => item.name == data.roomName);
       if (rooms[index].users.length === 2) {
@@ -125,6 +147,7 @@ io.on("connection", (socket) => {
 
   socket.on("start-game", (data) => {
     console.log(data);
+    players = [];
     g.players = [];
     const p1 = new Player(data.users[0].name, data.users[0].id);
     const p2 = new Player(data.users[1].name, data.users[1].id);
@@ -133,13 +156,10 @@ io.on("connection", (socket) => {
     g.setPlays();
     g.setGolds();
     g.initialize();
-
     objGame.players = [g.players[0], g.players[1]];
     objGame.active = g.activeCharacter;
 
     players.push(p1, p2);
-
-    dataToPhaser=data
 
     io.to(data.name).emit("start-game");
     io.in(data.name).emit("inisiate-game", data, objGame, tiles);
@@ -156,6 +176,13 @@ io.on("connection", (socket) => {
     }
 
     objGame.players = [players[0], g.players[1]];
+    objGame.active = g.activeCharacter;
+    io.in(data.name).emit("updated-game", objGame);
+  });
+
+  socket.on("end-turn", (data) => {
+    g.changeTurn();
+
     objGame.active = g.activeCharacter;
 
     io.in(data).emit("updated-game", objGame);
@@ -178,7 +205,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("market", (data) => {
-    const market = new Market();
+    const market = new Market(false);
     player = players.filter((x) => x.name === g.activeCharacter);
     market.transaction(player[0]);
     if (player[0].hasDone === 2) {
@@ -193,7 +220,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("tea-house", (data) => {
-    const teaHouse = new TeaHouse();
+    const teaHouse = new TeaHouse(false);
     player = players.filter((x) => x.name === g.activeCharacter);
     teaHouse.throwDice(player[0]);
     if (player[0].hasDone === 2) {
@@ -208,7 +235,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("ware-house", (data) => {
-    const wareHouse = new Warehouse();
+    const wareHouse = new Warehouse(false);
     player = players.filter((x) => x.name === g.activeCharacter);
     wareHouse.transaction(player[0]);
     if (player[0].hasDone === 2) {
@@ -223,7 +250,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("wain-wright", (data) => {
-    const wainWright = new WainWright();
+    const wainWright = new WainWright(false);
     player = players.filter((x) => x.name === g.activeCharacter);
     wainWright.upgrade(player[0]);
     if (player[0].hasDone === 2) {
@@ -238,7 +265,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("luxury-diamond", (data) => {
-    const luxuryShop = new LuxuryShop();
+    const luxuryShop = new LuxuryShop(false);
     player = players.filter((x) => x.name === g.activeCharacter);
     luxuryShop.sellDiamond(player[0]);
     if (player[0].hasDone === 2) {
@@ -253,7 +280,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("luxury-item", (data, item) => {
-    const luxuryShop = new LuxuryShop();
+    const luxuryShop = new LuxuryShop(false);
     player = players.filter((x) => x.name === g.activeCharacter);
     luxuryShop.transaction(player[0], item);
     if (player[0].hasDone === 2) {
@@ -267,8 +294,34 @@ io.on("connection", (socket) => {
     io.in(data).emit("updated-game", objGame);
   });
 
+  socket.on("free", (data, assistant) => {
+    player = players.filter((x) => x.name === g.activeCharacter);
+    assist = player[0].assistants.filter(
+      (x) => x.workLocation === assistant.workLocation
+    )[0];
+
+    player[0].release(assist);
+
+    if (player[0].hasDone === 2) {
+      g.checkTurn();
+      player[0].hasDone = 0;
+    }
+
+    objGame.players = [players[0], g.players[1]];
+    objGame.active = g.activeCharacter;
+    objGame.currentLocation = player[0].currentLocation;
+    io.in(data).emit("updated-game", objGame);
+  });
+
+  socket.on("steal", (data, target) => {
+    player = players.filter((x) => x.name === g.activeCharacter);
+
+    player[0].sendSteal(target);
+  });
+
   socket.on("free", (data) => {
     player = players.filter((x) => x.name === g.activeCharacter);
+    console.log(player[0]);
     player[0].release(player[0].assistants[0]);
     player[0].release(player[0].assistants[1]);
     if (player[0].hasDone === 2) {
@@ -279,6 +332,7 @@ io.on("connection", (socket) => {
     objGame.players = [players[0], g.players[1]];
     objGame.active = g.activeCharacter;
     objGame.currentLocation = player[0].currentLocation;
+
     io.in(data).emit("updated-game", objGame);
   });
 
@@ -292,10 +346,9 @@ io.on("connection", (socket) => {
     }
     console.log(`User ${socket.id} disconnected.`);
   });
-  //////test manggil initial game
   socket.on("test", () => {
     io.in(dataToPhaser.name).emit("dari-test", dataToPhaser, objGame, tiles);
-  })
+  });
 });
 
 server.listen(port, () => console.log(`Running on port ${port}`));

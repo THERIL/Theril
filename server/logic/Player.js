@@ -43,7 +43,6 @@ class Player {
           this.currentLocation = moveTo.tileName;
           this.hasDone += 1;
         }
-        // this.hasDone += 1;
       } else return { msg: "You dont have free assistant to do this" };
     } else return { msg: "It's not your turn" };
   }
@@ -60,11 +59,11 @@ class Player {
       : (this.capacity = 6);
   }
 
-  sendSteal(assistant, target, value, value2) {
+  sendSteal(target, value, value2) {
     if (this.hasDone < 2) {
       let cartDuty = this.assistants.filter((assistant) => !assistant.onDuty);
       if (cartDuty.length) {
-        assistant.steal(target, value, value2);
+        cartDuty[0].steal(target, value, value2);
         this.getStolenItems();
         this.hasDone += 1;
       } else return { msg: "You dont have free assistant to do this" };
@@ -82,6 +81,7 @@ class Player {
 
   release(assistant) {
     assistant.onDuty = false;
+    assistant.workLocation = "";
   }
 }
 
@@ -103,7 +103,7 @@ class Assistant {
   steal(target, value = this.randomizer(), value2 = this.randomizer()) {
     let isSuccess = value > this.stealChance ? false : true;
     if (isSuccess) {
-      target.diamond -= 1;
+      target.diamond--;
       this.stolenItem = true;
     } else {
       let isJailed = value2 > 0.25 ? false : true;
