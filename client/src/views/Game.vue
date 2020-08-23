@@ -4,7 +4,7 @@
     <h1>{{turn.name}}</h1>
     <h1>{{ pemain }}</h1>
     <h2>Playing: {{ activePlayer }}</h2>
-    <h2>Location: {{ currentLocation }}</h2>
+    <h2>Location: {{ pemain.currentLocation }}</h2>
     <div v-if="pemain.name === activePlayer">
       <button @click="changeCart">change value</button>
       <button
@@ -30,6 +30,14 @@
       <button v-if="currentLocation === 'Warehouse'" @click="wareHouse">Free Resources</button>
       <button @click="freeAsistance">Free Assistance</button>
     </div>
+    <button v-if="status.length === 2" @click="endTurn">End Turn</button>
+    <div v-for="(item,index) in pemain.items" :key="index">
+      <h1>{{item.name}}</h1>
+    </div>
+    <div v-for="(item,index) in pemain.resources" :key="index">
+      <h1>{{item.type.name}}</h1>
+      <h1>{{item.amount}}</h1>
+    </div>
   </div>
 </template>
 
@@ -45,11 +53,12 @@ export default {
       tiles: [],
       currentLocation: "",
       turn: "",
+      status: [],
     };
   },
   methods: {
     changeCart() {
-      socket.emit("updated-data", this.room.name, this.game);
+      socket.emit("updated-data", this.room, this.game);
     },
 
     move(target, moveFrom, moveTo) {
@@ -78,8 +87,11 @@ export default {
     },
     exit() {
       socket.emit("exit-game", this.room.name, this.user.id);
-      // this.$router.push({ name: "Lobby" });
-      this.$router.push(`/room/${this.room.name}`);
+      this.$router.push({ name: "Lobby" });
+      // this.$router.push(`/room/${this.room.name}`);
+    },
+    endTurn() {
+      socket.emit("end-turn", this.room.name, this.game);
     },
   },
   created() {
@@ -99,12 +111,16 @@ export default {
       )[0];
       this.activePlayer = game.active;
       this.currentLocation = game.currentLocation;
+      this.status = game.players.asistance.filter(
+        (asistance) => asistance.onDuty
+      );
     });
 
     socket.on("user-win", (data) => {
-      console.log(data.users);
-      alert("You Win bgst");
-      this.$router.push(`/room/${this.room.name}`);
+      console.log(data);
+      alert("Another player has leave the game, You Win");
+      // this.$router.push(`/room/${this.room.name}`);
+      this.$router.push({ name: "Lobby" });
     });
   },
   computed: {

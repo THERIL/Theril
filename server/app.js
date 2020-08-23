@@ -83,13 +83,15 @@ io.on("connection", (socket) => {
 
   socket.on("exit-game", (roomName, id) => {
     socket.leave(roomName, () => {
+      console.log(id);
       let index = rooms.findIndex((item) => item.name == roomName);
       rooms[index].users.splice(
         rooms[index].users.findIndex((user) => user.id == id),
         1
       );
       console.log(rooms[index], "exit button dari game.vue");
-      io.to(roomName).emit("user-win", rooms[index]);
+      // io.to(roomName).emit("user-win", rooms[index]);
+      io.to(rooms[index].users[0].id).emit("user-win", rooms[index]);
       io.emit("updated-room", rooms);
     });
   });
@@ -99,6 +101,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("create-room", (data) => {
+    objGame = {};
     let room = {
       name: data.roomName,
       users: [],
@@ -108,8 +111,10 @@ io.on("connection", (socket) => {
   });
 
   socket.on("join-room", (data) => {
+    objGame = {};
     socket.join(data.roomName, () => {
       let index = rooms.findIndex((item) => item.name == data.roomName);
+      // rooms[index].users = [];
       if (rooms[index].users.length === 2) {
         socket.emit("errorFull", "Player Already full");
         io.emit("updated-room", rooms);
@@ -122,6 +127,7 @@ io.on("connection", (socket) => {
 
   socket.on("start-game", (data) => {
     console.log(data);
+    players = [];
     g.players = [];
     const p1 = new Player(data.users[0].name, data.users[0].id);
     const p2 = new Player(data.users[1].name, data.users[1].id);
@@ -140,8 +146,15 @@ io.on("connection", (socket) => {
     io.in(data.name).emit("inisiate-game", data, objGame, tiles);
   });
 
-  socket.on("updated-data", (data) => {
+  socket.on("updated-data", (data, game) => {
+    console.log(data, "dari updated");
+    console.log(game, "dari updated");
+    // objGame = {};
     player = players.filter((x) => x.name === g.activeCharacter);
+    console.log(
+      player,
+      "-------------------------------------------------------"
+    );
     player[0].gold += 100;
     player[0].hasDone += 1;
 
@@ -152,9 +165,11 @@ io.on("connection", (socket) => {
 
     objGame.players = [players[0], g.players[1]];
     objGame.active = g.activeCharacter;
-
-    io.in(data).emit("updated-game", objGame);
+    // objGame.currentLocation = player[0].currentLocation;
+    io.in(data.name).emit("updated-game", objGame);
   });
+
+  socket.on("end-turn", (data, game) => {});
 
   socket.on("move", (data, moveFrom, moveTo) => {
     player = players.filter((x) => x.name === g.activeCharacter);
