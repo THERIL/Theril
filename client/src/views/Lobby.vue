@@ -1,6 +1,6 @@
 <template>
   <div class="w-full home">
-    <h1>Lobby {{user.name}}</h1>
+    <h1>Lobby</h1>
     <div class="flex flex-wrap">
       <RoomCard v-for="(room,idx) in rooms" :key="idx" :room="room" />
     </div>
