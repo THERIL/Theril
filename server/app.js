@@ -25,8 +25,8 @@ let rooms = [],
     new TeaHouse(false),
     new WainWright(false),
     new Warehouse(false),
-  ];
-users = [];
+  ],
+  users = [];
 
 let objGame = {
   players: [],
@@ -54,7 +54,6 @@ io.on("connection", (socket) => {
       id: socket.id,
     };
     users.push(user);
-    console.log(users);
     socket.emit("get-username", user);
   });
   socket.on("logout", () => {
@@ -109,7 +108,6 @@ io.on("connection", (socket) => {
     players.push(p1, p2);
 
     io.in(data.name).emit("start-game", data, objGame, tiles);
-    // io.to(data.name).emit("start-game", data);
   });
   socket.on("updated-data", (data) => {
     player = players.filter((x) => x.name === g.activeCharacter);

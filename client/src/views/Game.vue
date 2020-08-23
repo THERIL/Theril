@@ -32,7 +32,6 @@ export default {
   methods: {
     changeCart() {
       socket.emit("updated-data", this.room.name, this.game);
-      // this.pemain.players[0].gold += 1;
     },
 
     move(target, moveFrom, moveTo) {
