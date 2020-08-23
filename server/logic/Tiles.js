@@ -195,8 +195,9 @@ class PoliceOffice extends Tiles {
       if (player.gold >= this.bailPrice) {
         assistant.jailed = false;
         assistant.jailedDuration = 0;
-      }
-    }
+        player.gold -= this.bailPrice;
+      } else return { msg: "You don't have enough gold" };
+    } else return { msg: "It's not your turn" };
   }
 }
 
