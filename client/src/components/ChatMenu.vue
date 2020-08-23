@@ -18,13 +18,9 @@
           </div>
         </div>
 
-        <div class="w-4/6 chatbox-height p-5 border">
+        <div class="w-4/6 chatbox-height p-5 border overflow-scroll">
           <h1 class="text-xl font-bold text-gray-100">LOBBY CHAT</h1>
-          <div
-            class="text-left overflow-scroll"
-            v-for="(message,index) in allMessages"
-            :key="index"
-          >
+          <div class="text-left" v-for="(message,index) in allMessages" :key="index">
             <p class="font-bold mt-2 text-gray-100 text-left">({{message.username}}):</p>
             <p class="text-gray-100">{{message.text}}</p>
           </div>
