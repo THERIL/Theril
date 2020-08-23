@@ -32,9 +32,15 @@ const wh = new Warehouse(false);
 
 // console.time("Meow");
 
-player2.gold = 0;
-wh.transaction(player2);
-console.dir(player2, { depth: null });
+player.gold = 20;
+
+p.arrest(a1);
+p.bail(player, a1);
+console.dir(player, { depth: null });
+
+// player2.gold = 0;
+// wh.transaction(player2);
+// console.dir(player2, { depth: null });
 // console.log(th.throwDice(player2));
 
 // ww.upgrade(player);

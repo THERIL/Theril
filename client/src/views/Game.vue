@@ -187,16 +187,14 @@ export default {
       this.currentLocation = game.currentLocation;
       this.status = playerX.assistants.filter((x) => x.onDuty);
       this.jail = playerX.assistants.filter((x) => x.jailed);
-      console.log(this.pemain.assistants, "----------atas");
       this.pemain.assistants.map((x) =>
         x.jailedDuration > 0 ? x.jailedDuration-- : x.jailedDuration
       );
-      console.log(this.pemain.assistants, "----------bawah");
     });
 
     socket.on("user-win", (data) => {
-      console.log(data);
       alert("Another player has leave the game, You Win");
+      socket.emit("exit-game-winner", this.room.name, this.user.id);
       this.$router.push({ name: "Lobby" });
     });
   },

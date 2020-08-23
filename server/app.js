@@ -21,12 +21,12 @@ app.use(cors());
 let rooms = [],
   players = [],
   tiles = [
-    new Market(false),
     new LuxuryShop(false),
-    new PoliceOffice(false),
-    new TeaHouse(false),
     new WainWright(false),
+    new PoliceOffice(false),
+    new Market(false),
     new Warehouse(false),
+    new TeaHouse(false),
   ],
   users = [];
 
@@ -84,13 +84,13 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on("exit-game", (roomName, id) => {
-    socket.leave(roomName, () => {
-      console.log(id);
-    });
-  });
+  // socket.on("exit-game", (roomName, id) => {
+  //   socket.leave(roomName, () => {
+  //     console.log(id);
+  //   });
+  // });
 
-  socket.on("leave-room", (roomName, id) => {
+  socket.on("exit-game", (roomName, id) => {
     socket.leave(roomName, () => {
       let index = rooms.findIndex((item) => item.name == roomName);
       rooms[index].users.splice(
@@ -99,9 +99,20 @@ io.on("connection", (socket) => {
       );
 
       io.to(rooms[index].users[0].id).emit("user-win", rooms[index]);
-      io.emit("updated-room", rooms);
-      io.to(roomName).emit("room-detail", rooms[index]);
-      console.log(rooms);
+    });
+  });
+
+  socket.on("exit-game-winner", (roomName, id) => {
+    socket.leave(roomName, () => {
+      let index = rooms.findIndex((item) => item.name == roomName);
+      rooms[index].users.splice(
+        rooms[index].users.findIndex((user) => user.id == id),
+        1
+      );
+
+      rooms = [];
+
+      io.emit("get-list-room", rooms);
     });
   });
 
@@ -135,7 +146,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("start-game", (data) => {
-    console.log(data);
     players = [];
     g.players = [];
     const p1 = new Player(data.users[0].name, data.users[0].id);
