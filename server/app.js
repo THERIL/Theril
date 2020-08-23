@@ -59,6 +59,10 @@ io.on("connection", (socket) => {
     socket.emit("get-username", user);
   });
 
+  socket.on("clear-room", () => {
+    rooms = [];
+  });
+
   socket.on("logout", () => {
     if (users.some((user) => user.id === socket.id)) {
       console.log("Splice user dengan id yang disconnect (Handle logout)");
@@ -84,13 +88,9 @@ io.on("connection", (socket) => {
     });
   });
 
-  // socket.on("exit-game", (roomName, id) => {
-  //   socket.leave(roomName, () => {
-  //     console.log(id);
-  //   });
-  // });
-
   socket.on("exit-game", (roomName, id) => {
+    // console.log(roomName, id, ">>>>>>>>>>>");
+    console.log(rooms, ">>>>>>>>>>>>>>>>");
     socket.leave(roomName, () => {
       let index = rooms.findIndex((item) => item.name == roomName);
       rooms[index].users.splice(
@@ -98,7 +98,7 @@ io.on("connection", (socket) => {
         1
       );
 
-      io.to(rooms[index].users[0].id).emit("user-win", rooms[index]);
+      io.to(rooms[index].users[0].id).emit("user-win", "You Win");
     });
   });
 
@@ -133,8 +133,8 @@ io.on("connection", (socket) => {
   socket.on("join-room", (data) => {
     objGame = {};
     socket.join(data.roomName, () => {
-      console.log(socket.rooms, "dari join ____________");
       let index = rooms.findIndex((item) => item.name == data.roomName);
+      // rooms[index].users = [];
       if (rooms[index].users.length === 2) {
         socket.emit("errorFull", "Player Already full");
         io.emit("updated-room", rooms);
@@ -164,7 +164,8 @@ io.on("connection", (socket) => {
     io.in(data.name).emit("inisiate-game", data, objGame, tiles);
   });
 
-  socket.on("updated-data", (data) => {
+  socket.on("updated-data", (data, game) => {
+    // objGame = {};
     player = players.filter((x) => x.name === g.activeCharacter);
     player[0].gold += 100;
     player[0].hasDone += 1;
@@ -186,6 +187,8 @@ io.on("connection", (socket) => {
 
     io.in(data).emit("updated-game", objGame);
   });
+
+  socket.on("end-turn", (data, game) => {});
 
   socket.on("move", (data, moveFrom, moveTo) => {
     player = players.filter((x) => x.name === g.activeCharacter);

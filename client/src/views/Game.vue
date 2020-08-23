@@ -155,6 +155,14 @@ export default {
     steal() {
       socket.emit("steal", this.room.name, this.anotherPlayer);
     },
+    exit() {
+      socket.emit("exit-game", this.room.name, this.user.id);
+      this.$router.push({ name: "Lobby" });
+      // this.$router.push(`/room/${this.room.name}`);
+    },
+    endTurn() {
+      socket.emit("end-turn", this.room.name, this.game);
+    },
   },
   created() {
     socket.on("inisiate-game", (data, game, tiles) => {

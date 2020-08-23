@@ -67,6 +67,11 @@ export default {
     socket.on("updated-room", (data) => {
       this.rooms = data;
     });
+    // socket.on("user-win", (data) => {
+    //   // console.log(data.users);
+    //   // // alert("You Win bgst");
+    //   this.$router.push({ name: "Lobby" });
+    // });
   },
 };
 </script>

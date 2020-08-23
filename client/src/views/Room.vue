@@ -19,17 +19,21 @@ import socket from "../config/socket.js";
 
 export default {
   name: "Room",
-  data: function() {
+  data: function () {
     return {
       room: {},
     };
   },
-  created: function() {
+  created: function () {
     socket.on("room-detail", (room) => {
       this.room = room;
     });
     socket.on("start-game", () => {
       this.$router.push(`/game/${this.room.name}`);
+    });
+    socket.on("errorFull", (message) => {
+      this.$router.push({ name: "Lobby" });
+      alert(message);
     });
     socket.on("errorFull", (message) => {
       this.$router.push({ name: "Lobby" });
