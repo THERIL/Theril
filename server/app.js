@@ -13,10 +13,12 @@ const {
   WainWright,
   Warehouse,
 } = require("./game_data");
+
+let dataToPhaser = "";
+
 app.use(cors());
 
 let rooms = [],
-  playersToBe = [],
   players = [],
   tiles = [
     new Market(false),
@@ -25,8 +27,8 @@ let rooms = [],
     new TeaHouse(false),
     new WainWright(false),
     new Warehouse(false),
-  ];
-users = [];
+  ],
+  users = [];
 
 let objGame = {
   players: [],
@@ -54,9 +56,9 @@ io.on("connection", (socket) => {
       id: socket.id,
     };
     users.push(user);
-    console.log(users);
     socket.emit("get-username", user);
   });
+
   socket.on("logout", () => {
     if (users.some((user) => user.id === socket.id)) {
       console.log("Splice user dengan id yang disconnect (Handle logout)");
@@ -65,7 +67,10 @@ io.on("connection", (socket) => {
         1
       );
     }
+    objGame.players = [];
+    players = [];
     rooms = [];
+    users = [];
   });
 
   socket.on("leave-room", (roomName, id) => {
@@ -76,6 +81,26 @@ io.on("connection", (socket) => {
         1
       );
       io.to(roomName).emit("room-detail", rooms[index]);
+    });
+  });
+
+  socket.on("exit-game", (roomName, id) => {
+    socket.leave(roomName, () => {
+      console.log(id);
+    });
+  });
+
+  socket.on("leave-room", (roomName, id) => {
+    socket.leave(roomName, () => {
+      let index = rooms.findIndex((item) => item.name == roomName);
+      rooms[index].users.splice(
+        rooms[index].users.findIndex((user) => user.id == id),
+        1
+      );
+
+      io.to(rooms[index].users[0].id).emit("user-win", rooms[index]);
+      io.emit("updated-room", rooms);
+      io.to(roomName).emit("room-detail", rooms[index]);
       console.log(rooms);
     });
   });
@@ -85,6 +110,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("create-room", (data) => {
+    objGame = {};
     let room = {
       name: data.roomName,
       users: [],
@@ -94,6 +120,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("join-room", (data) => {
+    objGame = {};
     socket.join(data.roomName, () => {
       console.log(socket.rooms, "dari join ____________");
       let index = rooms.findIndex((item) => item.name == data.roomName);
@@ -102,32 +129,22 @@ io.on("connection", (socket) => {
         io.emit("updated-room", rooms);
       } else {
         rooms[index].users.push(data.username);
-        playersToBe.push(data.username);
         io.sockets.in(data.roomName).emit("room-detail", rooms[index]);
       }
     });
   });
 
   socket.on("start-game", (data) => {
-<<<<<<< HEAD
-    const game = new Game();
-    const p1 = new Player(data.users[0]);
-    const p2 = new Player(data.users[1]);
-    game.assign(p1);
-    game.assign(p2);
-    game.setPlays();
-    game.setGolds();
-    game.initialize();
-    socket.broadcast.to(data.name).emit("gas-game", data, game);
-=======
-    const p1 = new Player(playersToBe[0].name);
-    const p2 = new Player(playersToBe[1].name);
+    console.log(data);
+    players = [];
+    g.players = [];
+    const p1 = new Player(data.users[0].name, data.users[0].id);
+    const p2 = new Player(data.users[1].name, data.users[1].id);
     g.assign(p1);
     g.assign(p2);
     g.setPlays();
     g.setGolds();
     g.initialize();
-    // p1.release
     objGame.players = [g.players[0], g.players[1]];
     objGame.active = g.activeCharacter;
 
@@ -148,6 +165,13 @@ io.on("connection", (socket) => {
     }
 
     objGame.players = [players[0], g.players[1]];
+    objGame.active = g.activeCharacter;
+    io.in(data.name).emit("updated-game", objGame);
+  });
+
+  socket.on("end-turn", (data) => {
+    g.changeTurn();
+
     objGame.active = g.activeCharacter;
 
     io.in(data).emit("updated-game", objGame);
@@ -170,7 +194,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("market", (data) => {
-    const market = new Market();
+    const market = new Market(false);
     player = players.filter((x) => x.name === g.activeCharacter);
     market.transaction(player[0]);
     if (player[0].hasDone === 2) {
@@ -185,7 +209,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("tea-house", (data) => {
-    const teaHouse = new TeaHouse();
+    const teaHouse = new TeaHouse(false);
     player = players.filter((x) => x.name === g.activeCharacter);
     teaHouse.throwDice(player[0]);
     if (player[0].hasDone === 2) {
@@ -200,7 +224,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("ware-house", (data) => {
-    const wareHouse = new Warehouse();
+    const wareHouse = new Warehouse(false);
     player = players.filter((x) => x.name === g.activeCharacter);
     wareHouse.transaction(player[0]);
     if (player[0].hasDone === 2) {
@@ -215,7 +239,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("wain-wright", (data) => {
-    const wainWright = new WainWright();
+    const wainWright = new WainWright(false);
     player = players.filter((x) => x.name === g.activeCharacter);
     wainWright.upgrade(player[0]);
     if (player[0].hasDone === 2) {
@@ -230,9 +254,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("luxury-diamond", (data) => {
-    console.log("masuk sini -----------------------------------------");
-
-    const luxuryShop = new LuxuryShop();
+    const luxuryShop = new LuxuryShop(false);
     player = players.filter((x) => x.name === g.activeCharacter);
     luxuryShop.sellDiamond(player[0]);
     if (player[0].hasDone === 2) {
@@ -247,9 +269,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("luxury-item", (data, item) => {
-    console.log("masuk sini -----------------------------------------");
-
-    const luxuryShop = new LuxuryShop();
+    const luxuryShop = new LuxuryShop(false);
     player = players.filter((x) => x.name === g.activeCharacter);
     luxuryShop.transaction(player[0], item);
     if (player[0].hasDone === 2) {
@@ -263,10 +283,34 @@ io.on("connection", (socket) => {
     io.in(data).emit("updated-game", objGame);
   });
 
+  socket.on("free", (data, assistant) => {
+    player = players.filter((x) => x.name === g.activeCharacter);
+    assist = player[0].assistants.filter(
+      (x) => x.workLocation === assistant.workLocation
+    )[0];
+
+    player[0].release(assist);
+
+    if (player[0].hasDone === 2) {
+      g.checkTurn();
+      player[0].hasDone = 0;
+    }
+
+    objGame.players = [players[0], g.players[1]];
+    objGame.active = g.activeCharacter;
+    objGame.currentLocation = player[0].currentLocation;
+    io.in(data).emit("updated-game", objGame);
+  });
+
+  socket.on("steal", (data, target) => {
+    player = players.filter((x) => x.name === g.activeCharacter);
+
+    player[0].sendSteal(target);
+  });
+
   socket.on("free", (data) => {
     player = players.filter((x) => x.name === g.activeCharacter);
     console.log(player[0]);
-    // luxuryShop.transaction(player[0], item);
     player[0].release(player[0].assistants[0]);
     player[0].release(player[0].assistants[1]);
     if (player[0].hasDone === 2) {
@@ -277,6 +321,7 @@ io.on("connection", (socket) => {
     objGame.players = [players[0], g.players[1]];
     objGame.active = g.activeCharacter;
     objGame.currentLocation = player[0].currentLocation;
+
     io.in(data).emit("updated-game", objGame);
   });
 
@@ -289,7 +334,9 @@ io.on("connection", (socket) => {
       );
     }
     console.log(`User ${socket.id} disconnected.`);
->>>>>>> b155a93d16571eafbe6a043befb6b668f93ef5b0
+  });
+  socket.on("test", () => {
+    io.in(dataToPhaser.name).emit("dari-test", dataToPhaser, objGame, tiles);
   });
 });
 

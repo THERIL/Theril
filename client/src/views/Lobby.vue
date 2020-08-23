@@ -1,8 +1,8 @@
 <template>
   <div class="w-full home">
-    <h1>Lobby {{user.name}}</h1>
+    <h1>Lobby {{ user.name }}</h1>
     <div class="flex flex-wrap">
-      <RoomCard v-for="(room,idx) in rooms" :key="idx" :room="room" />
+      <RoomCard v-for="(room, idx) in rooms" :key="idx" :room="room" />
     </div>
     <form @submit="createRoom">
       <input type="text" v-model="roomInput" />
@@ -14,7 +14,6 @@
 
 <script>
 // @ is an alias to /src
-// import HelloWorld from '@/components/HelloWorld.vue'
 import socket from "../config/socket.js";
 import { mapGetters } from "vuex";
 import ChatMenu from "@/components/ChatMenu.vue";
@@ -26,7 +25,7 @@ export default {
     ChatMenu,
     RoomCard,
   },
-  data: function () {
+  data: function() {
     return {
       roomInput: "",
       id: "",
@@ -36,23 +35,26 @@ export default {
   methods: {
     createRoom(event) {
       event.preventDefault();
-      const payload = {
-        roomName: this.roomInput,
-      };
-      socket.emit("create-room", payload);
-      this.roomInput = "";
+      if (this.roomInput) {
+        const payload = {
+          roomName: this.roomInput,
+        };
+        socket.emit("create-room", payload);
+        this.roomInput = "";
+      } else {
+        alert("Nama room harus diisi");
+      }
     },
   },
   computed: mapGetters(["user"]),
-  created: function () {
-    if(!this.$store.state.user.name) {
-      this.$router.push('/')
+  created: function() {
+    if (!this.$store.state.user.name) {
+      this.$router.push("/");
     }
     socket.on("connect", () => {
       console.log(socket.id);
       this.id = socket.id;
       console.log("Connected to server.");
-      // this.username = localStorage.getItem('theril-username')
     });
     socket.on("get-username", (user) => {
       this.$store.commit("SET_USER", user);

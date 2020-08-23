@@ -29,6 +29,8 @@ export default class BootScene extends Scene {
     this.load.image('star', '../assets/star.png');
     this.load.image('bomb', '../assets/bomb.png');
     this.load.spritesheet('dude', dude, { frameWidth: 32, frameHeight: 48 });
+
+    
     
   }
 
