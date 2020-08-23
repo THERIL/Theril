@@ -89,7 +89,7 @@ io.on("connection", (socket) => {
         rooms[index].users.findIndex((user) => user.id == id),
         1
       );
-      console.log(rooms[index], "exit button dari game.vue");
+      // console.log(rooms[index], "exit button dari game.vue");
       // io.to(roomName).emit("user-win", rooms[index]);
       io.to(rooms[index].users[0].id).emit("user-win", rooms[index]);
       io.emit("updated-room", rooms);
@@ -126,7 +126,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("start-game", (data) => {
-    console.log(data);
     players = [];
     g.players = [];
     const p1 = new Player(data.users[0].name, data.users[0].id);
@@ -147,14 +146,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("updated-data", (data, game) => {
-    console.log(data, "dari updated");
-    console.log(game, "dari updated");
     // objGame = {};
     player = players.filter((x) => x.name === g.activeCharacter);
-    console.log(
-      player,
-      "-------------------------------------------------------"
-    );
     player[0].gold += 100;
     player[0].hasDone += 1;
 
@@ -165,7 +158,6 @@ io.on("connection", (socket) => {
 
     objGame.players = [players[0], g.players[1]];
     objGame.active = g.activeCharacter;
-    // objGame.currentLocation = player[0].currentLocation;
     io.in(data.name).emit("updated-game", objGame);
   });
 
