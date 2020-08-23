@@ -1,5 +1,5 @@
 <template>
-  <div class="card border-2 p-2 flex">
+  <div class="card bg-gray-500 bg-opacity-75 border-2 p-2 flex">
     <div id="kiri" class="w-4/6 border">
       <div class="border-b-2">
         <p>

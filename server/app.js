@@ -23,12 +23,12 @@ let rooms = [],
   playersToBe = [],
   players = [],
   tiles = [
-    new Market(false),
     new LuxuryShop(false),
-    new PoliceOffice(false),
-    new TeaHouse(false),
     new WainWright(false),
+    new PoliceOffice(false),
+    new Market(false),
     new Warehouse(false),
+    new TeaHouse(false),
   ],
   users = [];
 
