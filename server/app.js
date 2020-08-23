@@ -13,6 +13,9 @@ const {
   WainWright,
   Warehouse,
 } = require("./game_data");
+
+let dataToPhaser = "";
+
 app.use(cors());
 
 let rooms = [],
@@ -84,14 +87,21 @@ io.on("connection", (socket) => {
   socket.on("exit-game", (roomName, id) => {
     socket.leave(roomName, () => {
       console.log(id);
+    });
+  });
+
+  socket.on("leave-room", (roomName, id) => {
+    socket.leave(roomName, () => {
       let index = rooms.findIndex((item) => item.name == roomName);
       rooms[index].users.splice(
         rooms[index].users.findIndex((user) => user.id == id),
         1
       );
-      console.log(rooms[index], "exit button dari game.vue");
+
       io.to(rooms[index].users[0].id).emit("user-win", rooms[index]);
       io.emit("updated-room", rooms);
+      io.to(roomName).emit("room-detail", rooms[index]);
+      console.log(rooms);
     });
   });
 
@@ -112,6 +122,7 @@ io.on("connection", (socket) => {
   socket.on("join-room", (data) => {
     objGame = {};
     socket.join(data.roomName, () => {
+      console.log(socket.rooms, "dari join ____________");
       let index = rooms.findIndex((item) => item.name == data.roomName);
       if (rooms[index].users.length === 2) {
         socket.emit("errorFull", "Player Already full");
@@ -134,7 +145,6 @@ io.on("connection", (socket) => {
     g.setPlays();
     g.setGolds();
     g.initialize();
-
     objGame.players = [g.players[0], g.players[1]];
     objGame.active = g.activeCharacter;
 
@@ -144,7 +154,7 @@ io.on("connection", (socket) => {
     io.in(data.name).emit("inisiate-game", data, objGame, tiles);
   });
 
-  socket.on("updated-data", (data, game) => {
+  socket.on("updated-data", (data) => {
     player = players.filter((x) => x.name === g.activeCharacter);
     player[0].gold += 100;
     player[0].hasDone += 1;
@@ -296,7 +306,13 @@ io.on("connection", (socket) => {
     player = players.filter((x) => x.name === g.activeCharacter);
 
     player[0].sendSteal(target);
+  });
 
+  socket.on("free", (data) => {
+    player = players.filter((x) => x.name === g.activeCharacter);
+    console.log(player[0]);
+    player[0].release(player[0].assistants[0]);
+    player[0].release(player[0].assistants[1]);
     if (player[0].hasDone === 2) {
       g.checkTurn();
       player[0].hasDone = 0;
@@ -318,6 +334,9 @@ io.on("connection", (socket) => {
       );
     }
     console.log(`User ${socket.id} disconnected.`);
+  });
+  socket.on("test", () => {
+    io.in(dataToPhaser.name).emit("dari-test", dataToPhaser, objGame, tiles);
   });
 });
 

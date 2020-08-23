@@ -204,12 +204,6 @@ export default {
     user() {
       return this.$store.state.user;
     },
-    // status() {
-    //   socket.on("user-win", () => {
-    //     alert("You Win bgst");
-    //     // this.$router.push({ name: "Lobby" });
-    //   });
-    // },
   },
 };
 </script>

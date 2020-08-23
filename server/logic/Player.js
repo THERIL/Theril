@@ -43,7 +43,6 @@ class Player {
           this.currentLocation = moveTo.tileName;
           this.hasDone += 1;
         }
-        // this.hasDone += 1;
       } else return { msg: "You dont have free assistant to do this" };
     } else return { msg: "It's not your turn" };
   }
