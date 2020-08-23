@@ -34,8 +34,8 @@ describe("test socket", () => {
   describe("Test room", () => {
     test("get list room", (done) => {
       socket.emit("get-all-room");
-      socket.on("get-list-room", (data) => {
-        expect(data).toBeInstanceOf(Array);
+      socket.on("get-list-room", async (data) => {
+        await expect(data).toBeInstanceOf(Array);
         done();
       });
     });
@@ -45,8 +45,8 @@ describe("test socket", () => {
         roomName: "Test",
       };
       socket.emit("create-room", payload);
-      socket.on("updated-room", (data) => {
-        expect(data).toBeInstanceOf(Array);
+      socket.on("updated-room", async (data) => {
+        await expect(data).toBeInstanceOf(Array);
         done();
       });
     });
@@ -59,9 +59,9 @@ describe("test socket", () => {
         username: "Alfonso",
       };
       socket.emit("join-room", payload);
-      socket.on("room-detail", (data) => {
+      socket.on("room-detail", async (data) => {
         console.log("masuk 1");
-        expect(data).toBeInstanceOf(Object);
+        await expect(data).toBeInstanceOf(Object);
         done();
       });
     });
@@ -72,11 +72,9 @@ describe("test socket", () => {
         username: "Sakra",
       };
       socket.emit("join-room", payload);
-      socket.on("room-detail", (data, players) => {
-        // console.log(data);
-        // console.dir(players, { depth: null });
+      socket.on("room-detail", async (data) => {
         console.log("masuk 2");
-        expect(data).toBeInstanceOf(Object);
+        await expect(data).toBeInstanceOf(Object);
         done();
       });
     });
@@ -87,12 +85,12 @@ describe("test socket", () => {
         username: "Nicko",
       };
       socket.emit("join-room", payload);
-      socket.on("errorFull", (message) => {
+      socket.on("errorFull", async (message) => {
         console.log("masuk 3");
-        expect(message).toBe("Player Already full");
+        await expect(message).toBe("Player Already full");
       });
-      socket.on("updated-room", (data) => {
-        expect(data).toBeInstanceOf(Array);
+      socket.on("updated-room", async (data) => {
+        await expect(data).toBeInstanceOf(Array);
         done();
       });
     });
@@ -105,10 +103,12 @@ describe("test socket", () => {
         users: ["Alfonso", "Sakra"],
       };
       socket.emit("start-game", room);
-      socket.on("start-game", (data) => {
-        expect(data).toBeDefined();
+      socket.on("inisiate-game", async (data, objGame, tiles) => {
+        await expect(data).toBeDefined();
+        await expect(objGame).toBeDefined();
+        await expect(tiles).toBeDefined();
+        done();
       });
-      done();
     });
   });
 });

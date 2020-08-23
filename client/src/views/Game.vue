@@ -1,7 +1,7 @@
 <template>
   <div class="div">
     <button @click="exit">Exit</button>
-    <h1>{{turn.name}}</h1>
+    <h1>{{ turn.name }}</h1>
     <h1>{{ pemain }}</h1>
     <h2>Playing: {{ activePlayer }}</h2>
     <h2>Location: {{ pemain.currentLocation }}</h2>
@@ -12,31 +12,89 @@
         v-for="(tile, index) in tiles"
         @click="move(pemain.currentLocation, tile)"
         :key="index"
-      >{{ tile.tileName }}</button>
-      <button v-if="currentLocation === 'Market'" @click="market">Sell</button>
-      <button v-if="currentLocation === 'Luxury Shop'" @click="luxuryDiamond">Buy Diamond</button>
-      <button v-if="currentLocation === 'Luxury Shop'" @click="luxuryItem('Strider')">Buy Strider</button>
-      <button v-if="currentLocation === 'Luxury Shop'" @click="luxuryItem('Horns')">Buy Horns</button>
+      >
+        {{ tile.tileName }}
+      </button>
+      <button v-if="pemain.currentLocation === 'Market'" @click="market">
+        Sell
+      </button>
       <button
-        v-if="currentLocation === 'Luxury Shop'"
+        v-if="pemain.currentLocation === 'Luxury Shop'"
+        @click="luxuryDiamond"
+      >
+        Buy Diamond
+      </button>
+      <button
+        v-if="pemain.currentLocation === 'Luxury Shop'"
+        @click="luxuryItem('Strider')"
+      >
+        Buy Strider
+      </button>
+      <button
+        v-if="pemain.currentLocation === 'Luxury Shop'"
+        @click="luxuryItem('Horns')"
+      >
+        Buy Horns
+      </button>
+      <button
+        v-if="pemain.currentLocation === 'Luxury Shop'"
         @click="luxuryItem('Golden Whistle')"
-      >Buy Golden Whislte</button>
+      >
+        Buy Golden Whislte
+      </button>
       <button
-        v-if="currentLocation === 'Luxury Shop'"
+        v-if="pemain.currentLocation === 'Luxury Shop'"
         @click="luxuryItem('Shadow Hand')"
-      >Buy Shadow Hand</button>
-      <button v-if="currentLocation === 'Tea House'" @click="teaHouse">Gamble</button>
-      <button v-if="currentLocation === 'Wain Wright'" @click="wainWright">Upgrade Cart</button>
-      <button v-if="currentLocation === 'Warehouse'" @click="wareHouse">Free Resources</button>
-      <button @click="freeAsistance">Free Assistance</button>
+      >
+        Buy Shadow Hand
+      </button>
+      <button v-if="pemain.currentLocation === 'Tea House'" @click="teaHouse">
+        Gamble
+      </button>
+      <button
+        v-if="pemain.currentLocation === 'Wain Wright'"
+        @click="wainWright"
+      >
+        Upgrade Cart
+      </button>
+      <button v-if="pemain.currentLocation === 'Warehouse'" @click="wareHouse">
+        Free Resources
+      </button>
+      <div v-if="pemain.currentLocation === 'Police Office'">
+        <button v-if="jail.length" @click="bail">Bail {{ "(15 gold)" }}</button>
+        <h1 v-else>You dont have jailed assistant</h1>
+      </div>
+      <div v-for="(location, index) in pemain.assistants" :key="index">
+        <button
+          v-if="
+            status.length && pemain.currentLocation === location.workLocation
+          "
+          @click="freeAsistance(location)"
+        >
+          Free Assistant {{ index + 1 }}
+        </button>
+      </div>
+      <div
+        v-if="
+          game.players[0].currentLocation === game.players[1].currentLocation
+        "
+      >
+        <button @click="steal">Steal</button>
+      </div>
     </div>
     <button v-if="status.length === 2" @click="endTurn">End Turn</button>
-    <div v-for="(item,index) in pemain.items" :key="index">
-      <h1>{{item.name}}</h1>
+    <div v-for="(item, index) in pemain.items" :key="index">
+      <h1>{{ item.name }}</h1>
     </div>
-    <div v-for="(item,index) in pemain.resources" :key="index">
-      <h1>{{item.type.name}}</h1>
-      <h1>{{item.amount}}</h1>
+    <div v-for="(item, index) in pemain.resources" :key="index">
+      <h1>{{ item.type.name }}</h1>
+      <h1>{{ item.amount }}</h1>
+    </div>
+
+    <div v-if="pemain.currentLocation === 'Police Office'">
+      <div v-for="(assist, index) in pemain.assistants" :key="index">
+        <h1 v-if="assist.jailed">Assistant {{ index + 1 }}</h1>
+      </div>
     </div>
   </div>
 </template>
@@ -54,6 +112,8 @@ export default {
       currentLocation: "",
       turn: "",
       status: [],
+      anotherPlayer: {},
+      jail: [],
     };
   },
   methods: {
@@ -82,8 +142,18 @@ export default {
     luxuryItem(type) {
       socket.emit("luxury-item", this.room.name, type);
     },
-    freeAsistance() {
-      socket.emit("free", this.room.name);
+    freeAsistance(assistant) {
+      socket.emit("free", this.room.name, assistant);
+    },
+    exit() {
+      socket.emit("exit-game", this.room.name, this.user.id);
+      this.$router.push({ name: "Lobby" });
+    },
+    endTurn() {
+      socket.emit("end-turn", this.room.name, this.game);
+    },
+    steal() {
+      socket.emit("steal", this.room.name, this.anotherPlayer);
     },
     exit() {
       socket.emit("exit-game", this.room.name, this.user.id);
@@ -96,30 +166,43 @@ export default {
   },
   created() {
     socket.on("inisiate-game", (data, game, tiles) => {
-      this.pemain = game.players.filter(
+      let playerX = game.players.filter(
         (player) => player.id === this.user.id
       )[0];
+      let playerY = game.players.filter(
+        (player) => player.id !== this.user.id
+      )[0];
+      this.anotherPlayer = playerY;
+      this.pemain = playerX;
       this.activePlayer = game.active;
       this.room = data;
       this.game = game;
       this.tiles = tiles;
+      this.status = playerX.assistants.filter((x) => x.onDuty);
+      this.jail = playerX.assistants.filter((x) => x.jailed);
     });
 
     socket.on("updated-game", (game) => {
-      this.pemain = game.players.filter(
+      let playerX = game.players.filter(
         (player) => player.id === this.user.id
       )[0];
+      let playerY = game.players.filter(
+        (player) => player.id !== this.user.id
+      )[0];
+      this.anotherPlayer = playerY;
+      this.pemain = playerX;
       this.activePlayer = game.active;
       this.currentLocation = game.currentLocation;
-      this.status = game.players.asistance.filter(
-        (asistance) => asistance.onDuty
+      this.status = playerX.assistants.filter((x) => x.onDuty);
+      this.jail = playerX.assistants.filter((x) => x.jailed);
+      this.pemain.assistants.map((x) =>
+        x.jailedDuration > 0 ? x.jailedDuration-- : x.jailedDuration
       );
     });
 
     socket.on("user-win", (data) => {
-      console.log(data);
       alert("Another player has leave the game, You Win");
-      // this.$router.push(`/room/${this.room.name}`);
+      socket.emit("exit-game-winner", this.room.name, this.user.id);
       this.$router.push({ name: "Lobby" });
     });
   },
@@ -127,12 +210,6 @@ export default {
     user() {
       return this.$store.state.user;
     },
-    // status() {
-    //   socket.on("user-win", () => {
-    //     alert("You Win bgst");
-    //     // this.$router.push({ name: "Lobby" });
-    //   });
-    // },
   },
 };
 </script>
