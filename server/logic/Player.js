@@ -1,8 +1,9 @@
 const { itemArr } = require("./Module");
 
 class Player {
-  constructor(name) {
+  constructor(name, id) {
     this.name = name;
+    this.id = id;
     this.isPlayerOne = false;
     this.currentLocation = "";
     this.gold = 0;

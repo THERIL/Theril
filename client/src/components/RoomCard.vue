@@ -8,6 +8,7 @@
 </template>
 
 <script>
+import socket from "../config/socket";
 export default {
   name: "RoomCard",
   props: ["room"],
