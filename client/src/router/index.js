@@ -4,6 +4,7 @@ import Lobby from "../views/Lobby.vue";
 import Login from "../views/Login.vue";
 import Room from "../views/Room.vue";
 import Game from "../views/Game.vue";
+import Test from "../views/Test.vue";
 
 Vue.use(VueRouter);
 
@@ -28,9 +29,14 @@ const routes = [
     name: "Game",
     component: Game,
   },
+  {
+    path: "/test",
+    name: "Test",
+    component: Test,
+  },
 
   {
-    path: "/board",
+    path: "/board/:name",
     name: "Board",
     // route level code-splitting
     // this generates a separate chunk (about.[hash].js) for this route
