@@ -28,21 +28,19 @@ export default {
     socket.on("room-detail", (room) => {
       this.room = room;
     });
-<<<<<<< HEAD
-    socket.on("gas-game", (data, game) => {
-      this.$router.push(`/game/${this.data.name}`);
-    })
-=======
     socket.on("start-game", () => {
-      this.$router.push(`/game/${this.room.name}`);
-      // this.$store.commit("GAME_DATA", data);
+      // this.$router.push(`/game/${this.room.name}`);
+      // this.$store.commit("GAME_DATA", data); gak dipake
+      this.$router.push(`/board/${this.room.name}`);
     });
->>>>>>> b155a93d16571eafbe6a043befb6b668f93ef5b0
   },
   methods: {
     startGame() {
+      // console.log(this.room)
       socket.emit("start-game", this.room);
-      this.$router.push(`/game/${this.room.name}`);
+      // this.$router.push(`/game/${this.room.name}`);
+      this.$router.push(`/board/${this.room.name}`);
+
       // this.$store.commit("GAME_DATA", this.room);
     },
     leaveRoom() {

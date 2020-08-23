@@ -13,6 +13,9 @@ const {
   WainWright,
   Warehouse,
 } = require("./game_data");
+
+let dataToPhaser = ''
+
 app.use(cors());
 
 let rooms = [],
@@ -109,17 +112,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("start-game", (data) => {
-<<<<<<< HEAD
-    const game = new Game();
-    const p1 = new Player(data.users[0]);
-    const p2 = new Player(data.users[1]);
-    game.assign(p1);
-    game.assign(p2);
-    game.setPlays();
-    game.setGolds();
-    game.initialize();
-    socket.broadcast.to(data.name).emit("gas-game", data, game);
-=======
     const p1 = new Player(playersToBe[0].name);
     const p2 = new Player(playersToBe[1].name);
     g.assign(p1);
@@ -132,6 +124,8 @@ io.on("connection", (socket) => {
     objGame.active = g.activeCharacter;
 
     players.push(p1, p2);
+
+    dataToPhaser=data
 
     io.to(data.name).emit("start-game");
     io.in(data.name).emit("inisiate-game", data, objGame, tiles);
@@ -289,8 +283,11 @@ io.on("connection", (socket) => {
       );
     }
     console.log(`User ${socket.id} disconnected.`);
->>>>>>> b155a93d16571eafbe6a043befb6b668f93ef5b0
   });
+  //////test manggil initial game
+  socket.on("test", () => {
+    io.in(dataToPhaser.name).emit("dari-test", dataToPhaser, objGame, tiles);
+  })
 });
 
 server.listen(port, () => console.log(`Running on port ${port}`));

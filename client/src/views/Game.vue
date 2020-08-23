@@ -59,6 +59,7 @@
 
 <script>
 import socket from "../config/socket";
+// let data = {}
 export default {
   data() {
     return {
@@ -115,6 +116,10 @@ export default {
     });
   },
 };
+
+// export default {
+
+// }
 </script>
 
 <style scoped>
