@@ -3,14 +3,28 @@
     <div class="h-70vh p-5 bg-gray-700 flex flex-col border">
       <div class="w-full flex">
         <div class="w-2/6 p-5 border">
-          <div class>
+          <div>
             <p class="text-left text-white text-2xl font-bold">{{user.name}}</p>
+          </div>
+          <div class="border">
+            <h2 class="text-white text-2xl">Connected Users:</h2>
+            <div class="overflow-auto">
+              <p
+                class="text-left text-white text-lg"
+                v-for="(user,index) in connectedUsers"
+                :key="index"
+              >{{user.name}}</p>
+            </div>
           </div>
         </div>
 
-        <div class="w-4/6 chatbox-height overflow-auto p-5 border">
+        <div class="w-4/6 chatbox-height p-5 border">
           <h1 class="text-xl font-bold text-gray-100">LOBBY CHAT</h1>
-          <div class="text-left" v-for="(message,index) in allMessages" :key="index">
+          <div
+            class="text-left overflow-scroll"
+            v-for="(message,index) in allMessages"
+            :key="index"
+          >
             <p class="font-bold mt-2 text-gray-100 text-left">({{message.username}}):</p>
             <p class="text-gray-100">{{message.text}}</p>
           </div>
@@ -41,33 +55,40 @@ export default {
       data: function() {
             return {
                   messageInput: '',
-                  allMessages: [{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},{username: 'Nicko', text: 'Hello from socket.io'},]
+                  allMessages: []
             }
       },
-      props: ['user'],
+      props: ['user','connectedUsers'],
       methods: {
             sendMessage: function (event) {
                   event.preventDefault();
                   const payload= {
                         username: this.user.name,
-                        message: this.messageInput
+                        text: this.messageInput
                   }
                   socket.emit('send-message', payload)
+                  this.messageInput = '';
             }
       },
       created: function () {
-            socket.on('recieve', (message) => {
-                  this.allMessages.push(message);
-                  this.messageInput = '';
+            socket.on('recieve-message', (message) => {
+              if(Array.isArray(message)){
+              message.forEach(item => {
+                this.allMessages.push(item);
+              })
+              }
+              else{
+                this.allMessages.push(message)
+              }
             })
       }
 }
 </script>
 
 <style>
-.game-container {
+/* .game-container {
   width: 1600px;
-}
+} */
 .chatbox-height {
   height: 700px;
 }

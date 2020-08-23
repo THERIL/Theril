@@ -16,6 +16,7 @@ const {
 app.use(cors());
 
 let rooms = [],
+  messages = [],
   playersToBe = [],
   players = [],
   tiles = [
@@ -25,8 +26,8 @@ let rooms = [],
     new TeaHouse(false),
     new WainWright(false),
     new Warehouse(false),
-  ];
-users = [];
+  ],
+  users = [];
 
 let objGame = {
   players: [],
@@ -56,7 +57,17 @@ io.on("connection", (socket) => {
     users.push(user);
     console.log(users);
     socket.emit("get-username", user);
+    io.emit('get-connected-users', users)
+
+    console.log('sending message to client: ' + socket.id)
+    socket.emit('recieve-message', messages);
   });
+
+  socket.on('send-message', (data) => {
+    //data = {username:STRING, text:STRING}
+    messages.push(data)
+    io.emit('recieve-message', data)
+  })
   socket.on("logout", () => {
     if (users.some((user) => user.id === socket.id)) {
       console.log("Splice user dengan id yang disconnect (Handle logout)");

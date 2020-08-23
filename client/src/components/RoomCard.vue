@@ -1,9 +1,7 @@
 <template>
-  <div>
-    <div class="w-1/3 border">
-      <h2 class="text-gray-900 text-xl">{{ room.name }}</h2>
-      <button @click="joinRoom">JOIN ROOM</button>
-    </div>
+  <div class="w-1/3 border flex justify-between">
+    <h2 class="text-gray-900 text-xl">{{ room.name }}</h2>
+    <button @click="joinRoom">JOIN ROOM</button>
   </div>
 </template>
 
