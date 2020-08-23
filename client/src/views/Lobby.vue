@@ -36,17 +36,21 @@ export default {
   methods: {
     createRoom(event) {
       event.preventDefault();
-      const payload = {
-        roomName: this.roomInput,
-      };
-      socket.emit("create-room", payload);
-      this.roomInput = "";
+      if (this.roomInput) {
+        const payload = {
+          roomName: this.roomInput,
+        };
+        socket.emit("create-room", payload);
+        this.roomInput = "";
+      } else {
+        alert("Nama room harus diisi");
+      }
     },
   },
   computed: mapGetters(["user"]),
   created: function () {
-    if(!this.$store.state.user.name) {
-      this.$router.push('/')
+    if (!this.$store.state.user.name) {
+      this.$router.push("/");
     }
     socket.on("connect", () => {
       console.log(socket.id);
@@ -65,6 +69,11 @@ export default {
     socket.on("updated-room", (data) => {
       this.rooms = data;
     });
+    // socket.on("user-win", (data) => {
+    //   // console.log(data.users);
+    //   // // alert("You Win bgst");
+    //   this.$router.push({ name: "Lobby" });
+    // });
   },
 };
 </script>

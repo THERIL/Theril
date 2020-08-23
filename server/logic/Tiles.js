@@ -182,11 +182,21 @@ class PoliceOffice extends Tiles {
   constructor(tileStatus) {
     super(tileStatus);
     this.tileName = "Police Office";
+    this.bailPrice = 15;
   }
 
   arrest(assistant) {
     assistant.jailed = true;
     assistant.jailedDuration = assistant.potentialDuration;
+  }
+
+  bail(player, assistant) {
+    if (player.hasDone < 2) {
+      if (player.gold >= this.bailPrice) {
+        assistant.jailed = false;
+        assistant.jailedDuration = 0;
+      }
+    }
   }
 }
 
@@ -202,10 +212,10 @@ class WainWright extends Tiles {
       if (player.cart < 4) {
         if (allowed.length) {
           if (player.gold >= 7) {
-            allowed[0].work();
+            allowed[0].work(this.tileName);
             player.cart += 1;
             player.gold -= 8;
-            player.cartCapacity(this.tileName);
+            player.cartCapacity();
             player.hasDone += 1;
           } else return { msg: "You dont have money to do this" };
         } else return { msg: "You dont have free assistant to do this" };
