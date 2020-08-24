@@ -90,7 +90,8 @@ export default {
       },
       isSound: true,
       player1: 1,
-      player2: 1
+      player2: 1,
+      currentLocation: ''
     };
   },
   methods: {
@@ -127,6 +128,14 @@ export default {
     }
   },
   created() {},
+  computed: {
+    locationIn () {
+      if (this.currentLocation) {
+        
+      }
+      return 
+    }
+  }
 };
 </script>
 
