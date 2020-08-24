@@ -8,61 +8,77 @@
     >
       <audio id="move" src="../assets/move.mp3" type="audio/mpeg" />
       <div>
-        <i v-if="player1 == `${index+1}`" class="fa fa-user fa-3x icon" aria-hidden="true"></i>
+      <div>
+        <i v-if="playerPos1 == `${index+1}`" class="fa fa-user fa-3x icon text-yellow-900" aria-hidden="true"></i>
       </div>
       <div>
-        <i v-if="player2 == `${index+1}`" class="fa fa-user fa-3x icon" aria-hidden="true"></i>
+        <i v-if="playerPos2 == `${index+1}`" class="fa fa-user fa-3x icon text-green-900" aria-hidden="true"></i>
       </div>
+      </div>
+     
+      <div>
+        <div v-for="(assistant, index) in assistants1" :key="index" >
+          <Assistant :assistant="assistant" :tileName="tile.tileName" color="text-yellow-900"/>
+        </div>
+        <div v-for="(assistant, index) in assistants2" :key="index">
+          <Assistant :assistant="assistant" :tileName="tile.tileName" color="text-green-900"/>
+        </div>
+      </div>
+     
+      
     </div>
   </div>
 </template>
 
 <script>
+import Assistant from '../components/Assistant'
 export default {
   name: "TileCard",
-  props: ["index", "player1", "player2"],
-  computed: {
-    number() {
-      return this.index + 1;
-    },
-  },
+  components: { Assistant },
+  props: ["index", "tile", "player1", "player2", "assistants1", "assistants2"],
   methods: {
     move() {
+      console.log('move emit')
       var audio = document.getElementById("move");
       audio.play();
+      this.$emit('clickMove')
     },
+  },
+  created() {
+    console.log(this.player1, this.player2, '============================')
   },
   computed: {
     playerPos1() {
-      if (this.player1 == "LuxuryShop") {
+      if (this.player1 == "Luxury Shop") {
         return 1;
-      } else if (this.player1 == "WainWright") {
+      } else if (this.player1 == "Wain Wright") {
         return 2;
-      } else if (this.player1 == "PoliceOffice") {
+      } else if (this.player1 == "Police Office") {
         return 3;
       } else if (this.player1 == "Market") {
         return 4;
       } else if (this.player1 == "Warehouse") {
         return 5;
-      } else if (this.player1 == "TeaHouse") {
+      } else if (this.player1 == "Tea House") {
         return 6;
       }
     },
     playerPos2() {
-      if (this.player2 == "LuxuryShop") {
+      if (this.player2 == "Luxury Shop") {
         return 1;
-      } else if (this.player2 == "WainWright") {
+      } else if (this.player2 == "Wain Wright") {
         return 2;
-      } else if (this.player2 == "PoliceOffice") {
+      } else if (this.player2 == "Police Office") {
         return 3;
       } else if (this.player2 == "Market") {
         return 4;
       } else if (this.player2 == "Warehouse") {
         return 5;
-      } else if (this.player2 == "TeaHouse") {
+      } else if (this.player2 == "Tea House") {
         return 6;
       }
     },
+
   },
 };
 </script>

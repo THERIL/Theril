@@ -1,6 +1,5 @@
 <template>
   <div class="div game-luar flex justify-center">
-    <!-- mulai dari siniiiii========================================================================== -->
 
     <div class="div game-container mx-auto flex">
       <!-- div player========================================================================== -->
@@ -34,11 +33,14 @@
         </div>
           
           <!-- div current location========================================================================= -->
+          <!-- <p>{{game}}</p>
+          <p> {{game.message}} </p> -->
         <div class="mx-auto">
           <div class="w-1/3 mx-auto">
             <div id="tile" class="p-10 m-2 bg-gray-400 text-center font-bold rounded">
               <h2>Playing: {{ activePlayer }}</h2>
               <h2>Location: {{ pemain.currentLocation }}</h2>
+              <h3 v-if="game.message"> {{game.message}} </h3>
             </div>
           </div>
         </div>
@@ -101,7 +103,7 @@
         </div>
         <!-- div tiles========================================================================= -->
         <div id="tiles" class="flex flex-wrap">
-          <TileCard @click="move(pemain.currentLocation, tile)" v-for="(tile, index) in tiles" :key="index" :index="index" :player1="game.players[0].currentLocation" :player2="game.players[0].currentLocation" />
+          <TileCard v-for="(tile, index) in tiles" :key="index" :index="index" @clickMove="move(pemain.currentLocation, tile)" :tile="tile" :player1="pemain.currentLocation" :player2="anotherPlayer.currentLocation" :assistants1 ="game.players[0].assistants" :assistants2 ="game.players[1].assistants" />
         </div>
       </div>
 
@@ -148,7 +150,8 @@ export default {
       anotherPlayer: {},
       jail: [],
       isSound: true,
-
+      player1: 'Luxury Shop',
+      player2: 'Luxury Shop',
     };
   },
   components: {
@@ -172,6 +175,7 @@ export default {
     },
 
     move(target, moveFrom, moveTo) {
+      console.log('=================masuk move', moveFrom, moveTo)
       socket.emit("move", this.room.name, this.game, moveFrom, moveTo);
     },
     market() {
@@ -233,6 +237,7 @@ export default {
     });
 
     socket.on("updated-game", (game) => {
+      this.game = game
       let playerX = game.players.filter(
         (player) => player.id === this.user.id
       )[0];

@@ -251,7 +251,8 @@ io.on("connection", (socket) => {
   socket.on("tea-house", (data) => {
     const teaHouse = new TeaHouse(false);
     player = players.filter((x) => x.name === g.activeCharacter);
-    teaHouse.throwDice(player[0]);
+    let result = teaHouse.throwDice(player[0]);
+    
 
     let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
 
@@ -266,6 +267,7 @@ io.on("connection", (socket) => {
     objGame.players = [players[0], g.players[1]];
     objGame.active = g.activeCharacter;
     objGame.currentLocation = player[0].currentLocation;
+    objGame.message = result.msg
     io.in(data).emit("updated-game", objGame);
   });
 

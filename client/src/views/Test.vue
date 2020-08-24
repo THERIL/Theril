@@ -89,8 +89,8 @@ export default {
         name: "Nicko",
       },
       isSound: true,
-      player1: 1,
-      player2: 1,
+      player1: '',
+      player2: '',
       currentLocation: ''
     };
   },
