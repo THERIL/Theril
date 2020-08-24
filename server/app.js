@@ -39,6 +39,7 @@ let objGame = {
 };
 
 const g = new Game();
+const po = new PoliceOffice(false);
 
 io.on("connection", (socket) => {
   console.log("User connected: " + socket.id);
@@ -105,11 +106,11 @@ io.on("connection", (socket) => {
   socket.on("exit-game-winner", (roomName, id) => {
     socket.leave(roomName, () => {
       let index = rooms.findIndex((item) => item.name == roomName);
-      rooms[index].users.splice(
-        console.log(rooms[index], "dari exit-game-winner"),
-        rooms[index].users.findIndex((user) => user.id == id),
-        1
-      );
+      console.log(rooms[index], "------------------------asdjhakjfhajkhfjkas"),
+        rooms[index].users.splice(
+          rooms[index].users.findIndex((user) => user.id == id),
+          1
+        );
       rooms = [];
 
       io.emit("get-list-room", rooms);
@@ -170,13 +171,17 @@ io.on("connection", (socket) => {
   });
 
   socket.on("updated-data", (data, game) => {
-    // objGame = {};
     player = players.filter((x) => x.name === g.activeCharacter);
+    let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
+
     player[0].gold += 100;
     player[0].hasDone += 1;
 
     if (player[0].hasDone === 2) {
       g.checkTurn();
+      if (jailedAssistant.length) {
+        jailedAssistant.map((x) => po.reduceSentence(x));
+      }
       player[0].hasDone = 0;
     }
 
@@ -199,8 +204,13 @@ io.on("connection", (socket) => {
     player = players.filter((x) => x.name === g.activeCharacter);
     player[0].move((moveFrom = ""), moveTo);
 
+    let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
+
     if (player[0].hasDone === 2) {
       g.checkTurn();
+      if (jailedAssistant.length) {
+        jailedAssistant.map((x) => po.reduceSentence(x));
+      }
       player[0].hasDone = 0;
     }
 
@@ -214,9 +224,15 @@ io.on("connection", (socket) => {
   socket.on("market", (data) => {
     const market = new Market(false);
     player = players.filter((x) => x.name === g.activeCharacter);
+
+    let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
+
     market.transaction(player[0]);
     if (player[0].hasDone === 2) {
       g.checkTurn();
+      if (jailedAssistant.length) {
+        jailedAssistant.map((x) => po.reduceSentence(x));
+      }
       player[0].hasDone = 0;
     }
 
@@ -230,8 +246,14 @@ io.on("connection", (socket) => {
     const teaHouse = new TeaHouse(false);
     player = players.filter((x) => x.name === g.activeCharacter);
     teaHouse.throwDice(player[0]);
+
+    let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
+
     if (player[0].hasDone === 2) {
       g.checkTurn();
+      if (jailedAssistant.length) {
+        jailedAssistant.map((x) => po.reduceSentence(x));
+      }
       player[0].hasDone = 0;
     }
 
@@ -244,9 +266,15 @@ io.on("connection", (socket) => {
   socket.on("ware-house", (data) => {
     const wareHouse = new Warehouse(false);
     player = players.filter((x) => x.name === g.activeCharacter);
+    let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
+
     wareHouse.transaction(player[0]);
+
     if (player[0].hasDone === 2) {
       g.checkTurn();
+      if (jailedAssistant.length) {
+        jailedAssistant.map((x) => po.reduceSentence(x));
+      }
       player[0].hasDone = 0;
     }
 
@@ -259,9 +287,13 @@ io.on("connection", (socket) => {
   socket.on("wain-wright", (data) => {
     const wainWright = new WainWright(false);
     player = players.filter((x) => x.name === g.activeCharacter);
+    let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
     wainWright.upgrade(player[0]);
     if (player[0].hasDone === 2) {
       g.checkTurn();
+      if (jailedAssistant.length) {
+        jailedAssistant.map((x) => po.reduceSentence(x));
+      }
       player[0].hasDone = 0;
     }
 
@@ -274,9 +306,15 @@ io.on("connection", (socket) => {
   socket.on("luxury-diamond", (data) => {
     const luxuryShop = new LuxuryShop(false);
     player = players.filter((x) => x.name === g.activeCharacter);
+    let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
+
     luxuryShop.sellDiamond(player[0]);
+
     if (player[0].hasDone === 2) {
       g.checkTurn();
+      if (jailedAssistant.length) {
+        jailedAssistant.map((x) => po.reduceSentence(x));
+      }
       player[0].hasDone = 0;
     }
 
@@ -289,9 +327,15 @@ io.on("connection", (socket) => {
   socket.on("luxury-item", (data, item) => {
     const luxuryShop = new LuxuryShop(false);
     player = players.filter((x) => x.name === g.activeCharacter);
+    let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
+
     luxuryShop.transaction(player[0], item);
+
     if (player[0].hasDone === 2) {
       g.checkTurn();
+      if (jailedAssistant.length) {
+        jailedAssistant.map((x) => po.reduceSentence(x));
+      }
       player[0].hasDone = 0;
     }
 
@@ -303,14 +347,19 @@ io.on("connection", (socket) => {
 
   socket.on("free", (data, assistant) => {
     player = players.filter((x) => x.name === g.activeCharacter);
-    assist = player[0].assistants.filter(
+    let assist = player[0].assistants.filter(
       (x) => x.workLocation === assistant.workLocation
     )[0];
+
+    let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
 
     player[0].release(assist);
 
     if (player[0].hasDone === 2) {
       g.checkTurn();
+      if (jailedAssistant.length) {
+        jailedAssistant.map((x) => po.reduceSentence(x));
+      }
       player[0].hasDone = 0;
     }
 
@@ -322,16 +371,14 @@ io.on("connection", (socket) => {
 
   socket.on("steal", (data, target) => {
     player = players.filter((x) => x.name === g.activeCharacter);
-    let assistanceJail = player[0].assistants.filter((x) => x.jailed);
+    let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
 
     player[0].sendSteal(target);
+
     if (player[0].hasDone === 2) {
       g.checkTurn();
-      if (assistanceJail[0]) {
-        assistanceJail[0].jailedDuration -= 1;
-        if (assistanceJail[0].jailedDuration === 0) {
-          assistanceJail[0].jailed = false;
-        }
+      if (jailedAssistant.length) {
+        jailedAssistant.map((x) => po.reduceSentence(x));
       }
       player[0].hasDone = 0;
     }
@@ -339,16 +386,25 @@ io.on("connection", (socket) => {
     objGame.players = [players[0], g.players[1]];
     objGame.active = g.activeCharacter;
     objGame.currentLocation = player[0].currentLocation;
-    io.in(data).emit("updated-game", objGame);
+    io.in(data).emit("updated-game", objGame, target);
   });
 
   socket.on("horns", (data) => {
     player = players.filter((x) => x.name === g.activeCharacter);
-    // console.log(player[0]);
-    player[0].release(player[0].assistants[0]);
-    player[0].release(player[0].assistants[1]);
+
+    let jailedAssistant = player[0].assistants.filter(
+      (x) => x.onDuty && !x.jailed
+    );
+
+    if (jailedAssistant.length) {
+      jailedAssistant.map((x) => player[0].release(x));
+    }
+
     if (player[0].hasDone === 2) {
       g.checkTurn();
+      if (jailedAssistant.length) {
+        jailedAssistant.map((x) => po.reduceSentence(x));
+      }
       player[0].hasDone = 0;
     }
 
