@@ -1,7 +1,13 @@
 <template>
-  <div class="w-1/3 border flex justify-between">
-    <h2 class="text-gray-900 text-xl">{{ room.name }}</h2>
-    <button class @click="joinRoom">JOIN ROOM</button>
+  <div class="w-full p-5 border flex justify-between text-gray-100 rounded">
+    <div class="w-1/2">
+      <h2 class="text-xl">{{ room.name }}</h2>
+    </div>
+
+    <div class="w-1/2 flex justify-between">
+      <p>{{room.users.length}}/2</p>
+      <button class @click="joinRoom">JOIN ROOM</button>
+    </div>
   </div>
 </template>
 

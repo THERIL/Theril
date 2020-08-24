@@ -456,19 +456,21 @@ io.on("connection", (socket) => {
       io.in(data).emit("updated-game", objGame);
     });
 
-    socket.on("disconnect", () => {
-      if (users.some((user) => user.id === socket.id)) {
-        console.log("Splice user dengan id yang disconnect (Handle disconnect)");
-        users.splice(
-          users.findIndex((user) => user.id === socket.id),
-          1
-        );
-      }
-      console.log(`User ${socket.id} disconnected.`);
-    });
+
     socket.on("test", () => {
       io.in(dataToPhaser.name).emit("dari-test", dataToPhaser, objGame, tiles);
     });
+  });
+  socket.on("disconnect", () => {
+    if (users.some((user) => user.id === socket.id)) {
+      console.log("Splice user dengan id yang disconnect (Handle disconnect)");
+      users.splice(
+        users.findIndex((user) => user.id === socket.id),
+        1
+      );
+    }
+    console.log(`User ${socket.id} disconnected.`);
+    io.emit('get-connected-users', users)
   });
 })
 
