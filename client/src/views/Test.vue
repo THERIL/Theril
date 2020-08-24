@@ -9,9 +9,9 @@
         <PlayerCard :player="player" />
       </div>
       <div id="bord" class="w-3/4">
-        <div class="flex">
+        <div class="flex justify-end">
           <div>
-            <button v-if="isSound" @click="startAudio" class="flex items-center">
+            <button v-if="isSound" @click="startAudio" class="flex items-center mr-3">
               <i class="fa fa-volume-off fa-2x" aria-hidden="true"></i>
               <i class="fa fa-times" aria-hidden="true"></i>
             </button>
@@ -20,7 +20,7 @@
             </button>
           </div>
           <button>
-            <i class="fa fa-sign-out fa-2x" aria-hidden="true"></i>
+            <i class="fa fa-sign-out fa-2x mr-3" aria-hidden="true"></i>
           </button>
         </div>
 
@@ -39,7 +39,7 @@
             <audio id="market" src="../assets/market-coin.mp3" type="audio/mpeg" />
             SELL
           </button>
-          <button class="px-4 py-2 m-2 bg-green-200 text-green-900 text-center rounded shadow">STEAL</button>
+          <button @click.prevent="move1" class="px-4 py-2 m-2 bg-green-200 text-green-900 text-center rounded shadow">Move-1</button>
           <button
             class="px-4 py-2 m-2 bg-green-200 text-green-900 text-center rounded shadow"
           >CALL ASSISTANT</button>
@@ -67,7 +67,7 @@
           </button>
         </div>
         <div id="tiles" class="flex flex-wrap">
-          <TileCard v-for="(n,i) in 6" :key="i" :index="i" />
+          <TileCard v-for="(n,i) in 6" :key="i" :index="i"  :player1="player1" :player2="player2"/>
         </div>
       </div>
     </div>
@@ -89,13 +89,15 @@ export default {
         name: "Nicko",
       },
       isSound: true,
+      player1: 1,
+      player2: 1
     };
   },
   methods: {
     startAudio() {
       var audio = document.getElementById("start");
       audio.play();
-      audio.volume = 0.5;
+      audio.volume = 0.05;
       this.isSound = false;
     },
     stopAudio() {
@@ -120,6 +122,9 @@ export default {
       var audio = document.getElementById("get-resource");
       audio.play();
     },
+    move1() {
+      this.player1++
+    }
   },
   created() {},
 };
