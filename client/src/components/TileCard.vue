@@ -8,24 +8,30 @@
     >
       <audio id="move" src="../assets/move.mp3" type="audio/mpeg" />
       <div>
-      <div>
-        <i v-if="playerPos1 == `${index+1}`" class="fa fa-user fa-3x icon text-yellow-900" aria-hidden="true"></i>
-      </div>
-      <div>
-        <i v-if="playerPos2 == `${index+1}`" class="fa fa-user fa-3x icon text-green-900" aria-hidden="true"></i>
-      </div>
-      </div>
-     
-      <div>
-        <div v-for="(assistant, index) in assistants1" :key="index" >
-          <Assistant :assistant="assistant" :tileName="tile.tileName" color="text-yellow-900"/>
+        <div>
+          <i
+            v-if="playerPos1 == `${index+1}`"
+            class="fa fa-user fa-3x icon text-yellow-900"
+            aria-hidden="true"
+          ></i>
         </div>
-        <div v-for="(assistant, index) in assistants2" :key="index">
-          <Assistant :assistant="assistant" :tileName="tile.tileName" color="text-green-900"/>
+        <div>
+          <i
+            v-if="playerPos2 == `${index+1}`"
+            class="fa fa-user fa-3x icon text-green-900"
+            aria-hidden="true"
+          ></i>
         </div>
       </div>
-     
-      
+
+      <div>
+        <div v-for="(assistant, index) in assistants1" :key="index">
+          <Assistant :assistant="assistant" :tileName="tile.tileName" color="text-yellow-900" />
+        </div>
+        <div v-for="(assistant, index) in assistants2" :key="index+2">
+          <Assistant :assistant="assistant" :tileName="tile.tileName" color="text-green-900" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -35,7 +41,22 @@ import Assistant from '../components/Assistant'
 export default {
   name: "TileCard",
   components: { Assistant },
-  props: ["index", "tile", "player1", "player2", "assistants1", "assistants2"],
+  data() {
+    return{
+          pemain: {},
+      activePlayer: "",
+      room: {},
+      game: {},
+      tiles: [],
+      currentLocation: "",
+      turn: "",
+      status: [],
+      anotherPlayer: {},
+      jail: [],
+      isSound: true,
+    }
+  },
+  props: ["index", "tile", "player", "player2","game", "assistants1", "assistants2"],
   methods: {
     move() {
       console.log('move emit')
@@ -45,21 +66,34 @@ export default {
     },
   },
   created() {
-    console.log(this.player1, this.player2, '============================')
+      let playerX = game.players.filter(
+        (player) => player.id === this.user.id
+      )[0];
+      let playerY = game.players.filter(
+        (player) => player.id !== this.user.id
+      )[0];
+      this.anotherPlayer = playerY;
+      this.pemain = playerX;
+      this.activePlayer = game.active;
+      this.room = data;
+      this.game = game;
+      this.tiles = tiles;
+      this.status = playerX.assistants.filter((x) => x.onDuty);
+      this.jail = playerX.assistants.filter((x) => x.jailed);
   },
   computed: {
     playerPos1() {
-      if (this.player1 == "Luxury Shop") {
+      if (this.player == "Luxury Shop") {
         return 1;
-      } else if (this.player1 == "Wain Wright") {
+      } else if (this.player == "Wain Wright") {
         return 2;
-      } else if (this.player1 == "Police Office") {
+      } else if (this.player == "Police Office") {
         return 3;
-      } else if (this.player1 == "Market") {
+      } else if (this.player == "Market") {
         return 4;
-      } else if (this.player1 == "Warehouse") {
+      } else if (this.player == "Warehouse") {
         return 5;
-      } else if (this.player1 == "Tea House") {
+      } else if (this.player == "Tea House") {
         return 6;
       }
     },

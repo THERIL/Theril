@@ -3,15 +3,12 @@
     <div class="div game-container mx-auto flex">
       <!-- div player========================================================================== -->
 
-      <!-- <div
-        v-for="(player, index) in game.players"
-        :key="index"
-        id="player"
-        class="w-1/4 flex flex-col"
-      >
-        <PlayerCard :player="player" />
+      <div id="player" class="w-1/4 flex flex-col">
+        <PlayerCard v-for="(player, index) in game.players" :key="index" :player="player" />
         <br />
-      </div> -->
+        <p>{{pemain}}</p>
+        <p>{{anotherPlayer}} ====================</p>
+      </div>
 
       <!-- div board========================================================================= -->
 
@@ -34,8 +31,6 @@
         <!-- div current location========================================================================= -->
         <!-- <p>{{game}}</p>
         <p> {{game.message}} </p>-->
-        <p> {{pemain}} </p>
-        <p> {{anotherPlayer}} ====================</p>
         <div class="mx-auto">
           <div class="w-1/3 mx-auto">
             <div id="tile" class="p-10 m-2 bg-gray-400 text-center font-bold rounded">
@@ -55,7 +50,7 @@
               v-for="(tile, index) in tiles"
               @click="move(pemain.currentLocation, tile)"
               :key="index"
-            >{{ tile.tileName }}</button> -->
+            >{{ tile.tileName }}</button>-->
             <button v-if="pemain.currentLocation === 'Market'" @click="market">Sell</button>
             <button
               v-if="pemain.currentLocation === 'Luxury Shop'"
@@ -109,15 +104,15 @@
             :index="index"
             @clickMove="move(pemain.currentLocation, tile)"
             :tile="tile"
-            :player1="pemain.currentLocation"
+            :player="pemain.currentLocation"
             :player2="anotherPlayer.currentLocation"
-           
-            :assistants1="game.players[0].assistants"
-            :assistants2="game.players[1].assistants"
+            :game="game"
+            :assistants1="pemain.assistants"
+            :assistants2="anotherPlayer.assistants"
           />
         </div>
       </div>
-       <!-- :player2="anotherPlayer.currentLocation" -->
+      <!-- :player2="anotherPlayer.currentLocation" -->
 
       <!-- <button @click="exit">Exit</button> -->
       <!-- <h1>{{ turn.name }}</h1>
@@ -181,12 +176,12 @@ export default {
       this.isSound = true;
     },
     changeCart() {
-      socket.emit("updated-data", this.room, this.game);
+      socket.emit("updated-data", this.room);
     },
 
-    move(target, moveFrom, moveTo) {
+    move(moveFrom, moveTo) {
       console.log("=================masuk move", moveFrom, moveTo);
-      socket.emit("move", this.room.name, this.game, moveFrom, moveTo);
+      socket.emit("move", this.room.name, moveFrom, moveTo);
     },
     market() {
       socket.emit("market", this.room.name);
@@ -214,7 +209,7 @@ export default {
       this.$router.push({ name: "Lobby" });
     },
     endTurn() {
-      socket.emit("end-turn", this.room.name, this.game);
+      socket.emit("end-turn", this.room.name);
     },
     steal() {
       socket.emit("steal", this.room.name, this.anotherPlayer);
@@ -223,9 +218,6 @@ export default {
       socket.emit("exit-game", this.room.name, this.user.id);
       this.$router.push({ name: "Lobby" });
       // this.$router.push(`/room/${this.room.name}`);
-    },
-    endTurn() {
-      socket.emit("end-turn", this.room.name, this.game);
     },
   },
   created() {
@@ -247,7 +239,7 @@ export default {
     });
 
     socket.on("updated-game", (game) => {
-      // this.game = game;
+      this.game = game;
       let playerX = game.players.filter(
         (player) => player.id === this.user.id
       )[0];
@@ -270,12 +262,26 @@ export default {
       socket.emit("exit-game-winner", this.room.name, this.user.id);
       this.$router.push({ name: "Lobby" });
     });
+
+    socket.on('show-winner', msg => {
+      alert(msg);
+      
+    })
   },
   computed: {
     user() {
       return this.$store.state.user;
     },
-  },
+    win() {
+      let winner = this.game.players.map(player => {player.diamond === 6})
+      console.log(winner,'================= win computed')
+      if(winner.length > 0) {
+        socket.emit('winner',winner[0].name,this.room.name)
+        // alert('YOUWIN')
+      }
+    },
+
+    },
 };
 </script>
 
@@ -291,9 +297,21 @@ export default {
 }
 
 .game-luar {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.game-luar-background {
   background-image: url("../assets/background.jpeg");
-  width: 100vw;
-  min-height: 100vh;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  z-index: -1;
+  opacity: 0.6;
+
   background-repeat: no-repeat;
   background-size: cover;
   overflow: hidden;
