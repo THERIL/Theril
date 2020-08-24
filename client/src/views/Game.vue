@@ -1,10 +1,9 @@
 <template>
   <div class="div game-luar flex justify-center">
-
     <div class="div game-container mx-auto flex">
       <!-- div player========================================================================== -->
 
-      <div
+      <!-- <div
         v-for="(player, index) in game.players"
         :key="index"
         id="player"
@@ -12,7 +11,7 @@
       >
         <PlayerCard :player="player" />
         <br />
-      </div>
+      </div> -->
 
       <!-- div board========================================================================= -->
 
@@ -31,31 +30,32 @@
             <i class="fa fa-sign-out fa-2x mr-3" aria-hidden="true"></i>
           </button>
         </div>
-          
-          <!-- div current location========================================================================= -->
-          <!-- <p>{{game}}</p>
-          <p> {{game.message}} </p> -->
+
+        <!-- div current location========================================================================= -->
+        <!-- <p>{{game}}</p>
+        <p> {{game.message}} </p>-->
+        <p> {{pemain}} </p>
+        <p> {{anotherPlayer}} ====================</p>
         <div class="mx-auto">
           <div class="w-1/3 mx-auto">
             <div id="tile" class="p-10 m-2 bg-gray-400 text-center font-bold rounded">
               <h2>Playing: {{ activePlayer }}</h2>
               <h2>Location: {{ pemain.currentLocation }}</h2>
-              <h3 v-if="game.message"> {{game.message}} </h3>
+              <h3 v-if="game.message">{{game.message}}</h3>
             </div>
           </div>
         </div>
         <!-- div button========================================================================= -->
         <div id="button">
-          
           <div v-if="pemain.name === activePlayer" class="flex p-10 justify-center">
             <button v-if="status.length === 2" @click="endTurn">End Turn</button>
             <button @click="changeCart">change value</button>
-            <button
+            <!-- <button
               class="garmin"
               v-for="(tile, index) in tiles"
               @click="move(pemain.currentLocation, tile)"
               :key="index"
-            >{{ tile.tileName }}</button>
+            >{{ tile.tileName }}</button> -->
             <button v-if="pemain.currentLocation === 'Market'" @click="market">Sell</button>
             <button
               v-if="pemain.currentLocation === 'Luxury Shop'"
@@ -94,18 +94,30 @@
             </div>
             <div
               v-if="
-          game.players[0].currentLocation === game.players[1].currentLocation
+          pemain.currentLocation === anotherPlayer.currentLocation && pemain.currentLocation && anotherPlayer.currentLocation
         "
             >
-              <button @click="steal">Steal</button>
+              <button @click="steal">Duplicate Diamond</button>
             </div>
           </div>
         </div>
         <!-- div tiles========================================================================= -->
         <div id="tiles" class="flex flex-wrap">
-          <TileCard v-for="(tile, index) in tiles" :key="index" :index="index" @clickMove="move(pemain.currentLocation, tile)" :tile="tile" :player1="pemain.currentLocation" :player2="anotherPlayer.currentLocation" :assistants1 ="game.players[0].assistants" :assistants2 ="game.players[1].assistants" />
+          <TileCard
+            v-for="(tile, index) in tiles"
+            :key="index"
+            :index="index"
+            @clickMove="move(pemain.currentLocation, tile)"
+            :tile="tile"
+            :player1="pemain.currentLocation"
+            :player2="anotherPlayer.currentLocation"
+           
+            :assistants1="game.players[0].assistants"
+            :assistants2="game.players[1].assistants"
+          />
         </div>
       </div>
+       <!-- :player2="anotherPlayer.currentLocation" -->
 
       <!-- <button @click="exit">Exit</button> -->
       <!-- <h1>{{ turn.name }}</h1>
@@ -113,15 +125,13 @@
       <!-- <h2>Playing: {{ activePlayer }}</h2>
       <h2>Location: {{ pemain.currentLocation }}</h2>-->
 
-      
-
       <!-- <div v-for="(item, index) in pemain.items" :key="index">
         <h1>{{ item.name }}</h1>
       </div>
       <div v-for="(item, index) in pemain.resources" :key="index">
         <h1>{{ item.type.name }}</h1>
         <h1>{{ item.amount }}</h1>
-      </div> -->
+      </div>-->
 
       <div v-if="pemain.currentLocation === 'Police Office'">
         <div v-for="(assist, index) in pemain.assistants" :key="index">
@@ -150,8 +160,8 @@ export default {
       anotherPlayer: {},
       jail: [],
       isSound: true,
-      player1: 'Luxury Shop',
-      player2: 'Luxury Shop',
+      player1: "Luxury Shop",
+      player2: "Luxury Shop",
     };
   },
   components: {
@@ -175,7 +185,7 @@ export default {
     },
 
     move(target, moveFrom, moveTo) {
-      console.log('=================masuk move', moveFrom, moveTo)
+      console.log("=================masuk move", moveFrom, moveTo);
       socket.emit("move", this.room.name, this.game, moveFrom, moveTo);
     },
     market() {
@@ -237,7 +247,7 @@ export default {
     });
 
     socket.on("updated-game", (game) => {
-      this.game = game
+      // this.game = game;
       let playerX = game.players.filter(
         (player) => player.id === this.user.id
       )[0];
