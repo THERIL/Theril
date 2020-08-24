@@ -60,14 +60,16 @@ class Player {
   }
 
   sendSteal(target, value, value2) {
-    if (this.hasDone < 2) {
-      let cartDuty = this.assistants.filter((assistant) => !assistant.onDuty);
-      if (cartDuty.length) {
-        cartDuty[0].steal(target, value, value2);
-        this.getStolenItems();
-        this.hasDone += 1;
-      } else return { msg: "You dont have free assistant to do this" };
-    } else return { msg: "It's not your turn" };
+    if (target.diamond >= 1) {
+      if (this.hasDone < 2) {
+        let allowed = this.assistants.filter((assistant) => !assistant.onDuty);
+        if (allowed.length) {
+          allowed[0].steal(target, value, value2);
+          this.getStolenItems();
+          this.hasDone += 1;
+        } else return { msg: "You dont have free assistant to do this" };
+      } else return { msg: "It's not your turn" };
+    } else return { msg: "Target doesn't have any diamond" };
   }
 
   getStolenItems() {
@@ -91,7 +93,7 @@ class Assistant {
     this.potentialDuration = 6;
     this.jailedDuration = 0;
     this.onDuty = false;
-    this.stealChance = 0.25;
+    this.stealChance = 0.05;
     this.stolenItem = false;
     this.workLocation = "";
   }
@@ -106,7 +108,7 @@ class Assistant {
       target.diamond--;
       this.stolenItem = true;
     } else {
-      let isJailed = value2 > 0.25 ? false : true;
+      let isJailed = value2 > 0.95 ? false : true;
       if (isJailed) {
         this.jailed = true;
         this.jailedDuration = this.potentialDuration;

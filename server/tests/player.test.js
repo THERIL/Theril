@@ -104,29 +104,29 @@ describe("game starts", () => {
     done();
   });
 
-  test("starting resources should have foods", (done) => {
+  it("starting resources should have foods", (done) => {
     expect(player.resources).toContainEqual({
-      type: { price: 2 },
       amount: 1,
       isFull: false,
+      type: { name: "Food", price: 2 },
     });
     done();
   });
 
   test("starting resources should have clothing", (done) => {
     expect(player.resources).toContainEqual({
-      type: { price: 2 },
       amount: 1,
       isFull: false,
+      type: { name: "Clothing", price: 2 },
     });
     done();
   });
 
   test("starting resources should have jewelry", (done) => {
     expect(player.resources).toContainEqual({
-      type: { price: 2 },
       amount: 1,
       isFull: false,
+      type: { name: "Jewelry", price: 2 },
     });
     done();
   });

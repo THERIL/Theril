@@ -190,13 +190,24 @@ class PoliceOffice extends Tiles {
     assistant.jailedDuration = assistant.potentialDuration;
   }
 
+  reduceSentence(assitant) {
+    if (assitant.jailedDuration > 0) {
+      assitant.jailedDuration--;
+    }
+
+    if (!assitant.jailedDuration) {
+      assitant.jailed = false;
+    }
+  }
+
   bail(player, assistant) {
     if (player.hasDone < 2) {
       if (player.gold >= this.bailPrice) {
         assistant.jailed = false;
         assistant.jailedDuration = 0;
-      }
-    }
+        player.gold -= this.bailPrice;
+      } else return { msg: "You don't have enough gold" };
+    } else return { msg: "It's not your turn" };
   }
 }
 

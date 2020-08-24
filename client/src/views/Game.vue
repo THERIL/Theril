@@ -1,11 +1,44 @@
 <template>
-  <div class="game-luar">
-    <div class="game-container mx-auto flex">
-      <div
-        id="player"
-        class="bg-red-100 w-1/4"
-        v-for="(player, index) in game.players"
+  <div class="div">
+    <button @click="exit">Exit</button>
+    <h1>{{ turn.name }}</h1>
+    <h1>{{ pemain }}</h1>
+    <h2>Playing: {{ activePlayer }}</h2>
+    <h2>Location: {{ pemain.currentLocation }}</h2>
+    <div v-if="pemain.name === activePlayer">
+      <button @click="changeCart">change value</button>
+      <button
+        class="garmin"
+        v-for="(tile, index) in tiles"
+        @click="move(pemain.currentLocation, tile)"
         :key="index"
+      >
+        {{ tile.tileName }}
+      </button>
+      <button v-if="pemain.currentLocation === 'Market'" @click="market">
+        Sell
+      </button>
+      <button
+        v-if="pemain.currentLocation === 'Luxury Shop'"
+        @click="luxuryDiamond"
+      >
+        Buy Diamond
+      </button>
+      <button
+        v-if="pemain.currentLocation === 'Luxury Shop'"
+        @click="luxuryItem('Strider')"
+      >
+        Buy Strider
+      </button>
+      <button
+        v-if="pemain.currentLocation === 'Luxury Shop'"
+        @click="luxuryItem('Horns')"
+      >
+        Buy Horns
+      </button>
+      <button
+        v-if="pemain.currentLocation === 'Luxury Shop'"
+        @click="luxuryItem('Golden Whistle')"
       >
         <PlayerCard :player="player" />
       </div>
@@ -168,8 +201,11 @@ export default {
     },
     exit() {
       socket.emit("exit-game", this.room.name, this.user.id);
-      // this.$router.push({ name: "Lobby" });
-      this.$router.push(`/room/${this.room.name}`);
+      this.$router.push({ name: "Lobby" });
+      // this.$router.push(`/room/${this.room.name}`);
+    },
+    endTurn() {
+      socket.emit("end-turn", this.room.name, this.game);
     },
   },
   created() {
@@ -203,16 +239,14 @@ export default {
       this.currentLocation = game.currentLocation;
       this.status = playerX.assistants.filter((x) => x.onDuty);
       this.jail = playerX.assistants.filter((x) => x.jailed);
-      console.log(this.pemain.assistants, "----------atas");
       this.pemain.assistants.map((x) =>
         x.jailedDuration > 0 ? x.jailedDuration-- : x.jailedDuration
       );
-      console.log(this.pemain.assistants, "----------bawah");
     });
 
     socket.on("user-win", (data) => {
-      console.log(data);
       alert("Another player has leave the game, You Win");
+      socket.emit("exit-game-winner", this.room.name, this.user.id);
       this.$router.push({ name: "Lobby" });
     });
   },
