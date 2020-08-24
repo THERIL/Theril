@@ -14,6 +14,8 @@ const {
   Warehouse,
 } = require("./game_data");
 
+const { createRoom, joinRoom } = require("./socket/room");
+
 let dataToPhaser = "";
 
 app.use(cors());
@@ -89,15 +91,13 @@ io.on("connection", (socket) => {
   });
 
   socket.on("exit-game", (roomName, id) => {
-    // console.log(roomName, id, ">>>>>>>>>>>");
-    console.log(rooms, ">>>>>>>>>>>>>>>>");
     socket.leave(roomName, () => {
       let index = rooms.findIndex((item) => item.name == roomName);
       rooms[index].users.splice(
         rooms[index].users.findIndex((user) => user.id == id),
         1
       );
-
+      console.log(rooms[index], "dari exit game karena menyerah");
       io.to(rooms[index].users[0].id).emit("user-win", "You Win");
     });
   });
@@ -106,10 +106,10 @@ io.on("connection", (socket) => {
     socket.leave(roomName, () => {
       let index = rooms.findIndex((item) => item.name == roomName);
       rooms[index].users.splice(
+        console.log(rooms[index], "dari exit-game-winner"),
         rooms[index].users.findIndex((user) => user.id == id),
         1
       );
-
       rooms = [];
 
       io.emit("get-list-room", rooms);
@@ -122,17 +122,21 @@ io.on("connection", (socket) => {
 
   socket.on("create-room", (data) => {
     objGame = {};
-    let room = {
-      name: data.roomName,
-      users: [],
-    };
-    rooms.push(room);
+    createRoom(data, rooms);
+    // let room = {
+    //   name: data.roomName,
+    //   users: [],
+    // };
+    // rooms.push(room);
+    // console.log(rooms);
     io.emit("updated-room", rooms);
   });
 
   socket.on("join-room", (data) => {
     objGame = {};
     socket.join(data.roomName, () => {
+      // joinRoom(data, rooms);
+      // console.dir(rooms, { depth: null });
       let index = rooms.findIndex((item) => item.name == data.roomName);
       // rooms[index].users = [];
       if (rooms[index].users.length === 2) {
@@ -140,6 +144,7 @@ io.on("connection", (socket) => {
         io.emit("updated-room", rooms);
       } else {
         rooms[index].users.push(data.username);
+        // console.log(rooms[index], "dari join room");
         io.sockets.in(data.roomName).emit("room-detail", rooms[index]);
       }
     });
@@ -317,13 +322,29 @@ io.on("connection", (socket) => {
 
   socket.on("steal", (data, target) => {
     player = players.filter((x) => x.name === g.activeCharacter);
+    let assistanceJail = player[0].assistants.filter((x) => x.jailed);
 
     player[0].sendSteal(target);
+    if (player[0].hasDone === 2) {
+      g.checkTurn();
+      if (assistanceJail[0]) {
+        assistanceJail[0].jailedDuration -= 1;
+        if (assistanceJail[0].jailedDuration === 0) {
+          assistanceJail[0].jailed = false;
+        }
+      }
+      player[0].hasDone = 0;
+    }
+
+    objGame.players = [players[0], g.players[1]];
+    objGame.active = g.activeCharacter;
+    objGame.currentLocation = player[0].currentLocation;
+    io.in(data).emit("updated-game", objGame);
   });
 
-  socket.on("free", (data) => {
+  socket.on("horns", (data) => {
     player = players.filter((x) => x.name === g.activeCharacter);
-    console.log(player[0]);
+    // console.log(player[0]);
     player[0].release(player[0].assistants[0]);
     player[0].release(player[0].assistants[1]);
     if (player[0].hasDone === 2) {
