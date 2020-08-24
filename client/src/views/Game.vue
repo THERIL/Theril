@@ -12,54 +12,25 @@
         v-for="(tile, index) in tiles"
         @click="move(pemain.currentLocation, tile)"
         :key="index"
-      >
-        {{ tile.tileName }}
-      </button>
-      <button v-if="pemain.currentLocation === 'Market'" @click="market">
-        Sell
-      </button>
-      <button
-        v-if="pemain.currentLocation === 'Luxury Shop'"
-        @click="luxuryDiamond"
-      >
-        Buy Diamond
-      </button>
+      >{{ tile.tileName }}</button>
+      <button v-if="pemain.currentLocation === 'Market'" @click="market">Sell</button>
+      <button v-if="pemain.currentLocation === 'Luxury Shop'" @click="luxuryDiamond">Buy Diamond</button>
       <button
         v-if="pemain.currentLocation === 'Luxury Shop'"
         @click="luxuryItem('Strider')"
-      >
-        Buy Strider
-      </button>
-      <button
-        v-if="pemain.currentLocation === 'Luxury Shop'"
-        @click="luxuryItem('Horns')"
-      >
-        Buy Horns
-      </button>
+      >Buy Strider</button>
+      <button v-if="pemain.currentLocation === 'Luxury Shop'" @click="luxuryItem('Horns')">Buy Horns</button>
       <button
         v-if="pemain.currentLocation === 'Luxury Shop'"
         @click="luxuryItem('Golden Whistle')"
-      >
-        Buy Golden Whislte
-      </button>
+      >Buy Golden Whislte</button>
       <button
         v-if="pemain.currentLocation === 'Luxury Shop'"
         @click="luxuryItem('Shadow Hand')"
-      >
-        Buy Shadow Hand
-      </button>
-      <button v-if="pemain.currentLocation === 'Tea House'" @click="teaHouse">
-        Gamble
-      </button>
-      <button
-        v-if="pemain.currentLocation === 'Wain Wright'"
-        @click="wainWright"
-      >
-        Upgrade Cart
-      </button>
-      <button v-if="pemain.currentLocation === 'Warehouse'" @click="wareHouse">
-        Free Resources
-      </button>
+      >Buy Shadow Hand</button>
+      <button v-if="pemain.currentLocation === 'Tea House'" @click="teaHouse">Gamble</button>
+      <button v-if="pemain.currentLocation === 'Wain Wright'" @click="wainWright">Upgrade Cart</button>
+      <button v-if="pemain.currentLocation === 'Warehouse'" @click="wareHouse">Free Resources</button>
       <div v-if="pemain.currentLocation === 'Police Office'">
         <button v-if="jail.length" @click="bail">Bail {{ "(15 gold)" }}</button>
         <h1 v-else>You dont have jailed assistant</h1>
@@ -70,16 +41,14 @@
             status.length && pemain.currentLocation === location.workLocation
           "
           @click="freeAsistance(location)"
-        >
-          Free Assistant {{ index + 1 }}
-        </button>
+        >Free Assistant {{ index + 1 }}</button>
       </div>
       <div
         v-if="
-          game.players[0].currentLocation === game.players[1].currentLocation
+          pemain.currentLocation === anotherPlayer.currentLocation && pemain.currentLocation && anotherPlayer.currentLocation
         "
       >
-        <button @click="steal">Steal</button>
+        <button @click="steal">Duplicate Diamond</button>
       </div>
     </div>
     <button v-if="status.length === 2" @click="endTurn">End Turn</button>
