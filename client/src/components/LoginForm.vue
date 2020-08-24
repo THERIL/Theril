@@ -25,7 +25,7 @@
 import socket from "../config/socket.js";
 export default {
   name: "LoginForm",
-  data: function() {
+  data: function () {
     return {
       nameInput: "",
     };
