@@ -190,6 +190,16 @@ class PoliceOffice extends Tiles {
     assistant.jailedDuration = assistant.potentialDuration;
   }
 
+  reduceSentence(assitant) {
+    if (assitant.jailedDuration > 0) {
+      assitant.jailedDuration--;
+    }
+
+    if (!assitant.jailedDuration) {
+      assitant.jailed = false;
+    }
+  }
+
   bail(player, assistant) {
     if (player.hasDone < 2) {
       if (player.gold >= this.bailPrice) {
