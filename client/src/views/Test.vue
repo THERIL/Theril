@@ -1,6 +1,6 @@
 <template>
-  <div class="game-luar ">
-
+  <div class="game-luar">
+    <button @click="voice"> voice </button>
     <!-- <div class="game-container mx-auto flex">
       <audio loop id="start" src="../assets/Battle_Music_1.mp3" type="audio/mpeg" />
       <div id="player" class="w-1/4">
@@ -82,17 +82,17 @@
           <TileCard v-for="(n,i) in 6" :key="i" :index="i" :player1="player1" :player2="player2" />
         </div>
       </div>
-    </div> -->
+    </div>-->
     <button class="btn-cus">testttt</button>
 
     <div class="container">
-	<div class="avatar floating">
-	</div>
+      <div class="avatar floating"></div>
     </div>
   </div>
 </template>
 
 <script>
+import Artyom from "artyom.js";
 import PlayerCard from "../components/PlayerCard";
 import TileCard from "../components/TileCard";
 export default {
@@ -107,12 +107,18 @@ export default {
         name: "Nicko",
       },
       isSound: true,
-      player1: '',
-      player2: '',
-      currentLocation: ''
+      player1: "",
+      player2: "",
+      currentLocation: "",
     };
   },
   methods: {
+    voice() {
+      const moveTo = 'Luxury Shop'
+      const Jarvis = new Artyom();
+
+      Jarvis.say(`Move to ${moveTo} !`);
+    },
     startAudio() {
       var audio = document.getElementById("start");
       audio.play();
@@ -142,18 +148,17 @@ export default {
       audio.play();
     },
     move1() {
-      this.player1++
-    }
+      this.player1++;
+    },
   },
   created() {},
   computed: {
-    locationIn () {
+    locationIn() {
       if (this.currentLocation) {
-        
       }
-      return 
-    }
-  }
+      return;
+    },
+  },
 };
 </script>
 <style>
@@ -171,8 +176,6 @@ export default {
 } */
 
 /* .avatar img { width: 100%; height: auto; } */
-
-
 </style>
 
 /* .btn-cus {

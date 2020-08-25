@@ -166,7 +166,8 @@ export default {
     move(moveFrom, moveTo) {
       console.log("=================masuk move", moveFrom, moveTo);
       socket.emit("move", this.room.name, moveFrom, moveTo);
-      
+      // const Jarvis = new Artyom();
+      // Jarvis.say("Move to market !");
     },
     market() {
       socket.emit("market", this.room.name);
@@ -250,7 +251,6 @@ export default {
 
     socket.on('show-winner', msg => {
       alert(msg);
-      
     })
   },
   computed: {
