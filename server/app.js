@@ -197,6 +197,7 @@ io.on("connection", (socket) => {
       player[0].hasDone = 0;
     }
 
+
     objGame.players = [players[0], g.players[1]];
     objGame.active = g.activeCharacter;
 
@@ -338,8 +339,7 @@ io.on("connection", (socket) => {
     objGame.active = g.activeCharacter;
     objGame.currentLocation = player[0].currentLocation;
 
-    console.log('diamond01: ' + objGame.players[0].diamond)
-    console.log(objGame.players[1].diamond)
+
     let winner = objGame.players.filter(player => {
       console.log(player.diamond)
       return player.diamond >= 6
@@ -405,47 +405,6 @@ io.on("connection", (socket) => {
     if (jailedAssistant.length) {
       jailedAssistant.map((x) => player[0].release(x));
     }
-
-    if (player[0].hasDone === 2) {
-      g.checkTurn();
-      if (jailedAssistant.length) {
-        jailedAssistant.map((x) => po.reduceSentence(x));
-      }
-      player[0].hasDone = 0;
-    }
-
-    objGame.players = [players[0], g.players[1]];
-    objGame.active = g.activeCharacter;
-    objGame.currentLocation = player[0].currentLocation;
-    io.in(data).emit("updated-game", objGame);
-  });
-
-  socket.on("wain-wright", (data) => {
-    const wainWright = new WainWright(false);
-    player = players.filter((x) => x.name === g.activeCharacter);
-    let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
-    wainWright.upgrade(player[0]);
-    if (player[0].hasDone === 2) {
-      g.checkTurn();
-      if (jailedAssistant.length) {
-        jailedAssistant.map((x) => po.reduceSentence(x));
-      }
-      player[0].hasDone = 0;
-    }
-
-    objGame.players = [players[0], g.players[1]];
-    objGame.active = g.activeCharacter;
-    objGame.currentLocation = player[0].currentLocation;
-    io.in(data).emit("updated-game", objGame);
-  });
-
-
-  socket.on("luxury-item", (data, item) => {
-    const luxuryShop = new LuxuryShop(false);
-    player = players.filter((x) => x.name === g.activeCharacter);
-    let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
-
-    luxuryShop.transaction(player[0], item);
 
     if (player[0].hasDone === 2) {
       g.checkTurn();

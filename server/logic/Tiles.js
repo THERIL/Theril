@@ -87,19 +87,21 @@ class Market extends Tiles {
     if (player.hasDone < 2) {
       let allowed = player.assistants.filter((assistant) => !assistant.onDuty);
       if (allowed.length) {
-        allowed[0].work(this.tileName);
         for (let i = 0; i < this.requests.length; i++) {
           if (
             this.requests[i].request - player.resources[i].amount >= 0 &&
             player.resources[i].amount
           ) {
-            this.requests[i].request -= player.resources[i].amount;
+            allowed[0].work(this.tileName);
+            // this.requests[i].request -= player.resources[i].amount;
             player.gold +=
               this.requests[i].type.price * player.resources[i].amount;
             player.resources[i].amount = 0;
-            player.hasDone += 1;
+          } else {
+            return { msg: 'You dont have resources to sell' }
           }
         }
+        player.hasDone += 1;
       } else return { msg: "You dont have free assistant to do this" };
     } else return { msg: "It's not your turn" };
   }
