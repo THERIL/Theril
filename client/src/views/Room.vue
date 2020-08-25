@@ -64,11 +64,6 @@ export default {
       this.$router.push({ name: "Lobby" });
     },
   },
-  computed: {
-    id() {
-      return this.$store.state.user.id;
-    },
-  },
 };
 </script>
 
