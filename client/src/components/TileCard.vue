@@ -3,9 +3,19 @@
     <div
       @click="move"
       id="tile"
-      class="tile-bg p-20 m-2 bg-gray-400 text-center font-bold rounded flex justify-between"
-      :style="{'background-image': 'url(' + require(`../assets/tile-0${index+1}.png`) + ')',  'background-size': 100% 'auto'}"
+      class="m-2 relative bg-gray-900 opacity-75 hover:opacity-100 text-center font-bold rounded flex justify-between cursor-pointer"
+      style="padding-bottom:100%"
     >
+      <img
+        class="absolute h-full w-full object-cover"
+        :src="require(`../assets/tile-0${index+1}.png`)"
+        alt
+      />
+      <div
+        class="w-full opacity-75 bg-gray-900 text-gray-100 text-2xl absolute bottom-0 hover:opacity-100"
+      >{{tile.tileName}}</div>
+      <!-- <img :src="'../assets/tile-0'+(index+1)+'.png'" alt /> -->
+      <!-- :style="{'background-image': 'url(' + require(`../assets/tile-0${index+1}.png`) + ')',  'background-size': 100% 'auto'}" -->
       <audio id="move" src="../assets/move.mp3" type="audio/mpeg" />
       <div>
         <div>
@@ -43,72 +53,74 @@ export default {
   components: { Assistant },
   data() {
     return{
-          pemain: {},
-      activePlayer: "",
-      room: {},
-      game: {},
-      tiles: [],
-      currentLocation: "",
-      turn: "",
-      status: [],
-      anotherPlayer: {},
-      jail: [],
-      isSound: true,
+      //     pemain: {},
+      // activePlayer: "",
+      // room: {},
+      // game: {},
+      // tiles: [],
+      // currentLocation: "",
+      // turn: "",
+      // status: [],
+      // anotherPlayer: {},
+      // jail: [],
+      // isSound: true,
     }
   },
-  props: ["index", "tile", "player", "player2","game", "assistants1", "assistants2"],
+  props: ["index", "tile", "player", "player2","active", "assistants1", "assistants2"],
   methods: {
     move() {
-      console.log('move emit')
+      if(this.player.name === this.active){
       var audio = document.getElementById("move");
       audio.play();
       this.$emit('clickMove')
+      }
     },
   },
   created() {
-      let playerX = game.players.filter(
-        (player) => player.id === this.user.id
-      )[0];
-      let playerY = game.players.filter(
-        (player) => player.id !== this.user.id
-      )[0];
-      this.anotherPlayer = playerY;
-      this.pemain = playerX;
-      this.activePlayer = game.active;
-      this.room = data;
-      this.game = game;
-      this.tiles = tiles;
-      this.status = playerX.assistants.filter((x) => x.onDuty);
-      this.jail = playerX.assistants.filter((x) => x.jailed);
+    console.log(typeof index)
+      // let playerX = game.players.filter(
+      //   (player) => player.id === this.user.id
+      // )[0];
+      // let playerY = game.players.filter(
+      //   (player) => player.id !== this.user.id
+      // )[0];
+      // this.anotherPlayer = playerY;
+      // this.pemain = playerX;
+      // this.activePlayer = game.active;
+      // this.room = data;
+      // this.game = game;
+      // this.tiles = tiles;
+      // this.status = playerX.assistants.filter((x) => x.onDuty);
+      // this.jail = playerX.assistants.filter((x) => x.jailed);
   },
   computed: {
     playerPos1() {
-      if (this.player == "Luxury Shop") {
+      if (this.player.currentLocation == "Luxury Shop") {
         return 1;
-      } else if (this.player == "Wain Wright") {
+      } else if (this.player.currentLocation == "Wain Wright") {
         return 2;
-      } else if (this.player == "Police Office") {
+      } else if (this.player.currentLocation == "Police Office") {
         return 3;
-      } else if (this.player == "Market") {
+      } else if (this.player.currentLocation == "Market") {
         return 4;
-      } else if (this.player == "Warehouse") {
+      } else if (this.player.currentLocation == "Warehouse") {
         return 5;
-      } else if (this.player == "Tea House") {
+      } else if (this.player.currentLocation == "Tea House") {
         return 6;
       }
     },
     playerPos2() {
-      if (this.player2 == "Luxury Shop") {
+      if (this.player2.currentLocation == "Luxury Shop") {
         return 1;
-      } else if (this.player2 == "Wain Wright") {
+      } else if (this.player2.currentLocation == "Wain Wright") {
         return 2;
-      } else if (this.player2 == "Police Office") {
+      } else if (this.player2.currentLocation == "Police Office") {
         return 3;
-      } else if (this.player2 == "Market") {
+      } else if (this.player2.currentLocation == "Market") {
         return 4;
-      } else if (this.player2 == "Warehouse") {
+      } else if (this.player2.currentLocation == "Warehouse") {
         return 5;
-      } else if (this.player2 == "Tea House") {
+      } else if (this.player2.currentLocation == "Tea House") {
         return 6;
       }
     },

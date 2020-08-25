@@ -21,7 +21,7 @@ let dataToPhaser = "";
 app.use(cors());
 
 let rooms = [],
-  messages = [],
+  messages = [{ username: 'tester', text: 'ini text dummy' },],
   playersToBe = [],
   players = [],
   tiles = [
@@ -47,6 +47,11 @@ io.on("connection", (socket) => {
   console.log("User connected: " + socket.id);
   if (users.some((user) => user.id === socket.id))
     console.log("sudah ada username");
+
+  socket.on("send-message", payload => {
+    messages.push(payload)
+    io.emit('recieve-message', payload)
+  })
 
   socket.on("submit-username", (name) => {
     if (users.some((user) => user.id === socket.id)) {
@@ -97,9 +102,6 @@ io.on("connection", (socket) => {
     });
   });
 
-  socket.on('winner', (name, roomName) => {
-    io.to(roomName).emit('show-winner', `${name} has collected 6 Diamonds!`)
-  });
 
   socket.on("exit-game", (roomName, id) => {
     socket.leave(roomName, () => {
@@ -197,20 +199,10 @@ io.on("connection", (socket) => {
 
     objGame.players = [players[0], g.players[1]];
     objGame.active = g.activeCharacter;
-    console.log(objGame.players)
-    objGame.players.map(player => {
-      if (player.diamond >= 2) {
-        {
-          console.log(player, '==============================')
-          console.log('MENANGWOI')
-          // io.in(data.name).emit("updated-game", objGame);
-          io.in(data.name).emit('show-winner', `${player.name} has collected 6 diamonds!`)
-        }
-      } else {
 
-        io.in(data.name).emit("updated-game", objGame);
-      }
-    })
+    io.in(data.name).emit("updated-game", objGame);
+
+
 
   });
 
@@ -240,15 +232,6 @@ io.on("connection", (socket) => {
     objGame.players = [players[0], g.players[1]];
     objGame.active = g.activeCharacter;
     objGame.currentLocation = player[0].currentLocation;
-    let winner = this.game.players.map(player => {
-      player.diamond === 6
-    })
-    console.log(winner, '================= win computed')
-    if (winner.length) {
-      socket.emit('winner', winner[0].name, this.room.name)
-      // alert('YOUWIN')
-    }
-
     io.in(data).emit("updated-game", objGame);
   });
 
@@ -336,7 +319,7 @@ io.on("connection", (socket) => {
     io.in(data).emit("updated-game", objGame);
   });
 
-  socket.on("luxury-diamond", (data) => {
+  socket.on("luxury-diamond", (roomName) => {
     const luxuryShop = new LuxuryShop(false);
     player = players.filter((x) => x.name === g.activeCharacter);
     let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
@@ -354,7 +337,21 @@ io.on("connection", (socket) => {
     objGame.players = [players[0], g.players[1]];
     objGame.active = g.activeCharacter;
     objGame.currentLocation = player[0].currentLocation;
-    io.in(data).emit("updated-game", objGame);
+
+    console.log('diamond01: ' + objGame.players[0].diamond)
+    console.log(objGame.players[1].diamond)
+    let winner = objGame.players.filter(player => {
+      console.log(player.diamond)
+      return player.diamond >= 6
+    })
+    console.log(winner, '================= win computed')
+    if (winner.length) {
+      io.to(roomName).emit('show-winner', `${winner[0].name} has collected 6 Diamonds!`)
+      // alert('YOUWIN')
+    }
+    else {
+      io.in(roomName).emit("updated-game", objGame);
+    }
   });
 
   socket.on("luxury-item", (data, item) => {
@@ -442,26 +439,6 @@ io.on("connection", (socket) => {
     io.in(data).emit("updated-game", objGame);
   });
 
-  socket.on("luxury-diamond", (data) => {
-    const luxuryShop = new LuxuryShop(false);
-    player = players.filter((x) => x.name === g.activeCharacter);
-    let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
-
-    luxuryShop.sellDiamond(player[0]);
-
-    if (player[0].hasDone === 2) {
-      g.checkTurn();
-      if (jailedAssistant.length) {
-        jailedAssistant.map((x) => po.reduceSentence(x));
-      }
-      player[0].hasDone = 0;
-    }
-
-    objGame.players = [players[0], g.players[1]];
-    objGame.active = g.activeCharacter;
-    objGame.currentLocation = player[0].currentLocation;
-    io.in(data).emit("updated-game", objGame);
-  });
 
   socket.on("luxury-item", (data, item) => {
     const luxuryShop = new LuxuryShop(false);
