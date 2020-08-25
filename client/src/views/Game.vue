@@ -8,39 +8,134 @@
       <div id="player" class="w-1/4 flex flex-col justify-center">
         <PlayerCard v-for="(player, index) in game.players" :key="index" :player="player" />
         <br />
+        <!-- div button========================================================================= -->
+        <div id="button" class="mt-10">
+          <div v-if="pemain.name === activePlayer" class="flex flex-wrap p-4 justify-center">
+            <div v-if="pemain.currentLocation === 'Police Office'">
+              <div v-for="(assist, index) in pemain.assistants" :key="index">
+                <button
+                  class="bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
+                  v-if="assist.jailed"
+                >Assistant {{ index + 1 }}</button>
+              </div>
+            </div>
+            <button
+              class="bg-red-800 text-gray-100 px-2 py-1 font-semibold"
+              v-if="status.length === 2"
+              @click="endTurn"
+            >End Turn</button>
+            <button
+              class="bg-green-800 text-gray-100 px-2 py-1 font-semibold"
+              @click="changeCart"
+            >change value</button>
+            <button
+              class="bg-yellow-800 text-gray-100 px-2 py-1 font-semibold"
+              v-if="pemain.currentLocation === 'Market'"
+              @click="market"
+            >Sell</button>
+            <button
+              class="bg-blue-800 text-gray-100 px-2 py-1 font-semibold"
+              v-if="pemain.currentLocation === 'Luxury Shop'"
+              @click="luxuryDiamond"
+            >Buy Diamond</button>
+            <button
+              class="bg-blue-800 text-gray-100 px-2 py-1 font-semibold"
+              v-if="pemain.currentLocation === 'Luxury Shop'"
+              @click="luxuryItem('Strider')"
+            >Buy Strider</button>
+            <button
+              class="bg-blue-800 text-gray-100 px-2 py-1 font-semibold"
+              v-if="pemain.currentLocation === 'Luxury Shop'"
+              @click="luxuryItem('Horns')"
+            >Buy Horns</button>
+            <button
+              class="bg-blue-800 text-gray-100 px-2 py-1 font-semibold"
+              v-if="pemain.currentLocation === 'Luxury Shop'"
+              @click="luxuryItem('Golden Whistle')"
+            >Buy Golden Whislte</button>
+            <button
+              class="bg-blue-800 text-gray-100 px-2 py-1 font-semibold"
+              v-if="pemain.currentLocation === 'Luxury Shop'"
+              @click="luxuryItem('Shadow Hand')"
+            >Buy Shadow Hand</button>
+            <button
+              class="bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
+              v-if="pemain.currentLocation === 'Tea House'"
+              @click="teaHouse"
+            >Gamble</button>
+            <button
+              class="bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
+              v-if="pemain.currentLocation === 'Wain Wright'"
+              @click="wainWright"
+            >Upgrade Cart</button>
+            <button
+              class="bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
+              v-if="pemain.currentLocation === 'Warehouse'"
+              @click="wareHouse"
+            >Free Resources</button>
+
+            <div v-for="(location, index) in pemain.assistants" :key="index">
+              <button
+                class="bg-green-800 text-gray-100 px-2 py-1 font-semibold"
+                v-if="status.length && pemain.currentLocation === location.workLocation"
+                @click="freeAsistance(location)"
+              >Free Assistant {{ index + 1 }}</button>
+            </div>
+            <div
+              class="bg-red-800 text-gray-100 px-2 py-1 font-semibold"
+              v-if="pemain.currentLocation === anotherPlayer.currentLocation && pemain.currentLocation && anotherPlayer.currentLocation"
+            >
+              <button @click="steal">Duplicate Diamond</button>
+
+              <div v-if="pemain.currentLocation === 'Police Office'">
+                <div v-for="(assistant,index) in jail" :key="index">
+                  <button
+                    class="bg-red-800 text-gray-100 px-2 py-1 font-semibold"
+                    v-if="jail.length"
+                    @click="bail(index)"
+                  >Bail {{ index+1 }}</button>
+                  <p v-else>You dont have jailed assistant</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-
       <!-- div board========================================================================= -->
-
       <div id="bord" class="w-3/4">
         <div class="flex justify-end">
           <div>
             <button v-if="isSound" @click="startAudio" class="flex items-center mr-3">
-              <i class="fa fa-volume-off fa-2x" aria-hidden="true"></i>
-              <i class="fa fa-times" aria-hidden="true"></i>
+              <i class="fa text-gray-100 fa-volume-off fa-2x" aria-hidden="true"></i>
+              <i class="fa text-gray-100 fa-times" aria-hidden="true"></i>
             </button>
             <button v-else @click="stopAudio">
-              <i class="fa fa-volume-up fa-2x" aria-hidden="true"></i>
+              <i class="fa text-gray-100 fa-volume-up fa-2x" aria-hidden="true"></i>
             </button>
           </div>
           <button @click="exit">
-            <i class="fa fa-sign-out fa-2x mr-3" aria-hidden="true"></i>
+            <i class="fa text-gray-100 fa-sign-out fa-2x mr-3" aria-hidden="true"></i>
           </button>
         </div>
-
         <!-- div current location========================================================================= -->
-        <!-- <p>{{game}}</p>
-        <p> {{game.message}} </p>-->
         <div class="mx-auto">
-          <div class="w-full h-10p mx-auto">
-            <div id="tile" class="p-10 m-2 bg-gray-400 text-center font-bold rounded">
-              <h2>Playing: {{ activePlayer }}</h2>
-              <h2>Location: {{ pemain.currentLocation }}</h2>
-              <h3 v-if="game.message">{{game.message}}</h3>
+          <div class="w-full flex h-10p mx-auto">
+            <div class="w-1/2 bg-gray-400 rounded">
+              <section class="p-5 font-bold">
+                <h4>MARKET</h4>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione porro nisi delectus laudantium aspernatur beatae expedita doloribus facere vitae dolor.</p>
+              </section>
+            </div>
+
+            <div class="w-1/3 mx-auto bg-gray-400 rounded">
+              <section class="p-5 font-bold">
+                <h2>Currently Playing: {{ activePlayer }}</h2>
+                <h2>Your Location: {{ pemain.currentLocation }}</h2>
+                <h3 v-if="game.message">{{game.message}}</h3>
+              </section>
             </div>
           </div>
         </div>
-
         <!-- div tiles========================================================================= -->
         <div id="tiles" class="flex flex-wrap h-80p">
           <TileCard
@@ -56,70 +151,8 @@
             :assistants2="anotherPlayer.assistants"
           />
         </div>
-        <div id="button" class="flex mt-20 h-10p">
-          <div v-if="pemain.currentLocation === 'Police Office'">
-            <div v-for="(assist, index) in pemain.assistants" :key="index">
-              <h1 v-if="assist.jailed">Assistant {{ index + 1 }}</h1>
-            </div>
-          </div>
-          <div v-if="pemain.name === activePlayer" class="flex p-10 justify-center">
-            <button v-if="status.length === 2" @click="endTurn" class="btn-cus">End Turn</button>
-            <button @click="changeCart" class="btn-cus">change value</button>
-            <!-- <button
-              class="garmin"
-              v-for="(tile, index) in tiles"
-              @click="move(pemain.currentLocation, tile)"
-              :key="index"
-            >{{ tile.tileName }}</button>-->
-            <button v-if="pemain.currentLocation === 'Market'" @click="market" class="btn-cus">Sell</button>
-            <button
-              v-if="pemain.currentLocation === 'Luxury Shop'"
-              @click="luxuryDiamond"
-            >Buy Diamond</button>
-            <button
-              v-if="pemain.currentLocation === 'Luxury Shop'"
-              @click="luxuryItem('Strider')"
-             class="btn-cus" >Buy Strider</button>
-            <button
-              v-if="pemain.currentLocation === 'Luxury Shop'"
-              @click="luxuryItem('Horns')"
-            class="btn-cus" >Buy Horns</button>
-            <button
-              v-if="pemain.currentLocation === 'Luxury Shop'"
-              @click="luxuryItem('Golden Whistle')"
-            class="btn-cus" >Buy Golden Whislte</button>
-            <button
-              v-if="pemain.currentLocation === 'Luxury Shop'"
-              @click="luxuryItem('Shadow Hand')"
-            class="btn-cus">Buy Shadow Hand</button>
-            <button class="btn-cus" v-if="pemain.currentLocation === 'Tea House'" @click="teaHouse">Gamble</button>
-            <button class="btn-cus" v-if="pemain.currentLocation === 'Wain Wright'" @click="wainWright">Upgrade Cart</button>
-            <button class="btn-cus" v-if="pemain.currentLocation === 'Warehouse'" @click="wareHouse">Free Resources</button>
-            <div v-if="pemain.currentLocation === 'Police Office'">
-              <button class="btn-cus" v-if="jail.length" @click="bail">Bail {{ "(15 gold)" }}</button>
-              <h1 v-else>You dont have jailed assistant</h1>
-            </div>
-            <div v-for="(location, index) in pemain.assistants" :key="index">
-              <button
-                v-if="
-            status.length && pemain.currentLocation === location.workLocation
-          "
-                @click="freeAsistance(location)"
-            class="btn-cus"  >Free Assistant {{ index + 1 }}</button>
-            </div>
-            <div
-              v-if="
-          pemain.currentLocation === anotherPlayer.currentLocation && pemain.currentLocation && anotherPlayer.currentLocation
-        "
-            >
-              <button class="btn-cus" @click="steal">Duplicate Diamond</button>
-            </div>
-          </div>
-        </div>
       </div>
-      <!-- div button========================================================================= -->
     </div>
-    <!-- </div> -->
   </div>
 </template>
 
@@ -164,10 +197,7 @@ export default {
     },
 
     move(moveFrom, moveTo) {
-      console.log("=================masuk move", moveFrom, moveTo);
       socket.emit("move", this.room.name, moveFrom, moveTo);
-      // const Jarvis = new Artyom();
-      // Jarvis.say("Move to market !");
     },
     market() {
       socket.emit("market", this.room.name);
@@ -200,14 +230,15 @@ export default {
     steal() {
       socket.emit("steal", this.room.name, this.anotherPlayer);
     },
-    exit() {
-      socket.emit("exit-game", this.room.name, this.user.id);
-      this.$router.push({ name: "Lobby" });
-      // this.$router.push(`/room/${this.room.name}`);
+    bail(index) {
+      socket.emit("bail", this.room.name, index);
     },
   },
   created() {
     socket.on("inisiate-game", (data, game, tiles) => {
+      // console.log(data, "--------------");
+      console.log(game, ">>>>>>>>>>>>>>>");
+      // console.log(tiles, "<<<<<<<<<");
       let playerX = game.players.filter(
         (player) => player.id === this.user.id
       )[0];
@@ -241,6 +272,7 @@ export default {
       this.pemain.assistants.map((x) =>
         x.jailedDuration > 0 ? x.jailedDuration-- : x.jailedDuration
       );
+      this.game = game;
     });
 
     socket.on("user-win", (data) => {
@@ -249,9 +281,9 @@ export default {
       this.$router.push({ name: "Lobby" });
     });
 
-    socket.on('show-winner', msg => {
+    socket.on("show-winner", (msg) => {
       alert(msg);
-    })
+    });
   },
   computed: {
     user() {
@@ -265,8 +297,7 @@ export default {
       //   // alert('YOUWIN')
       // }
     },
-
-    },
+  },
 };
 </script>
 
@@ -303,6 +334,4 @@ export default {
   background-size: cover;
   overflow: hidden;
 }
-
-
 </style>

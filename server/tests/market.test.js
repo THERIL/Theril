@@ -5,6 +5,8 @@ const Player = require("../logic/Player");
 const player = new Player("Wyrdhn");
 const player2 = new Player("Hehe");
 const player3 = new Player("wuehehe");
+const player4 = new Player("sdfsdf");
+const player5 = new Player("768678678");
 
 m.transaction(player);
 
@@ -14,6 +16,13 @@ player2.assistants[1].work();
 m.transaction(player2);
 
 player3.hasDone = 2;
+
+player4.resources[0].amount = 0;
+player4.resources[1].amount = 0;
+player4.resources[2].amount = 0;
+
+m.transaction(player4);
+m.transaction(player5);
 
 describe("Market", () => {
   test('should have name "Market', (done) => {
@@ -48,7 +57,10 @@ describe("Market", () => {
     done();
   });
 
-  {
-    msg: "It's not your turn";
-  }
+  test("should reject if player doent have resources", (done) => {
+    expect(m.transaction(player4)).toEqual({
+      msg: "You dont have resources to sell",
+    });
+    done();
+  });
 });

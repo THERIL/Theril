@@ -32,11 +32,20 @@ const wh = new Warehouse(false);
 
 // console.time("Meow");
 
-player.gold = 20;
+// player.gold = 20;
 
-p.arrest(a1);
-p.bail(player, a1);
-console.dir(player, { depth: null });
+// p.arrest(a1);
+// p.bail(player, a1);
+// console.dir(player, { depth: null });
+
+// console.dir(player, { depth: null });
+// console.dir(m, { depth: null });
+
+// m.transaction(player);
+
+// console.log("setelah transaksi------------------------------");
+// console.dir(player, { depth: null });
+// console.dir(m, { depth: null });
 
 // player2.gold = 0;
 // wh.transaction(player2);

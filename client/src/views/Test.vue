@@ -1,6 +1,7 @@
 <template>
   <div class="game-luar">
     <button @click="voice"> voice </button>
+    <PlayerInRoom/>
     <!-- <div class="game-container mx-auto flex">
       <audio loop id="start" src="../assets/Battle_Music_1.mp3" type="audio/mpeg" />
       <div id="player" class="w-1/4">
@@ -83,7 +84,7 @@
         </div>
       </div>
     </div>-->
-    <button class="btn-cus">testttt</button>
+    <!-- <button class="btn-cus">testttt</button> -->
 
     <div class="container">
       <div class="avatar floating"></div>
@@ -95,11 +96,13 @@
 import Artyom from "artyom.js";
 import PlayerCard from "../components/PlayerCard";
 import TileCard from "../components/TileCard";
+import PlayerInRoom from "../components/PlayerInRoom"
 export default {
   name: "Test",
   components: {
     PlayerCard,
     TileCard,
+    PlayerInRoom
   },
   data: function () {
     return {
