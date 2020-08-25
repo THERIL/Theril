@@ -49,6 +49,28 @@ const updatedData = (players, objGame) => {
   return { players, objGame };
 };
 
+const bailAction = (players, assistant, objGame) => {
+  console.log(assistant);
+  let player = players.filter((x) => x.name === g.activeCharacter);
+
+  let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
+
+  po.bail(player[0], assistant);
+
+  if (player[0].hasDone === 2) {
+    g.checkTurn();
+    if (jailedAssistant.length) {
+      jailedAssistant.map((x) => po.reduceSentence(x));
+    }
+    player[0].hasDone = 0;
+  }
+
+  objGame.players = [players[0], g.players[1]];
+  objGame.active = g.activeCharacter;
+  objGame.currentLocation = player[0].currentLocation;
+  return { players, objGame };
+};
+
 const move = (players, moveFrom, moveTo, objGame) => {
   let player = players.filter((x) => x.name === g.activeCharacter);
   player[0].move((moveFrom = ""), moveTo);
@@ -282,4 +304,5 @@ module.exports = {
   startGame,
   updatedData,
   endTurn,
+  bailAction,
 };

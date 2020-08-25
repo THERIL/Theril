@@ -82,8 +82,12 @@
             <button v-if="pemain.currentLocation === 'Wain Wright'" @click="wainWright">Upgrade Cart</button>
             <button v-if="pemain.currentLocation === 'Warehouse'" @click="wareHouse">Free Resources</button>
             <div v-if="pemain.currentLocation === 'Police Office'">
-              <button v-if="jail.length" @click="bail">Bail {{ "(15 gold)" }}</button>
-              <h1 v-else>You dont have jailed assistant</h1>
+              <div v-for="(assitant, index) in jail" :key="index">
+                <h1>{{assistant}}</h1>
+                <button v-if="jail.length" @click="bail(assistant)">Bail Assistant{{index+1}}</button>
+
+                <h1 v-else>You dont have jailed assistant</h1>
+              </div>
             </div>
             <div v-for="(location, index) in pemain.assistants" :key="index">
               <button
@@ -218,9 +222,8 @@ export default {
     steal() {
       socket.emit("steal", this.room.name, this.anotherPlayer);
     },
-    exit() {
-      socket.emit("exit-game", this.room.name, this.user.id);
-      this.$router.push({ name: "Lobby" });
+    bail(assistant) {
+      socket.emit("bail", this.room.name, assistant);
     },
   },
   created() {

@@ -36,6 +36,7 @@ const {
   startGame,
   updatedData,
   endTurn,
+  bailAction,
 } = require("./socket/action");
 
 app.use(cors());
@@ -159,6 +160,13 @@ io.on("connection", (socket) => {
   socket.on("end-turn", async (data) => {
     let end = await endTurn(objGame);
     io.in(data).emit("updated-game", end);
+  });
+
+  socket.on("bail", async (data, assistant) => {
+    let bail = await bailAction(players, assistant, objGame);
+    // console.dir(bail, { depth: null });
+    players = bail.players;
+    io.in(data).emit("updated-game", bail.objGame);
   });
 
   socket.on("move", async (data, moveFrom, moveTo) => {
