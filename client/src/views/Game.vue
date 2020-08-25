@@ -1,5 +1,6 @@
 <template>
   <div class="div game-luar flex justify-center">
+    <div class="game-luar-background"></div>
     <div class="div h-full mx-auto flex">
       <!-- div player========================================================================== -->
 
