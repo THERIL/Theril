@@ -4,6 +4,8 @@ const Player = require("../logic/Player");
 const player = new Player("Wyrdhn");
 const player2 = new Player("Hehe");
 const player3 = new Player("Wuehehe");
+const player4 = new Player("546456");
+const player5 = new Player("4576457");
 const { LuxuryShop, Market } = require("../logic/Tiles");
 const ls = new LuxuryShop();
 const m = new Market();
@@ -22,6 +24,11 @@ player2.move("", m);
 g.checkTurn();
 player2.move(m, ls);
 g.checkTurn();
+
+player4.cart = 4;
+player4.checkCart();
+
+player5.checkCart();
 
 const assist = player.assistants[0];
 

@@ -73,12 +73,9 @@
               v-if="pemain.currentLocation === 'Warehouse'"
               @click="wareHouse"
             >Free Resources</button>
+            </div>
             <div v-if="pemain.currentLocation === 'Police Office'">
-              <button
-                class="bg-red-800 text-gray-100 px-2 py-1 font-semibold"
-                v-if="jail.length"
-                @click="bail"
-              >Bail {{ "(15 gold)" }}</button>
+              <button v-for="(assistant,index) in jail" :key="index" class="bg-red-800 text-gray-100 px-2 py-1 font-semibold" v-if="jail.length" @click="bail(index)">Bail {{ index+1 }}</button>
               <p v-else>You dont have jailed assistant</p>
             </div>
 
@@ -100,7 +97,6 @@
       </div>
 
       <!-- div board========================================================================= -->
-
       <div id="bord" class="w-3/4">
         <div class="flex justify-end">
           <div>
@@ -190,9 +186,7 @@ export default {
     },
 
     move(moveFrom, moveTo) {
-      console.log("=================masuk move", moveFrom, moveTo);
       socket.emit("move", this.room.name, moveFrom, moveTo);
-      
     },
     market() {
       socket.emit("market", this.room.name);
@@ -225,14 +219,15 @@ export default {
     steal() {
       socket.emit("steal", this.room.name, this.anotherPlayer);
     },
-    exit() {
-      socket.emit("exit-game", this.room.name, this.user.id);
-      this.$router.push({ name: "Lobby" });
-      // this.$router.push(`/room/${this.room.name}`);
+    bail(index) {
+      socket.emit("bail", this.room.name, index);
     },
   },
   created() {
     socket.on("inisiate-game", (data, game, tiles) => {
+      // console.log(data, "--------------");
+      console.log(game, ">>>>>>>>>>>>>>>");
+      // console.log(tiles, "<<<<<<<<<");
       let playerX = game.players.filter(
         (player) => player.id === this.user.id
       )[0];
@@ -266,6 +261,7 @@ export default {
       this.pemain.assistants.map((x) =>
         x.jailedDuration > 0 ? x.jailedDuration-- : x.jailedDuration
       );
+      this.game = game;
     });
 
     socket.on("user-win", (data) => {
@@ -274,10 +270,9 @@ export default {
       this.$router.push({ name: "Lobby" });
     });
 
-    socket.on('show-winner', msg => {
+    socket.on("show-winner", (msg) => {
       alert(msg);
-      
-    })
+    });
   },
   computed: {
     user() {
@@ -291,8 +286,7 @@ export default {
       //   // alert('YOUWIN')
       // }
     },
-
-    },
+  },
 };
 </script>
 

@@ -47,6 +47,20 @@
 import Assistant from "../components/Assistant";
 export default {
   name: "TileCard",
+  data() {
+    return {
+      pemain: {},
+      activePlayer: "",
+      room: {},
+      tiles: [],
+      currentLocation: "",
+      turn: "",
+      status: [],
+      anotherPlayer: {},
+      jail: [],
+      isSound: true,
+    };
+  },
   components: { Assistant },
   data() {
     return {
@@ -145,6 +159,11 @@ export default {
 
 .icon {
   position: absolute;
+  margin-left: 15px;
+}
+
+.garmin {
+  margin-left: 15px;
 }
 
 .avatar {

@@ -23,12 +23,12 @@ import socket from "../config/socket.js";
 
 export default {
   name: "Room",
-  data: function() {
+  data: function () {
     return {
       room: {},
     };
   },
-  created: function() {
+  created: function () {
     socket.on("room-detail", (room) => {
       this.room = room;
     });
@@ -62,11 +62,6 @@ export default {
     leaveRoom() {
       socket.emit("leave-room", this.room.name, this.id);
       this.$router.push({ name: "Lobby" });
-    },
-  },
-  computed: {
-    id() {
-      return this.$store.state.user.id;
     },
   },
 };

@@ -51,12 +51,18 @@ class Player {
     this.cart === 0
       ? (this.capacity = 2)
       : this.cart === 1
-        ? (this.capacity = 3)
-        : this.cart === 2
-          ? (this.capacity = 4)
-          : this.cart === 3
-            ? (this.capacity = 5)
-            : (this.capacity = 6);
+      ? (this.capacity = 3)
+      : this.cart === 2
+      ? (this.capacity = 4)
+      : this.cart === 3
+      ? (this.capacity = 5)
+      : (this.capacity = 6);
+  }
+
+  checkCart() {
+    if (this.cart === 4) {
+      this.diamond += 1;
+    }
   }
 
   sendSteal(target, value, value2) {
@@ -93,7 +99,7 @@ class Assistant {
     this.potentialDuration = 6;
     this.jailedDuration = 0;
     this.onDuty = false;
-    this.stealChance = 0.05;
+    this.stealChance = 0.25;
     this.stolenItem = false;
     this.workLocation = "";
   }
@@ -108,7 +114,7 @@ class Assistant {
       target.diamond--;
       this.stolenItem = true;
     } else {
-      let isJailed = value2 > 0.95 ? false : true;
+      let isJailed = value2 > 0.25 ? false : true;
       if (isJailed) {
         this.jailed = true;
         this.jailedDuration = this.potentialDuration;
