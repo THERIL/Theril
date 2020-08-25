@@ -45,7 +45,9 @@
       </div>
       <div
         v-if="
-          pemain.currentLocation === anotherPlayer.currentLocation && pemain.currentLocation && anotherPlayer.currentLocation
+          pemain.currentLocation === anotherPlayer.currentLocation &&
+            pemain.currentLocation &&
+            anotherPlayer.currentLocation
         "
       >
         <button @click="steal">Duplicate Diamond</button>
@@ -87,11 +89,11 @@ export default {
   },
   methods: {
     changeCart() {
-      socket.emit("updated-data", this.room, this.game);
+      socket.emit("updated-data", this.room);
     },
 
-    move(target, moveFrom, moveTo) {
-      socket.emit("move", this.room.name, this.game, moveFrom, moveTo);
+    move(moveFrom, moveTo) {
+      socket.emit("move", this.room.name, moveFrom, moveTo);
     },
     market() {
       socket.emit("market", this.room.name);
@@ -119,7 +121,7 @@ export default {
       this.$router.push({ name: "Lobby" });
     },
     endTurn() {
-      socket.emit("end-turn", this.room.name, this.game);
+      socket.emit("end-turn", this.room.name);
     },
     steal() {
       socket.emit("steal", this.room.name, this.anotherPlayer);
@@ -127,14 +129,13 @@ export default {
     exit() {
       socket.emit("exit-game", this.room.name, this.user.id);
       this.$router.push({ name: "Lobby" });
-      // this.$router.push(`/room/${this.room.name}`);
-    },
-    endTurn() {
-      socket.emit("end-turn", this.room.name, this.game);
     },
   },
   created() {
     socket.on("inisiate-game", (data, game, tiles) => {
+      // console.log(data, "--------------");
+      console.log(game, ">>>>>>>>>>>>>>>");
+      // console.log(tiles, "<<<<<<<<<");
       let playerX = game.players.filter(
         (player) => player.id === this.user.id
       )[0];
