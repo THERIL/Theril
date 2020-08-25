@@ -11,10 +11,9 @@
       >
         <PlayerCard :player="player" />
         <br />
-      </div> -->
+      </div>-->
 
       <!-- div board========================================================================= -->
-
       <div id="bord" class="w-3/4">
         <div class="flex justify-end">
           <div>
@@ -34,8 +33,6 @@
         <!-- div current location========================================================================= -->
         <!-- <p>{{game}}</p>
         <p> {{game.message}} </p>-->
-        <p> {{pemain}} </p>
-        <p> {{anotherPlayer}} ====================</p>
         <div class="mx-auto">
           <div class="w-1/3 mx-auto">
             <div id="tile" class="p-10 m-2 bg-gray-400 text-center font-bold rounded">
@@ -46,6 +43,10 @@
           </div>
         </div>
         <!-- div button========================================================================= -->
+
+        <h1>{{pemain.hasDone}}</h1>
+        <h1>{{pemain.assistants[0].onDuty}}</h1>
+        <h1>{{pemain.assistants[1].onDuty}}</h1>
         <div id="button">
           <div v-if="pemain.name === activePlayer" class="flex p-10 justify-center">
             <button v-if="status.length === 2" @click="endTurn">End Turn</button>
@@ -55,7 +56,7 @@
               v-for="(tile, index) in tiles"
               @click="move(pemain.currentLocation, tile)"
               :key="index"
-            >{{ tile.tileName }}</button> -->
+            >{{ tile.tileName }}</button>-->
             <button v-if="pemain.currentLocation === 'Market'" @click="market">Sell</button>
             <button
               v-if="pemain.currentLocation === 'Luxury Shop'"
@@ -109,23 +110,22 @@
             :index="index"
             @clickMove="move(pemain.currentLocation, tile)"
             :tile="tile"
-            :player1="pemain.currentLocation"
+            :player="pemain.currentLocation"
             :player2="anotherPlayer.currentLocation"
-           
-            :assistants1="game.players[0].assistants"
-            :assistants2="game.players[1].assistants"
+            :assistants1="pemain.assistants"
+            :assistants2="anotherPlayer.assistants"
+            :game="game"
           />
         </div>
       </div>
-       <!-- :player2="anotherPlayer.currentLocation" -->
-
-      <!-- <button @click="exit">Exit</button> -->
-      <!-- <h1>{{ turn.name }}</h1>
-      <h1>{{ pemain }}</h1>-->
-      <!-- <h2>Playing: {{ activePlayer }}</h2>
+      <!-- :player2="anotherPlayer.currentLocation" -->
+      <!-- <button @click="exit">Exit</button>
+      <h1>{{ turn.name }}</h1>
+      <h1>{{ pemain }}</h1>
+      <h2>Playing: {{ activePlayer }}</h2>
       <h2>Location: {{ pemain.currentLocation }}</h2>-->
-
-      <!-- <div v-for="(item, index) in pemain.items" :key="index">
+      <!-- 
+      <div v-for="(item, index) in pemain.items" :key="index">
         <h1>{{ item.name }}</h1>
       </div>
       <div v-for="(item, index) in pemain.resources" :key="index">
@@ -160,8 +160,6 @@ export default {
       anotherPlayer: {},
       jail: [],
       isSound: true,
-      player1: "Luxury Shop",
-      player2: "Luxury Shop",
     };
   },
   components: {
@@ -184,9 +182,8 @@ export default {
       socket.emit("updated-data", this.room, this.game);
     },
 
-    move(target, moveFrom, moveTo) {
-      console.log("=================masuk move", moveFrom, moveTo);
-      socket.emit("move", this.room.name, this.game, moveFrom, moveTo);
+    move(moveFrom, moveTo) {
+      socket.emit("move", this.room.name, moveFrom, moveTo);
     },
     market() {
       socket.emit("market", this.room.name);
@@ -214,7 +211,7 @@ export default {
       this.$router.push({ name: "Lobby" });
     },
     endTurn() {
-      socket.emit("end-turn", this.room.name, this.game);
+      socket.emit("end-turn", this.room.name);
     },
     steal() {
       socket.emit("steal", this.room.name, this.anotherPlayer);
@@ -223,9 +220,6 @@ export default {
       socket.emit("exit-game", this.room.name, this.user.id);
       this.$router.push({ name: "Lobby" });
       // this.$router.push(`/room/${this.room.name}`);
-    },
-    endTurn() {
-      socket.emit("end-turn", this.room.name, this.game);
     },
   },
   created() {
@@ -247,7 +241,6 @@ export default {
     });
 
     socket.on("updated-game", (game) => {
-      // this.game = game;
       let playerX = game.players.filter(
         (player) => player.id === this.user.id
       )[0];
@@ -263,6 +256,7 @@ export default {
       this.pemain.assistants.map((x) =>
         x.jailedDuration > 0 ? x.jailedDuration-- : x.jailedDuration
       );
+      this.game = game;
     });
 
     socket.on("user-win", (data) => {

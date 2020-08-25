@@ -22,7 +22,6 @@ app.use(cors());
 
 let rooms = [],
   messages = [],
-  playersToBe = [],
   players = [],
   tiles = [
     new LuxuryShop(false),
@@ -62,10 +61,10 @@ io.on("connection", (socket) => {
     };
     users.push(user);
     socket.emit("get-username", user);
-    io.emit('get-connected-users', users)
+    io.emit("get-connected-users", users);
 
-    console.log('sending message to client: ' + socket.id)
-    socket.emit('recieve-message', messages);
+    console.log("sending message to client: " + socket.id);
+    socket.emit("recieve-message", messages);
   });
 
   socket.on("clear-room", () => {
@@ -176,7 +175,7 @@ io.on("connection", (socket) => {
     io.in(data.name).emit("inisiate-game", data, objGame, tiles);
   });
 
-  socket.on("updated-data", (data, game) => {
+  socket.on("updated-data", (data) => {
     player = players.filter((x) => x.name === g.activeCharacter);
     let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
 
@@ -204,10 +203,9 @@ io.on("connection", (socket) => {
     io.in(data).emit("updated-game", objGame);
   });
 
-  socket.on("end-turn", (data, game) => {});
-
   socket.on("move", (data, moveFrom, moveTo) => {
     player = players.filter((x) => x.name === g.activeCharacter);
+    console.log(player, "-----------------------player");
     player[0].move((moveFrom = ""), moveTo);
 
     let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
@@ -230,10 +228,12 @@ io.on("connection", (socket) => {
   socket.on("market", (data) => {
     const market = new Market(false);
     player = players.filter((x) => x.name === g.activeCharacter);
+    if (player[0].hasDone > 2) player.hasDone = 0;
 
     let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
 
     market.transaction(player[0]);
+
     if (player[0].hasDone === 2) {
       g.checkTurn();
       if (jailedAssistant.length) {
@@ -252,7 +252,6 @@ io.on("connection", (socket) => {
     const teaHouse = new TeaHouse(false);
     player = players.filter((x) => x.name === g.activeCharacter);
     let result = teaHouse.throwDice(player[0]);
-    
 
     let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
 
@@ -267,7 +266,7 @@ io.on("connection", (socket) => {
     objGame.players = [players[0], g.players[1]];
     objGame.active = g.activeCharacter;
     objGame.currentLocation = player[0].currentLocation;
-    objGame.message = result.msg
+    objGame.message = result.msg;
     io.in(data).emit("updated-game", objGame);
   });
 
@@ -377,24 +376,7 @@ io.on("connection", (socket) => {
     io.in(data).emit("updated-game", objGame);
   });
 
-  socket.on("move", (data, game, moveFrom, moveTo) => {
-    player = players.filter((x) => x.name === g.activeCharacter);
-    player[0].move((moveFrom = ""), moveTo);
-
-    if (player[0].hasDone === 2) {
-      g.checkTurn();
-      player[0].hasDone = 0;
-    }
-
-    objGame.players = [players[0], g.players[1]];
-    objGame.active = g.activeCharacter;
-    objGame.currentLocation = player[0].currentLocation;
-
-    io.in(data).emit("updated-game", objGame);
-  });
-
-  socket.on("market", (data) => {
-    const market = new Market();
+  socket.on("steal", (data) => {
     player = players.filter((x) => x.name === g.activeCharacter);
     let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
 
@@ -430,21 +412,6 @@ io.on("connection", (socket) => {
       if (jailedAssistant.length) {
         jailedAssistant.map((x) => po.reduceSentence(x));
       }
-      player[0].hasDone = 0;
-    }
-
-    objGame.players = [players[0], g.players[1]];
-    objGame.active = g.activeCharacter;
-    objGame.currentLocation = player[0].currentLocation;
-    io.in(data).emit("updated-game", objGame);
-  });
-
-  socket.on("wain-wright", (data) => {
-    const wainWright = new WainWright();
-    player = players.filter((x) => x.name === g.activeCharacter);
-    wainWright.upgrade(player[0]);
-    if (player[0].hasDone === 2) {
-      g.checkTurn();
       player[0].hasDone = 0;
     }
 
@@ -510,7 +477,9 @@ io.on("connection", (socket) => {
 
     socket.on("disconnect", () => {
       if (users.some((user) => user.id === socket.id)) {
-        console.log("Splice user dengan id yang disconnect (Handle disconnect)");
+        console.log(
+          "Splice user dengan id yang disconnect (Handle disconnect)"
+        );
         users.splice(
           users.findIndex((user) => user.id === socket.id),
           1
@@ -522,6 +491,6 @@ io.on("connection", (socket) => {
       io.in(dataToPhaser.name).emit("dari-test", dataToPhaser, objGame, tiles);
     });
   });
-})
+});
 
 server.listen(port, () => console.log(`Running on port ${port}`));

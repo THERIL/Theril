@@ -8,77 +8,119 @@
     >
       <audio id="move" src="../assets/move.mp3" type="audio/mpeg" />
       <div>
-      <div>
-        <i v-if="playerPos1 == `${index+1}`" class="fa fa-user fa-3x icon text-yellow-900" aria-hidden="true"></i>
+        <div>
+          <i
+            v-if="anLoc == `${index+1}`"
+            class="fa fa-user fa-3x icon text-yellow-900 garmin"
+            aria-hidden="true"
+          ></i>
+        </div>
+        <div>
+          <i
+            v-if="pemLoc == `${index+1}`"
+            class="fa fa-user fa-3x icon text-green-900 garmin"
+            aria-hidden="true"
+          ></i>
+        </div>
       </div>
+
       <div>
-        <i v-if="playerPos2 == `${index+1}`" class="fa fa-user fa-3x icon text-green-900" aria-hidden="true"></i>
-      </div>
-      </div>
-     
-      <div>
-        <div v-for="(assistant, index) in assistants1" :key="index" >
-          <Assistant :assistant="assistant" :tileName="tile.tileName" color="text-yellow-900"/>
+        <div v-for="(assistant, index) in assistants1" :key="index">
+          <Assistant :assistant="assistant" :tileName="tile.tileName" color="text-yellow-900" />
         </div>
         <div v-for="(assistant, index) in assistants2" :key="index">
-          <Assistant :assistant="assistant" :tileName="tile.tileName" color="text-green-900"/>
+          <Assistant :assistant="assistant" :tileName="tile.tileName" color="text-green-900" />
         </div>
       </div>
-     
-      
     </div>
   </div>
 </template>
 
 <script>
-import Assistant from '../components/Assistant'
+import Assistant from "../components/Assistant";
 export default {
   name: "TileCard",
+  data() {
+    return {
+      pemain: {},
+      activePlayer: "",
+      room: {},
+      tiles: [],
+      currentLocation: "",
+      turn: "",
+      status: [],
+      anotherPlayer: {},
+      jail: [],
+      isSound: true,
+    };
+  },
   components: { Assistant },
-  props: ["index", "tile", "player1", "player2", "assistants1", "assistants2"],
+  props: [
+    "index",
+    "tile",
+    "game",
+    "player",
+    "player2",
+    "assistants1",
+    "assistants2",
+  ],
   methods: {
     move() {
-      console.log('move emit')
+      console.log("move emit");
       var audio = document.getElementById("move");
       audio.play();
-      this.$emit('clickMove')
+      this.$emit("clickMove");
     },
   },
   created() {
-    console.log(this.player1, this.player2, '============================')
+    let playerX = this.game.players.filter(
+      (player) => player.id === this.user.id
+    )[0];
+    let playerY = this.game.players.filter(
+      (player) => player.id !== this.user.id
+    )[0];
+    this.anotherPlayer = playerY;
+    this.pemain = playerX;
+    this.activePlayer = game.active;
+    this.room = data;
+    this.game = game;
+    this.tiles = tiles;
+    this.status = playerX.assistants.filter((x) => x.onDuty);
+    this.jail = playerX.assistants.filter((x) => x.jailed);
   },
   computed: {
-    playerPos1() {
-      if (this.player1 == "Luxury Shop") {
+    pemLoc() {
+      console.log(this.game.players[0], "------------pemain location");
+      if (this.game.players[0].currentLocation === "Luxury Shop") {
         return 1;
-      } else if (this.player1 == "Wain Wright") {
+      } else if (this.game.players[0].currentLocation === "Wain Wright") {
         return 2;
-      } else if (this.player1 == "Police Office") {
+      } else if (this.game.players[0].currentLocation === "Police Office") {
         return 3;
-      } else if (this.player1 == "Market") {
+      } else if (this.game.players[0].currentLocation === "Market") {
         return 4;
-      } else if (this.player1 == "Warehouse") {
+      } else if (this.game.players[0].currentLocation === "Warehouse") {
         return 5;
-      } else if (this.player1 == "Tea House") {
+      } else if (this.game.players[0].currentLocation === "Tea House") {
         return 6;
       }
     },
-    playerPos2() {
-      if (this.player2 == "Luxury Shop") {
+    anLoc() {
+      console.log(this.game.players[1], "---------------------anotherPlayer");
+      if (this.game.players[1].currentLocation === "Luxury Shop") {
         return 1;
-      } else if (this.player2 == "Wain Wright") {
+      } else if (this.game.players[1].currentLocation === "Wain Wright") {
         return 2;
-      } else if (this.player2 == "Police Office") {
+      } else if (this.game.players[1].currentLocation === "Police Office") {
         return 3;
-      } else if (this.player2 == "Market") {
+      } else if (this.game.players[1].currentLocation === "Market") {
         return 4;
-      } else if (this.player2 == "Warehouse") {
+      } else if (this.game.players[1].currentLocation === "Warehouse") {
         return 5;
-      } else if (this.player2 == "Tea House") {
+      } else if (this.game.players[1].currentLocation === "Tea House") {
         return 6;
       }
     },
-
   },
 };
 </script>
@@ -91,5 +133,10 @@ export default {
 
 .icon {
   position: absolute;
+  margin-left: 15px;
+}
+
+.garmin {
+  margin-left: 15px;
 }
 </style>
