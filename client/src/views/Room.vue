@@ -23,12 +23,12 @@ import socket from "../config/socket.js";
 
 export default {
   name: "Room",
-  data: function() {
+  data: function () {
     return {
       room: {},
     };
   },
-  created: function() {
+  created: function () {
     socket.on("room-detail", (room) => {
       this.room = room;
     });

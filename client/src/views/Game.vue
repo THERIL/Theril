@@ -109,7 +109,9 @@
             </div>
             <div
               v-if="
-          pemain.currentLocation === anotherPlayer.currentLocation && pemain.currentLocation && anotherPlayer.currentLocation
+          pemain.currentLocation === anotherPlayer.currentLocation &&
+            pemain.currentLocation &&
+            anotherPlayer.currentLocation
         "
             >
               <button @click="steal">Duplicate Diamond</button>
@@ -202,6 +204,9 @@ export default {
   },
   created() {
     socket.on("inisiate-game", (data, game, tiles) => {
+      // console.log(data, "--------------");
+      console.log(game, ">>>>>>>>>>>>>>>");
+      // console.log(tiles, "<<<<<<<<<");
       let playerX = game.players.filter(
         (player) => player.id === this.user.id
       )[0];
