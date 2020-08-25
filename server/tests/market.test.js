@@ -59,7 +59,7 @@ describe("Market", () => {
 
   test("should reject if player doent have resources", (done) => {
     expect(m.transaction(player4)).toEqual({
-      msg: "You dont have free resources to sell",
+      msg: "You dont have resources to sell",
     });
     done();
   });
