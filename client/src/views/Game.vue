@@ -73,77 +73,84 @@
               v-if="pemain.currentLocation === 'Warehouse'"
               @click="wareHouse"
             >Free Resources</button>
-          </div>
-          <div v-if="pemain.currentLocation === 'Police Office'">
-            <div v-for="(assistant,index) in jail" :key="index">
+
+            <div v-for="(location, index) in pemain.assistants" :key="index">
               <button
-                class="bg-red-800 text-gray-100 px-2 py-1 font-semibold"
-                v-if="jail.length"
-                @click="bail(index)"
-              >Bail {{ index+1 }}</button>
-              <p v-else>You dont have jailed assistant</p>
+                class="bg-green-800 text-gray-100 px-2 py-1 font-semibold"
+                v-if="status.length && pemain.currentLocation === location.workLocation"
+                @click="freeAsistance(location)"
+              >Free Assistant {{ index + 1 }}</button>
+            </div>
+            <div
+              class="bg-red-800 text-gray-100 px-2 py-1 font-semibold"
+              v-if="pemain.currentLocation === anotherPlayer.currentLocation && pemain.currentLocation && anotherPlayer.currentLocation"
+            >
+              <button @click="steal">Duplicate Diamond</button>
+
+              <div v-if="pemain.currentLocation === 'Police Office'">
+                <div v-for="(assistant,index) in jail" :key="index">
+                  <button
+                    class="bg-red-800 text-gray-100 px-2 py-1 font-semibold"
+                    v-if="jail.length"
+                    @click="bail(index)"
+                  >Bail {{ index+1 }}</button>
+                  <p v-else>You dont have jailed assistant</p>
+                </div>
+              </div>
             </div>
           </div>
-
-          <div v-for="(location, index) in pemain.assistants" :key="index">
-            <button
-              class="bg-green-800 text-gray-100 px-2 py-1 font-semibold"
-              v-if="status.length && pemain.currentLocation === location.workLocation"
-              @click="freeAsistance(location)"
-            >Free Assistant {{ index + 1 }}</button>
-          </div>
-          <div
-            class="bg-red-800 text-gray-100 px-2 py-1 font-semibold"
-            v-if="pemain.currentLocation === anotherPlayer.currentLocation && pemain.currentLocation && anotherPlayer.currentLocation"
-          >
-            <button @click="steal">Duplicate Diamond</button>
-          </div>
         </div>
       </div>
-    </div>
-
-    <!-- div board========================================================================= -->
-    <div id="bord" class="w-3/4">
-      <div class="flex justify-end">
-        <div>
-          <button v-if="isSound" @click="startAudio" class="flex items-center mr-3">
-            <i class="fa fa-volume-off fa-2x" aria-hidden="true"></i>
-            <i class="fa fa-times" aria-hidden="true"></i>
-          </button>
-          <button v-else @click="stopAudio">
-            <i class="fa fa-volume-up fa-2x" aria-hidden="true"></i>
+      <!-- div board========================================================================= -->
+      <div id="bord" class="w-3/4">
+        <div class="flex justify-end">
+          <div>
+            <button v-if="isSound" @click="startAudio" class="flex items-center mr-3">
+              <i class="fa text-gray-100 fa-volume-off fa-2x" aria-hidden="true"></i>
+              <i class="fa text-gray-100 fa-times" aria-hidden="true"></i>
+            </button>
+            <button v-else @click="stopAudio">
+              <i class="fa text-gray-100 fa-volume-up fa-2x" aria-hidden="true"></i>
+            </button>
+          </div>
+          <button @click="exit">
+            <i class="fa text-gray-100 fa-sign-out fa-2x mr-3" aria-hidden="true"></i>
           </button>
         </div>
-        <button @click="exit">
-          <i class="fa fa-sign-out fa-2x mr-3" aria-hidden="true"></i>
-        </button>
-      </div>
+        <!-- div current location========================================================================= -->
+        <div class="mx-auto">
+          <div class="w-full flex h-10p mx-auto">
+            <div class="w-1/2 bg-gray-400 rounded">
+              <section class="p-5 font-bold">
+                <h4>MARKET</h4>
+                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione porro nisi delectus laudantium aspernatur beatae expedita doloribus facere vitae dolor.</p>
+              </section>
+            </div>
 
-      <!-- div current location========================================================================= -->
-      <div class="mx-auto">
-        <div class="w-full h-10p mx-auto">
-          <div id="tile" class="p-10 m-2 bg-gray-400 text-center font-bold rounded">
-            <h2>Playing: {{ activePlayer }}</h2>
-            <h2>Location: {{ pemain.currentLocation }}</h2>
-            <h3 v-if="game.message">{{game.message}}</h3>
+            <div class="w-1/3 mx-auto bg-gray-400 rounded">
+              <section class="p-5 font-bold">
+                <h2>Currently Playing: {{ activePlayer }}</h2>
+                <h2>Your Location: {{ pemain.currentLocation }}</h2>
+                <h3 v-if="game.message">{{game.message}}</h3>
+              </section>
+            </div>
           </div>
         </div>
-      </div>
-
-      <!-- div tiles========================================================================= -->
-      <div id="tiles" class="flex flex-wrap h-80p">
-        <TileCard
-          v-for="(tile, index) in tiles"
-          :key="index"
-          :index="index"
-          @clickMove="move(pemain.currentLocation, tile)"
-          :tile="tile"
-          :player="pemain"
-          :player2="anotherPlayer"
-          :active="activePlayer"
-          :assistants1="pemain.assistants"
-          :assistants2="anotherPlayer.assistants"
-        />
+        <!-- div tiles========================================================================= -->
+        <div id="tiles" class="flex flex-wrap h-80p">
+          <TileCard
+            v-for="(tile, index) in tiles"
+            :key="index"
+            :index="index"
+            @clickMove="move(pemain.currentLocation, tile)"
+            :tile="tile"
+            :player="pemain"
+            :player2="anotherPlayer"
+            :active="activePlayer"
+            :assistants1="pemain.assistants"
+            :assistants2="anotherPlayer.assistants"
+          />
+        </div>
       </div>
     </div>
   </div>

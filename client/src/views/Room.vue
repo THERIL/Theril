@@ -59,10 +59,10 @@ export default {
     id() {
       return this.$store.state.user.id;
     },
-    leaveRoom() {
-      socket.emit("leave-room", this.room.name, this.id);
-      this.$router.push({ name: "Lobby" });
-    },
+    // leaveRoom() {
+    //   socket.emit("leave-room", this.room.name, this.id);
+    //   this.$router.push({ name: "Lobby" });
+    // },
   },
 };
 </script>
