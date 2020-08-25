@@ -1,17 +1,12 @@
 <template>
   <div class="div game-luar flex justify-center">
-    <div class="div game-container mx-auto flex">
+    <div class="div h-full mx-auto flex">
       <!-- div player========================================================================== -->
 
-      <!-- <div
-        v-for="(player, index) in game.players"
-        :key="index"
-        id="player"
-        class="w-1/4 flex flex-col"
-      >
-        <PlayerCard :player="player" />
+      <div id="player" class="w-1/4 flex flex-col">
+        <PlayerCard v-for="(player, index) in game.players" :key="index" :player="player" />
         <br />
-      </div>-->
+      </div>
 
       <!-- div board========================================================================= -->
       <div id="bord" class="w-3/4">
@@ -34,7 +29,7 @@
         <!-- <p>{{game}}</p>
         <p> {{game.message}} </p>-->
         <div class="mx-auto">
-          <div class="w-1/3 mx-auto">
+          <div class="w-full h-10p mx-auto">
             <div id="tile" class="p-10 m-2 bg-gray-400 text-center font-bold rounded">
               <h2>Playing: {{ activePlayer }}</h2>
               <h2>Location: {{ pemain.currentLocation }}</h2>
@@ -42,12 +37,28 @@
             </div>
           </div>
         </div>
-        <!-- div button========================================================================= -->
 
-        <h1>{{pemain.hasDone}}</h1>
-        <h1>{{pemain.assistants[0].onDuty}}</h1>
-        <h1>{{pemain.assistants[1].onDuty}}</h1>
-        <div id="button">
+        <!-- div tiles========================================================================= -->
+        <div id="tiles" class="flex flex-wrap h-80p">
+          <TileCard
+            v-for="(tile, index) in tiles"
+            :key="index"
+            :index="index"
+            @clickMove="move(pemain.currentLocation, tile)"
+            :tile="tile"
+            :player="pemain"
+            :player2="anotherPlayer"
+            :active="activePlayer"
+            :assistants1="pemain.assistants"
+            :assistants2="anotherPlayer.assistants"
+          />
+        </div>
+        <div id="button" class="flex mt-20 h-10p">
+          <!-- <div v-if="pemain.currentLocation === 'Police Office'">
+            <div v-for="(assist, index) in pemain.assistants" :key="index">
+              <h1 v-if="assist.jailed">Assistant {{ index + 1 }}</h1>
+            </div>
+          </div>-->
           <div v-if="pemain.name === activePlayer" class="flex p-10 justify-center">
             <button v-if="status.length === 2" @click="endTurn">End Turn</button>
             <button @click="changeCart">change value</button>
@@ -82,8 +93,11 @@
             <button v-if="pemain.currentLocation === 'Wain Wright'" @click="wainWright">Upgrade Cart</button>
             <button v-if="pemain.currentLocation === 'Warehouse'" @click="wareHouse">Free Resources</button>
             <div v-if="pemain.currentLocation === 'Police Office'">
-              <button v-if="jail.length" @click="bail">Bail {{ "(15 gold)" }}</button>
-              <h1 v-else>You dont have jailed assistant</h1>
+              <div v-for="(assistant, index) in jail" :key="index">
+                <h1>{{assistant}}</h1>
+                <button v-if="jail.length" @click="bail(index)">Bail Assistant {{index + 1}}</button>
+                <h1 v-else>You dont have jailed assistant</h1>
+              </div>
             </div>
             <div v-for="(location, index) in pemain.assistants" :key="index">
               <button
@@ -102,42 +116,8 @@
             </div>
           </div>
         </div>
-        <!-- div tiles========================================================================= -->
-        <div id="tiles" class="flex flex-wrap">
-          <TileCard
-            v-for="(tile, index) in tiles"
-            :key="index"
-            :index="index"
-            @clickMove="move(pemain.currentLocation, tile)"
-            :tile="tile"
-            :player="pemain.currentLocation"
-            :player2="anotherPlayer.currentLocation"
-            :assistants1="pemain.assistants"
-            :assistants2="anotherPlayer.assistants"
-            :game="game"
-          />
-        </div>
       </div>
-      <!-- :player2="anotherPlayer.currentLocation" -->
-      <!-- <button @click="exit">Exit</button>
-      <h1>{{ turn.name }}</h1>
-      <h1>{{ pemain }}</h1>
-      <h2>Playing: {{ activePlayer }}</h2>
-      <h2>Location: {{ pemain.currentLocation }}</h2>-->
-      <!-- 
-      <div v-for="(item, index) in pemain.items" :key="index">
-        <h1>{{ item.name }}</h1>
-      </div>
-      <div v-for="(item, index) in pemain.resources" :key="index">
-        <h1>{{ item.type.name }}</h1>
-        <h1>{{ item.amount }}</h1>
-      </div>-->
-
-      <div v-if="pemain.currentLocation === 'Police Office'">
-        <div v-for="(assist, index) in pemain.assistants" :key="index">
-          <h1 v-if="assist.jailed">Assistant {{ index + 1 }}</h1>
-        </div>
-      </div>
+      <!-- div button========================================================================= -->
     </div>
   </div>
 </template>
@@ -179,7 +159,7 @@ export default {
       this.isSound = true;
     },
     changeCart() {
-      socket.emit("updated-data", this.room, this.game);
+      socket.emit("updated-data", this.room);
     },
 
     move(moveFrom, moveTo) {
@@ -216,10 +196,8 @@ export default {
     steal() {
       socket.emit("steal", this.room.name, this.anotherPlayer);
     },
-    exit() {
-      socket.emit("exit-game", this.room.name, this.user.id);
-      this.$router.push({ name: "Lobby" });
-      // this.$router.push(`/room/${this.room.name}`);
+    bail(index) {
+      socket.emit("bail", this.room.name, index);
     },
   },
   created() {
@@ -241,6 +219,7 @@ export default {
     });
 
     socket.on("updated-game", (game) => {
+      this.game = game;
       let playerX = game.players.filter(
         (player) => player.id === this.user.id
       )[0];
@@ -264,10 +243,22 @@ export default {
       socket.emit("exit-game-winner", this.room.name, this.user.id);
       this.$router.push({ name: "Lobby" });
     });
+
+    socket.on("show-winner", (msg) => {
+      alert(msg);
+    });
   },
   computed: {
     user() {
       return this.$store.state.user;
+    },
+    win() {
+      // let winner = this.game.players.map(player => {player.diamond === 6})
+      // console.log(winner,'================= win computed')
+      // if(winner.length > 0) {
+      //   socket.emit('winner',winner[0].name,this.room.name)
+      //   // alert('YOUWIN')
+      // }
     },
   },
 };
@@ -278,16 +269,30 @@ export default {
   margin-right: 15px;
 }
 
-.game-container {
-  width: 1350px;
+.h-10p {
+  height: 10%;
+}
 
-  /* height: ; */
+.h-80p {
+  height: 80%;
 }
 
 .game-luar {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.game-luar-background {
   background-image: url("../assets/background.jpeg");
-  width: 100vw;
-  min-height: 100vh;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  z-index: -1;
+  opacity: 0.6;
+
   background-repeat: no-repeat;
   background-size: cover;
   overflow: hidden;
