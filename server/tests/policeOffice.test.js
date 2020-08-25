@@ -16,6 +16,14 @@ p.arrest(player2.assistants[0]);
 p.bail(player, player.assistants[1]);
 p.bail(player2, player2.assistants[0]);
 
+p.arrest(player3.assistants[0]);
+p.arrest(player3.assistants[1]);
+
+player3.assistants[1].jailedDuration = 0;
+
+p.reduceSentence(player3.assistants[0]);
+p.reduceSentence(player3.assistants[1]);
+
 describe("Police Office", () => {
   test("should have name", (done) => {
     expect(p.tileName).toBe("Police Office");
@@ -51,6 +59,16 @@ describe("Police Office", () => {
     expect(p.bail(player3, player.assistants[0])).toEqual({
       msg: "It's not your turn",
     });
+    done();
+  });
+
+  test("should reduce sentence per turn", (done) => {
+    expect(player3.assistants[0].jailedDuration).toBe(5);
+    done();
+  });
+
+  test("should free after sentence over", (done) => {
+    expect(player3.assistants[1].jailed).toBeFalsy();
     done();
   });
 });

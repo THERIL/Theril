@@ -19,12 +19,12 @@ import socket from "../config/socket.js";
 
 export default {
   name: "Room",
-  data: function () {
+  data: function() {
     return {
       room: {},
     };
   },
-  created: function () {
+  created: function() {
     socket.on("room-detail", (room) => {
       this.room = room;
     });
@@ -44,6 +44,16 @@ export default {
     startGame() {
       socket.emit("start-game", this.room);
       this.$router.push(`/game/${this.room.name}`);
+      // this.$store.commit("GAME_DATA", this.room);
+    },
+    leaveRoom() {
+      socket.emit("leave-room", this.room.name, this.id);
+      this.$router.push({ name: "Lobby" });
+    },
+  },
+  computed: {
+    id() {
+      return this.$store.state.user.id;
     },
     leaveRoom() {
       socket.emit("leave-room", this.room.name, this.id);

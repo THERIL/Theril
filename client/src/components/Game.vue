@@ -1,8 +1,6 @@
 <template>
   <div :id="containerId" v-if="downloaded" />
-  <div class="placeholder" v-else>
-    Downloading ...
-  </div>
+  <div class="placeholder" v-else>Downloading ...</div>
 </template>
 
 
@@ -33,6 +31,6 @@ export default {
 <style lang="scss" scoped>
 .placeholder {
   font-size: 2rem;
-  font-family: 'Courier New', Courier, monospace;
+  font-family: "Courier New", Courier, monospace;
 }
 </style>

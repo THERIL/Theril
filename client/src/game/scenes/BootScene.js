@@ -10,12 +10,12 @@ import dude from '../assets/dude.png'
 
 
 export default class BootScene extends Scene {
-  constructor () {
+  constructor() {
     super({ key: 'BootScene' })
   }
 
-  preload () {
-    
+  preload() {
+
     this.load.image('sky', sky)
     this.load.image('background', background)
     this.load.image('bomb', bomb)
@@ -30,11 +30,11 @@ export default class BootScene extends Scene {
     this.load.image('bomb', '../assets/bomb.png');
     this.load.spritesheet('dude', dude, { frameWidth: 32, frameHeight: 48 });
 
-    
-    
+
+
   }
 
-  create () {
+  create() {
     this.scene.start('PlayScene')
   }
 }
