@@ -39,7 +39,10 @@
             <audio id="market" src="../assets/market-coin.mp3" type="audio/mpeg" />
             SELL
           </button>
-          <button @click.prevent="move1" class="px-4 py-2 m-2 bg-green-200 text-green-900 text-center rounded shadow">Move-1</button>
+          <button
+            @click.prevent="move1"
+            class="px-4 py-2 m-2 bg-green-200 text-green-900 text-center rounded shadow"
+          >Move-1</button>
           <button
             class="px-4 py-2 m-2 bg-green-200 text-green-900 text-center rounded shadow"
           >CALL ASSISTANT</button>
@@ -67,7 +70,7 @@
           </button>
         </div>
         <div id="tiles" class="flex flex-wrap">
-          <TileCard v-for="(n,i) in 6" :key="i" :index="i"  :player1="player1" :player2="player2"/>
+          <TileCard v-for="(n,i) in 6" :key="i" :index="i" :player1="player1" :player2="player2" />
         </div>
       </div>
     </div>
@@ -140,18 +143,18 @@ export default {
 </script>
 
 <style>
-.game-container {
+/* .game-container {
   width: 1350px;
 
-  /* height: ; */
+  /* height: ; 
 }
 
-.game-luar {
+/* .game-luar {
   background-image: url("../assets/background.jpeg");
   width: 100vw;
   min-height: 100vh;
   background-repeat: no-repeat;
   background-size: cover;
   overflow: hidden;
-}
+} */
 </style>

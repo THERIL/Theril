@@ -1,10 +1,9 @@
 <template>
-  <div id="app">
+  <div id="app" class="mx-auto">
     <div id="nav">
       <router-link to="/" v-if="!user.name">Login</router-link>|
       <router-link to="/lobby">Lobby</router-link>|
-      <router-link to="/test">test</router-link>
-|
+      <router-link to="/test">test</router-link>|
       <!-- <router-link to="/board">Board</router-link> -->
       <button @click="logout">Logout</button>
     </div>
@@ -30,5 +29,9 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style scoped>
+#app {
+  width: 1366px;
+  height: 768px;
+}
 </style>
