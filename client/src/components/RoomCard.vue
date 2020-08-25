@@ -1,5 +1,5 @@
 <template>
-  <div class="w-full p-5 border flex justify-between text-gray-100 rounded">
+  <div class="w-full h-33p p-5 border flex justify-between text-gray-100 rounded">
     <div class="w-1/2">
       <h2 class="text-xl">{{ room.name }}</h2>
     </div>
@@ -24,4 +24,8 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+.h-33p {
+  height: 33.3333%;
+}
+</style>

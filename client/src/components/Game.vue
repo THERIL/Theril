@@ -28,9 +28,12 @@ export default {
 </script>
 
 
-<style lang="scss" scoped>
+<style scoped>
 .placeholder {
   font-size: 2rem;
   font-family: "Courier New", Courier, monospace;
+}
+button {
+  background-image: url("../assets/button.png");
 }
 </style>
