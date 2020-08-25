@@ -3,7 +3,7 @@
     <div class="div game-container mx-auto flex">
       <!-- div player========================================================================== -->
 
-      <!-- <div
+      <div
         v-for="(player, index) in game.players"
         :key="index"
         id="player"
@@ -11,7 +11,7 @@
       >
         <PlayerCard :player="player" />
         <br />
-      </div> -->
+      </div>
 
       <!-- div board========================================================================= -->
 

@@ -377,7 +377,7 @@ io.on("connection", (socket) => {
     io.in(data).emit("updated-game", objGame);
   });
 
-  socket.on("move", (data, game, moveFrom, moveTo) => {
+  socket.on("move", (data, moveFrom, moveTo) => {
     player = players.filter((x) => x.name === g.activeCharacter);
     player[0].move((moveFrom = ""), moveTo);
 
