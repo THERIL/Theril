@@ -59,6 +59,12 @@ class Player {
       : (this.capacity = 6);
   }
 
+  checkCart() {
+    if (this.cart === 4) {
+      this.diamond += 1;
+    }
+  }
+
   sendSteal(target, value, value2) {
     if (target.diamond >= 1) {
       if (this.hasDone < 2) {

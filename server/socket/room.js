@@ -37,7 +37,7 @@ const userLogout = (users, id, objGame, players, rooms) => {
     rooms = [];
     users = [];
   }
-  return { users, objGame, players, users };
+  return { users, objGame, players, users, rooms };
 };
 
 const disconnect = (users, id) => {

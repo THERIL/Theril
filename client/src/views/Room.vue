@@ -1,12 +1,20 @@
 <template>
-  <div>
-    <h1>{{ room }}</h1>
-    <button
-      class="bg-blue-900 text-gray-100 p-2"
-      @click="startGame"
-      v-if="room.users[0].id == id && room.users.length === 2"
-    >START GAME</button>
-    <button class="bg-blue-900 text-gray-100 p-2" @click="leaveRoom">Leave Room</button>
+  <div class="mx-auto flex flex-col justify-center items-center">
+    <div>
+      <h1 class="font-bold">{{ room.name }}</h1>
+      <div>
+        <h2 v-for="(user,index) in room.users" :key="index">USER: {{user.name}}</h2>
+      </div>
+    </div>
+
+    <div class="flex">
+      <button
+        class="bg-blue-900 text-gray-100 p-2"
+        @click="startGame"
+        v-if="room.users[0].id == id && room.users.length === 2"
+      >START GAME</button>
+      <button class="bg-blue-900 text-gray-100 p-2" @click="leaveRoom">Leave Room</button>
+    </div>
   </div>
 </template>
 
@@ -15,12 +23,12 @@ import socket from "../config/socket.js";
 
 export default {
   name: "Room",
-  data: function() {
+  data: function () {
     return {
       room: {},
     };
   },
-  created: function() {
+  created: function () {
     socket.on("room-detail", (room) => {
       this.room = room;
     });

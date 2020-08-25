@@ -42,7 +42,8 @@ const {
 app.use(cors());
 
 let rooms = [],
-  messages = [],
+  messages = [{ username: "tester", text: "ini text dummy" }],
+  playersToBe = [],
   players = [],
   tiles = [
     new LuxuryShop(false),
@@ -65,6 +66,11 @@ io.on("connection", (socket) => {
   if (users.some((user) => user.id === socket.id))
     console.log("sudah ada username");
 
+  socket.on("send-message", (payload) => {
+    messages.push(payload);
+    io.emit("recieve-message", payload);
+  });
+
   socket.on("submit-username", async (name) => {
     let user = await userLogin(users, socket.id, name);
     socket.emit("get-username", user);
@@ -83,6 +89,7 @@ io.on("connection", (socket) => {
     users = logout.users;
     objGame = logout.objGame;
     players = logout.players;
+    rooms = logout.rooms;
   });
 
   socket.on("leave-room", (roomName, id) => {
@@ -162,9 +169,8 @@ io.on("connection", (socket) => {
     io.in(data).emit("updated-game", end);
   });
 
-  socket.on("bail", async (data, assistant) => {
-    let bail = await bailAction(players, assistant, objGame);
-    // console.dir(bail, { depth: null });
+  socket.on("bail", async (data, index) => {
+    let bail = await bailAction(players, index, objGame);
     players = bail.players;
     io.in(data).emit("updated-game", bail.objGame);
   });
@@ -196,13 +202,27 @@ io.on("connection", (socket) => {
   socket.on("wain-wright", async (data) => {
     let wainWright = await wainWrightAction(players, objGame);
     players = wainWright.players;
-    io.in(data).emit("updated-game", wainWright.objGame);
+    if (wainWright.winner.length) {
+      io.to(data).emit(
+        "show-winner",
+        `${wainWright.winner[0].name} has collected 6 Diamonds!`
+      );
+    } else {
+      io.in(data).emit("updated-game", wainWright.objGame);
+    }
   });
 
   socket.on("luxury-diamond", async (data) => {
     let luxuryDiamond = await luxuryDiamondAction(players, objGame);
     players = luxuryDiamond.players;
-    io.in(data).emit("updated-game", luxuryDiamond.objGame);
+    if (luxuryDiamond.winner.length) {
+      io.to(data).emit(
+        "show-winner",
+        `${luxuryDiamond.winner[0].name} has collected 6 Diamonds!`
+      );
+    } else {
+      io.in(data).emit("updated-game", luxuryDiamond.objGame);
+    }
   });
 
   socket.on("luxury-item", async (data, item) => {
@@ -220,7 +240,18 @@ io.on("connection", (socket) => {
   socket.on("steal", async (data, target) => {
     let stealDiamond = await steal(players, target, objGame);
     players = stealDiamond.players;
-    io.in(data).emit("updated-game", stealDiamond.objGame, stealDiamond.target);
+    if (stealDiamond.winner.length) {
+      io.to(data).emit(
+        "show-winner",
+        `${stealDiamond.winner[0].name} has collected 6 Diamonds!`
+      );
+    } else {
+      io.in(data).emit(
+        "updated-game",
+        stealDiamond.objGame,
+        stealDiamond.target
+      );
+    }
   });
 
   socket.on("horns", async (data) => {
