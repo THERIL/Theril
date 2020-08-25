@@ -4,15 +4,29 @@
       <!-- div player========================================================================== -->
 
       <div id="player" class="w-1/4 flex flex-col">
-        <PlayerCard v-for="(player, index) in game.players" :key="index" :player="player" />
+        <PlayerCard
+          v-for="(player, index) in game.players"
+          :key="index"
+          :player="player"
+        />
         <br />
       </div>
-
+      <iframe
+        allow="microphone;"
+        width="350"
+        height="430"
+        src="https://console.dialogflow.com/api-client/demo/embedded/ec1c8deb-b60b-4f58-b2e9-1f499c604a14"
+      >
+      </iframe>
       <!-- div board========================================================================= -->
       <div id="bord" class="w-3/4">
         <div class="flex justify-end">
           <div>
-            <button v-if="isSound" @click="startAudio" class="flex items-center mr-3">
+            <button
+              v-if="isSound"
+              @click="startAudio"
+              class="flex items-center mr-3"
+            >
               <i class="fa fa-volume-off fa-2x" aria-hidden="true"></i>
               <i class="fa fa-times" aria-hidden="true"></i>
             </button>
@@ -30,10 +44,13 @@
         <p> {{game.message}} </p>-->
         <div class="mx-auto">
           <div class="w-full h-10p mx-auto">
-            <div id="tile" class="p-10 m-2 bg-gray-400 text-center font-bold rounded">
+            <div
+              id="tile"
+              class="p-10 m-2 bg-gray-400 text-center font-bold rounded"
+            >
               <h2>Playing: {{ activePlayer }}</h2>
               <h2>Location: {{ pemain.currentLocation }}</h2>
-              <h3 v-if="game.message">{{game.message}}</h3>
+              <h3 v-if="game.message">{{ game.message }}</h3>
             </div>
           </div>
         </div>
@@ -59,8 +76,13 @@
               <h1 v-if="assist.jailed">Assistant {{ index + 1 }}</h1>
             </div>
           </div>-->
-          <div v-if="pemain.name === activePlayer" class="flex p-10 justify-center">
-            <button v-if="status.length === 2" @click="endTurn">End Turn</button>
+          <div
+            v-if="pemain.name === activePlayer"
+            class="flex p-10 justify-center"
+          >
+            <button v-if="status.length === 2" @click="endTurn">
+              End Turn
+            </button>
             <button @click="changeCart">change value</button>
             <!-- <button
               class="garmin"
@@ -68,49 +90,83 @@
               @click="move(pemain.currentLocation, tile)"
               :key="index"
             >{{ tile.tileName }}</button>-->
-            <button v-if="pemain.currentLocation === 'Market'" @click="market">Sell</button>
+            <button v-if="pemain.currentLocation === 'Market'" @click="market">
+              Sell
+            </button>
             <button
               v-if="pemain.currentLocation === 'Luxury Shop'"
               @click="luxuryDiamond"
-            >Buy Diamond</button>
+            >
+              Buy Diamond
+            </button>
             <button
               v-if="pemain.currentLocation === 'Luxury Shop'"
               @click="luxuryItem('Strider')"
-            >Buy Strider</button>
+            >
+              Buy Strider
+            </button>
             <button
               v-if="pemain.currentLocation === 'Luxury Shop'"
               @click="luxuryItem('Horns')"
-            >Buy Horns</button>
+            >
+              Buy Horns
+            </button>
             <button
               v-if="pemain.currentLocation === 'Luxury Shop'"
               @click="luxuryItem('Golden Whistle')"
-            >Buy Golden Whislte</button>
+            >
+              Buy Golden Whislte
+            </button>
             <button
               v-if="pemain.currentLocation === 'Luxury Shop'"
               @click="luxuryItem('Shadow Hand')"
-            >Buy Shadow Hand</button>
-            <button v-if="pemain.currentLocation === 'Tea House'" @click="teaHouse">Gamble</button>
-            <button v-if="pemain.currentLocation === 'Wain Wright'" @click="wainWright">Upgrade Cart</button>
-            <button v-if="pemain.currentLocation === 'Warehouse'" @click="wareHouse">Free Resources</button>
+            >
+              Buy Shadow Hand
+            </button>
+            <button
+              v-if="pemain.currentLocation === 'Tea House'"
+              @click="teaHouse"
+            >
+              Gamble
+            </button>
+            <button
+              v-if="pemain.currentLocation === 'Wain Wright'"
+              @click="wainWright"
+            >
+              Upgrade Cart
+            </button>
+            <button
+              v-if="pemain.currentLocation === 'Warehouse'"
+              @click="wareHouse"
+            >
+              Free Resources
+            </button>
             <div v-if="pemain.currentLocation === 'Police Office'">
               <div v-for="(assistant, index) in jail" :key="index">
-                <h1>{{assistant}}</h1>
-                <button v-if="jail.length" @click="bail(index)">Bail Assistant {{index + 1}}</button>
+                <h1>{{ assistant }}</h1>
+                <button v-if="jail.length" @click="bail(index)">
+                  Bail Assistant {{ index + 1 }}
+                </button>
                 <h1 v-else>You dont have jailed assistant</h1>
               </div>
             </div>
             <div v-for="(location, index) in pemain.assistants" :key="index">
               <button
                 v-if="
-            status.length && pemain.currentLocation === location.workLocation
-          "
+                  status.length &&
+                    pemain.currentLocation === location.workLocation
+                "
                 @click="freeAsistance(location)"
-              >Free Assistant {{ index + 1 }}</button>
+              >
+                Free Assistant {{ index + 1 }}
+              </button>
             </div>
             <div
               v-if="
-          pemain.currentLocation === anotherPlayer.currentLocation && pemain.currentLocation && anotherPlayer.currentLocation
-        "
+                pemain.currentLocation === anotherPlayer.currentLocation &&
+                  pemain.currentLocation &&
+                  anotherPlayer.currentLocation
+              "
             >
               <button @click="steal">Duplicate Diamond</button>
             </div>

@@ -146,16 +146,12 @@ io.on("connection", (socket) => {
   socket.on("join-room", (data) => {
     objGame = {};
     socket.join(data.roomName, () => {
-      // joinRoom(data, rooms);
-      // console.dir(rooms, { depth: null });
       let index = rooms.findIndex((item) => item.name == data.roomName);
-      // rooms[index].users = [];
       if (rooms[index].users.length === 2) {
         socket.emit("errorFull", "Player Already full");
         io.emit("updated-room", rooms);
       } else {
         rooms[index].users.push(data.username);
-        // console.log(rooms[index], "dari join room");
         io.sockets.in(data.roomName).emit("room-detail", rooms[index]);
       }
     });
