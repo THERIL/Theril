@@ -93,7 +93,7 @@ class Assistant {
     this.potentialDuration = 6;
     this.jailedDuration = 0;
     this.onDuty = false;
-    this.stealChance = 0.05;
+    this.stealChance = 0.25;
     this.stolenItem = false;
     this.workLocation = "";
   }
@@ -108,7 +108,7 @@ class Assistant {
       target.diamond--;
       this.stolenItem = true;
     } else {
-      let isJailed = value2 > 0.95 ? false : true;
+      let isJailed = value2 > 0.25 ? false : true;
       if (isJailed) {
         this.jailed = true;
         this.jailedDuration = this.potentialDuration;

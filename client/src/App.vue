@@ -3,6 +3,8 @@
     <div id="nav">
       <router-link to="/" v-if="!user.name">Login</router-link>|
       <router-link to="/lobby">Lobby</router-link>|
+      <router-link to="/test">test</router-link>
+|
       <!-- <router-link to="/board">Board</router-link> -->
       <button @click="logout">Logout</button>
     </div>
@@ -29,24 +31,4 @@ export default {
 </script>
 
 <style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-
-  a {
-    font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #42b983;
-    }
-  }
-}
 </style>

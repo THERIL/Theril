@@ -90,15 +90,13 @@ class Market extends Tiles {
         for (let i = 0; i < this.requests.length; i++) {
           if (
             this.requests[i].request - player.resources[i].amount >= 0 &&
-            player.resources[i].amount
+            player.resources[i].amount !== 0
           ) {
             allowed[0].work(this.tileName);
             player.gold +=
               this.requests[i].type.price * player.resources[i].amount;
             player.resources[i].amount = 0;
-          } else {
-            return { msg: "You dont have any resources to sell" };
-          }
+          } else return { msg: "You dont have free resources to sell" };
         }
         player.hasDone += 1;
       } else return { msg: "You dont have free assistant to do this" };

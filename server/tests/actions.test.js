@@ -4,6 +4,7 @@ const player2 = new Player("Hehe");
 const player3 = new Player("Wuehehe");
 const player4 = new Player("asdasd");
 const player5 = new Player("324234234");
+const player6 = new Player("657567567");
 
 const { LuxuryShop, Market } = require("../logic/Tiles");
 const ls = new LuxuryShop();
@@ -18,9 +19,9 @@ player2.move(ls, m);
 player3.assistants[0].onDuty = true;
 player3.assistants[1].onDuty = true;
 
-player2.diamond = 1;
+player2.diamond = 10;
 
-player.sendSteal(player2, 0.15);
+player.sendSteal(player2, 0.05);
 player2.sendSteal(player, 0.5, 0.5);
 
 player3.release(player3.assistants[0]);
@@ -49,6 +50,11 @@ player5.cartCapacity();
 player5.assistants[0].onDuty = true;
 player5.assistants[1].onDuty = true;
 
+player5.diamond = 1;
+
+player6.assistants[0].onDuty = true;
+player6.assistants[1].onDuty = true;
+
 describe("movement", () => {
   test("should move from none to location", (done) => {
     expect(player.currentLocation).toBe("Luxury Shop");
@@ -76,13 +82,13 @@ describe("movement", () => {
 describe("steal", () => {
   it("should increase diamond if true", (done) => {
     expect(player.diamond).toBe(1);
-    expect(player2.diamond).toBe(0);
+    expect(player2.diamond).toBe(9);
     done();
   });
 
   it("should not increase diamond if false", (done) => {
     expect(player.diamond).toBe(1);
-    expect(player2.diamond).toBe(0);
+    expect(player2.diamond).toBe(9);
     done();
   });
 
@@ -98,8 +104,15 @@ describe("steal", () => {
     done();
   });
 
-  test("should reject action if there are no assistant left", (done) => {
+  test("should reject action if target doesnt have diamond", (done) => {
     expect(player5.sendSteal(player4)).toEqual({
+      msg: "Target doesn't have any diamond",
+    });
+    done();
+  });
+
+  test("should reject action if it's not player's turn", (done) => {
+    expect(player6.sendSteal(player5)).toEqual({
       msg: "You dont have free assistant to do this",
     });
     done();

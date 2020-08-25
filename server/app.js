@@ -41,6 +41,7 @@ const {
 app.use(cors());
 
 let rooms = [],
+  messages = [],
   players = [],
   tiles = [
     new LuxuryShop(false),
@@ -66,6 +67,10 @@ io.on("connection", (socket) => {
   socket.on("submit-username", async (name) => {
     let user = await userLogin(users, socket.id, name);
     socket.emit("get-username", user);
+    io.emit("get-connected-users", users);
+
+    console.log("sending message to client: " + socket.id);
+    socket.emit("recieve-message", messages);
   });
 
   socket.on("clear-room", () => {

@@ -4,11 +4,13 @@
     <div class="flex flex-wrap">
       <RoomCard v-for="(room, idx) in rooms" :key="idx" :room="room" />
     </div>
-    <form @submit="createRoom">
-      <input type="text" v-model="roomInput" />
-      <button type="submit">CREATE ROOM</button>
-    </form>
-    <ChatMenu :user="user" :id="id" />
+    <div class="flex justify-end p-5">
+      <form @submit="createRoom">
+        <input class="px-2 py-1 border bg-gray-300" type="text" v-model="roomInput" />
+        <button class="px-2 py-1 rounded font-bold bg-yellow-300" type="submit">CREATE ROOM</button>
+      </form>
+    </div>
+    <ChatMenu :connectedUsers="connectedUsers" :user="user" :id="id" />
   </div>
 </template>
 
@@ -30,6 +32,7 @@ export default {
       roomInput: "",
       id: "",
       rooms: [],
+      connectedUsers: []
     };
   },
   methods: {
@@ -59,6 +62,9 @@ export default {
     socket.on("get-username", (user) => {
       this.$store.commit("SET_USER", user);
     });
+    socket.on('get-connected-users', (users) => {
+      this.connectedUsers = users
+    })
     socket.emit("get-all-room");
     socket.on("get-list-room", (data) => {
       this.rooms = data;

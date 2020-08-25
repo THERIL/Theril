@@ -18,7 +18,7 @@ export default class PlayScene extends Scene {
   }
 
   create() {
-   
+
     this.add.image(600, 300, 'background')
 
     socket.emit('test')
@@ -71,7 +71,7 @@ export default class PlayScene extends Scene {
     this.updateClickCountText(clickCount);
 
     // for (let i = 0; i<this.tiles.length; i++ ) {
-     
+
     // }
 
     const tilesText = this.add.text(200, 400, `tessst ${this.tiles}`)
