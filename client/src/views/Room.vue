@@ -55,10 +55,6 @@ export default {
       this.$router.push({ name: "Lobby" });
       alert(message);
     });
-    socket.on("errorFull", (message) => {
-      this.$router.push({ name: "Lobby" });
-      alert(message);
-    });
   },
   methods: {
     startGame() {

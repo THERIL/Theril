@@ -74,7 +74,7 @@ const bailAction = (players, index, objGame) => {
 
 const move = (players, moveFrom, moveTo, objGame) => {
   let player = players.filter((x) => x.name === g.activeCharacter);
-  player[0].move((moveFrom = ""), moveTo);
+  let x = player[0].move((moveFrom = ""), moveTo);
 
   let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
 
@@ -89,7 +89,7 @@ const move = (players, moveFrom, moveTo, objGame) => {
   objGame.players = [players[0], g.players[1]];
   objGame.active = g.activeCharacter;
   objGame.currentLocation = player[0].currentLocation;
-  return { players, objGame };
+  return { players, objGame, x };
 };
 
 const marketAction = (players, objGame) => {
@@ -98,7 +98,7 @@ const marketAction = (players, objGame) => {
 
   let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
 
-  market.transaction(player[0]);
+  let x = market.transaction(player[0]);
   if (player[0].hasDone === 2) {
     g.checkTurn();
     if (jailedAssistant.length) {
@@ -110,13 +110,13 @@ const marketAction = (players, objGame) => {
   objGame.players = [players[0], g.players[1]];
   objGame.active = g.activeCharacter;
   objGame.currentLocation = player[0].currentLocation;
-  return { players, objGame };
+  return { players, objGame, x };
 };
 
 const teaHouseAction = (players, objGame) => {
   const teaHouse = new TeaHouse(false);
   let player = players.filter((x) => x.name === g.activeCharacter);
-  teaHouse.throwDice(player[0]);
+  let x = teaHouse.throwDice(player[0]);
 
   let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
 
@@ -131,7 +131,7 @@ const teaHouseAction = (players, objGame) => {
   objGame.players = [players[0], g.players[1]];
   objGame.active = g.activeCharacter;
   objGame.currentLocation = player[0].currentLocation;
-  return { players, objGame };
+  return { players, objGame, x };
 };
 
 const wareHouseAction = (players, objGame) => {
@@ -139,7 +139,7 @@ const wareHouseAction = (players, objGame) => {
   let player = players.filter((x) => x.name === g.activeCharacter);
   let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
 
-  wareHouse.transaction(player[0]);
+  let x = wareHouse.transaction(player[0]);
 
   if (player[0].hasDone === 2) {
     g.checkTurn();
@@ -152,14 +152,14 @@ const wareHouseAction = (players, objGame) => {
   objGame.players = [players[0], g.players[1]];
   objGame.active = g.activeCharacter;
   objGame.currentLocation = player[0].currentLocation;
-  return { players, objGame };
+  return { players, objGame, x };
 };
 
 const wainWrightAction = (players, objGame) => {
   const wainWright = new WainWright(false);
   let player = players.filter((x) => x.name === g.activeCharacter);
   let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
-  wainWright.upgrade(player[0]);
+  let x = wainWright.upgrade(player[0]);
   player[0].checkCart();
   if (player[0].hasDone === 2) {
     g.checkTurn();
@@ -177,7 +177,7 @@ const wainWrightAction = (players, objGame) => {
     return player.diamond >= 6;
   });
 
-  return { players, objGame, winner };
+  return { players, objGame, winner, x };
 };
 
 const luxuryDiamondAction = (players, objGame) => {
@@ -185,7 +185,7 @@ const luxuryDiamondAction = (players, objGame) => {
   let player = players.filter((x) => x.name === g.activeCharacter);
   let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
 
-  luxuryShop.sellDiamond(player[0]);
+  let x = luxuryShop.sellDiamond(player[0]);
 
   if (player[0].hasDone === 2) {
     g.checkTurn();
@@ -202,15 +202,15 @@ const luxuryDiamondAction = (players, objGame) => {
   let winner = objGame.players.filter((player) => {
     return player.diamond >= 6;
   });
-  return { players, objGame, winner };
+  return { players, objGame, winner, x };
 };
 
 const luxuryItemsAction = (players, item, objGame) => {
   const luxuryShop = new LuxuryShop(false);
-  player = players.filter((x) => x.name === g.activeCharacter);
+  let player = players.filter((x) => x.name === g.activeCharacter);
   let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
 
-  luxuryShop.transaction(player[0], item);
+  let x = luxuryShop.transaction(player[0], item);
 
   if (player[0].hasDone === 2) {
     g.checkTurn();
@@ -223,7 +223,7 @@ const luxuryItemsAction = (players, item, objGame) => {
   objGame.players = [players[0], g.players[1]];
   objGame.active = g.activeCharacter;
   objGame.currentLocation = player[0].currentLocation;
-  return { players, objGame };
+  return { players, objGame, x };
 };
 
 const freeAssistants = (players, assistant, objGame) => {
@@ -254,7 +254,7 @@ const steal = (players, target, objGame) => {
   let player = players.filter((x) => x.name === g.activeCharacter);
   let jailedAssistant = player[0].assistants.filter((x) => x.jailed);
 
-  player[0].sendSteal(target);
+  let x = player[0].sendSteal(target);
 
   if (player[0].hasDone === 2) {
     g.checkTurn();
@@ -272,7 +272,7 @@ const steal = (players, target, objGame) => {
     return player.diamond >= 6;
   });
 
-  return { players, target, objGame, winner };
+  return { players, objGame, winner, x };
 };
 const hornsAction = (players, objGame) => {
   let player = players.filter((x) => x.name === g.activeCharacter);

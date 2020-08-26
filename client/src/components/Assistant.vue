@@ -3,10 +3,10 @@
     <!-- <i v-if="assistant.workLocation == tileName" class="floating"
       :class="[color]" >
 			<img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/751678/skytsunami.png" />
-		</i> -->
+    </i>-->
     <i
       v-if="assistant.workLocation == tileName"
-      class="fa fa-user fa-3x floating-ass"
+      class="fa fa-user fa-2x floating-ass"
       :class="[color]"
       aria-hidden="true"
     ></i>
@@ -27,10 +27,7 @@ export default {
   animation-duration: 3s;
   animation-iteration-count: infinite;
   animation-timing-function: ease-in-out;
-  margin-left: 30px;
+  margin-left: 15px;
   margin-top: 15px;
 }
-
-
-
 </style>

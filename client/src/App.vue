@@ -33,6 +33,8 @@ export default {
 @import url("https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap");
 #app {
   height: 100vh;
+  min-width: 1366px;
+  min-height: 768px;
   font-family: "Play", sans-serif;
 }
 </style>

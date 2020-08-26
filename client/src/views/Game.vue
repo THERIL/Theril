@@ -1,8 +1,36 @@
 <template>
   <div class="div game-luar flex justify-center">
     <div class="game-luar-background"></div>
+
+    <!-- MODAL -->
+    <form @submit="submitForm">
+      <input type="text" v-model="text" />
+    </form>
+
+    <div v-if="isWin">
+      <div id="myModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <p>{{ winMessage }}</p>
+        </div>
+        <button @click="exit">Ok</button>
+      </div>
+    </div>
+    <div v-if="pemain.name === activePlayer">
+      <div v-if="stuck">
+        <div id="myModal" class="modal">
+          <!-- Modal content -->
+          <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>{{ stuck.msg }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
     <audio loop id="start" src="../assets/music-4.mp3" type="audio/mpeg" />
     <div class="div h-full mx-auto flex">
+      <button @click="exitGame">Exit</button>
       <!-- div player========================================================================== -->
 
       <div id="player" class="w-1/4 mt-4 flex flex-col">
@@ -30,83 +58,8 @@
               class="bg-green-800 text-gray-100 px-2 py-1 font-semibold"
               @click="changeCart"
             >change value</button>
-            <button
-              class="bg-yellow-800 text-gray-100 px-2 py-1 font-semibold"
-              v-if="pemain.currentLocation === 'Market'"
-              @click="market"
-            >Sell</button>
-            <button
-              class="bg-blue-800 text-gray-100 px-2 py-1 font-semibold"
-              v-if="pemain.currentLocation === 'Luxury Shop'"
-              @click="luxuryDiamond"
-            >Buy Diamond</button>
-            <button
-              class="bg-blue-800 text-gray-100 px-2 py-1 font-semibold"
-              v-if="pemain.currentLocation === 'Luxury Shop'"
-              @click="luxuryItem('Strider')"
-            >Buy Strider</button>
-            <button
-              class="bg-blue-800 text-gray-100 px-2 py-1 font-semibold"
-              v-if="pemain.currentLocation === 'Luxury Shop'"
-              @click="luxuryItem('Horns')"
-            >Buy Horns</button>
-            <button
-              class="bg-blue-800 text-gray-100 px-2 py-1 font-semibold"
-              v-if="pemain.currentLocation === 'Luxury Shop'"
-              @click="luxuryItem('Golden Whistle')"
-            >Buy Golden Whislte</button>
-            <button
-              class="bg-blue-800 text-gray-100 px-2 py-1 font-semibold"
-              v-if="pemain.currentLocation === 'Luxury Shop'"
-              @click="luxuryItem('Shadow Hand')"
-            >Buy Shadow Hand</button>
-            <button
-              class="bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
-              v-if="pemain.currentLocation === 'Tea House'"
-              @click="teaHouse"
-            >Gamble</button>
-            <div v-if="pemain.currentLocation === 'Wain Wright'">
-              <button
-                v-if="pemain.cart < 4"
-                class="bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
-                @click="wainWright"
-              >Upgrade Cart</button>
-              <p v-else>Your cart is already at max level</p>
-            </div>
-            <button
-              class="bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
-              v-if="pemain.currentLocation === 'Warehouse'"
-              @click="wareHouse"
-            >Free Resources</button>
-
-            <div v-for="(location, index) in pemain.assistants" :key="index">
-              <button
-                class="bg-green-800 text-gray-100 px-2 py-1 font-semibold"
-                v-if="
-                  status.length &&
-                    pemain.currentLocation === location.workLocation
-                "
-                @click="freeAsistance(location)"
-              >Free Assistant {{ index + 1 }}</button>
-            </div>
-            <div
-              class="bg-red-800 text-gray-100 px-2 py-1 font-semibold"
-              v-if="
-                pemain.currentLocation === anotherPlayer.currentLocation &&
-                  pemain.currentLocation &&
-                  anotherPlayer.currentLocation
-              "
-            >
-              <button @click="steal">Duplicate Diamond</button>
-            </div>
           </div>
         </div>
-        <iframe
-          allow="microphone;"
-          width="350"
-          height="430"
-          src="https://console.dialogflow.com/api-client/demo/embedded/ec1c8deb-b60b-4f58-b2e9-1f499c604a14"
-        ></iframe>
       </div>
       <!-- div board========================================================================= -->
       <div id="bord" class="w-3/4">
@@ -128,13 +81,9 @@
         <div class="mx-auto">
           <div class="w-full px-5 flex justify-between h-10p mx-auto">
             <div class="w-1/2 bg-gray-400 rounded">
+              <i class="nes-octocat animate"></i>
               <section class="p-5 font-bold">
-                <h4>MARKET</h4>
-                <p>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Ratione porro nisi delectus laudantium aspernatur beatae
-                  expedita doloribus facere vitae dolor.
-                </p>
+                <p>{{ botChat }}</p>
               </section>
             </div>
 
@@ -154,6 +103,12 @@
             :key="index"
             :index="index"
             @clickMove="move(pemain.currentLocation, tile)"
+            @wareHouse="wareHouse"
+            @market="market"
+            @teaHouse="teaHouse"
+            @wainWright="wainWright"
+            @luxuryDiamond="luxuryDiamond"
+            @luxuryItem="luxuryItem"
             :tile="tile"
             :player="pemain"
             :player2="anotherPlayer"
@@ -171,6 +126,8 @@
 import socket from "../config/socket";
 import PlayerCard from "../components/PlayerCard";
 import TileCard from "../components/TileCard";
+import { mapGetters } from "vuex";
+import axios from "axios";
 export default {
   data() {
     return {
@@ -185,6 +142,11 @@ export default {
       anotherPlayer: {},
       jail: [],
       isSound: true,
+      isWin: false,
+      winMessage: "",
+      stuck: "",
+      text: "",
+      botChat: "",
     };
   },
   components: {
@@ -232,6 +194,10 @@ export default {
       socket.emit("free", this.room.name, assistant);
     },
     exit() {
+      socket.emit("exit-game-winner", this.room.name, this.user.id);
+      this.$router.push({ name: "Lobby" });
+    },
+    exitGame() {
       socket.emit("exit-game", this.room.name, this.user.id);
       this.$router.push({ name: "Lobby" });
     },
@@ -243,6 +209,31 @@ export default {
     },
     bail(index) {
       socket.emit("bail", this.room.name, index);
+    },
+    horns() {
+      socket.emit("horns", this.room.name);
+    },
+    submitForm(event) {
+      event.preventDefault();
+      const chat = { text: this.text };
+      console.log(chat);
+      axios({
+        method: "post",
+        url: "http://localhost:3000",
+        data: chat,
+      })
+        .then(({ data }) => {
+          console.log(data);
+          // context.emit("DIALOG_FLOW_CHAT", data);
+          this.botChat = data;
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally((_) => {
+          this.text = "";
+        });
+      // this.$store.dispacth("dialogFlow", chat);
     },
   },
   created() {
@@ -263,7 +254,8 @@ export default {
       this.jail = playerX.assistants.filter((x) => x.jailed);
     });
 
-    socket.on("updated-game", (game) => {
+    socket.on("updated-game", (game, msg) => {
+      this.stuck = msg;
       this.game = game;
       let playerX = game.players.filter(
         (player) => player.id === this.user.id
@@ -284,13 +276,14 @@ export default {
     });
 
     socket.on("user-win", (data) => {
-      alert("Another player has leave the game, You Win");
-      socket.emit("exit-game-winner", this.room.name, this.user.id);
-      this.$router.push({ name: "Lobby" });
+      this.isWin = true;
+      this.winMessage = data;
+      // socket.emit("exit-game-winner", this.room.name, this.user.id);
+      // this.$router.push({ name: "Lobby" });
     });
-
     socket.on("show-winner", (msg) => {
-      alert(msg);
+      this.isWin = true;
+      this.winMessage = msg;
     });
   },
   computed: {

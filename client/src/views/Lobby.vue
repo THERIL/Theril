@@ -1,8 +1,9 @@
 <template>
-  <div class="h-full mx-auto">
-    <div class="h-full p-5 bg-gray-700 flex flex-col border">
+  <div class="game-luar">
+    <div class="game-luar-background"></div>
+    <div class="h-full p-5 flex flex-col border">
       <div class="w-full h-full flex">
-        <div class="w-2/6 h-full p-5 bg-gray-800">
+        <div class="w-2/6 h-full p-5 bg-lobby">
           <div>
             <p class="text-left text-white text-2xl font-bold">{{user.name}}</p>
           </div>
@@ -26,10 +27,13 @@
                   type="text"
                   v-model="roomInput"
                 />
-                <button class="px-2 py-1 rounded font-bold bg-yellow-300" type="submit">CREATE ROOM</button>
+                <button
+                  class="px-2 py-1 ml-4 rounded font-bold bg-yellow-300"
+                  type="submit"
+                >CREATE ROOM</button>
               </form>
             </div>
-            <div class="flex flex-wrap h-60p bg-gray-800 overflow-y-scroll">
+            <div class="flex flex-wrap h-60p bg-lobby overflow-y-scroll">
               <RoomCard v-for="(room, idx) in rooms" :key="idx" :room="room" />
             </div>
           </div>
@@ -55,12 +59,12 @@ export default {
     ChatMenu,
     RoomCard,
   },
-  data: function() {
+  data: function () {
     return {
       roomInput: "",
       id: "",
       rooms: [],
-      connectedUsers: []
+      connectedUsers: [],
     };
   },
   methods: {
@@ -78,7 +82,7 @@ export default {
     },
   },
   computed: mapGetters(["user"]),
-  created: function() {
+  created: function () {
     if (!this.$store.state.user.name) {
       this.$router.push("/");
     }
@@ -90,27 +94,44 @@ export default {
     socket.on("get-username", (user) => {
       this.$store.commit("SET_USER", user);
     });
-    socket.on('get-connected-users', (users) => {
-      this.connectedUsers = users
-    })
+    socket.on("get-connected-users", (users) => {
+      this.connectedUsers = users;
+    });
     socket.emit("get-all-room");
     socket.on("get-list-room", (data) => {
       this.rooms = data;
     });
-
     socket.on("updated-room", (data) => {
       this.rooms = data;
     });
-    // socket.on("user-win", (data) => {
-    //   // console.log(data.users);
-    //   // // alert("You Win bgst");
-    //   this.$router.push({ name: "Lobby" });
-    // });
   },
 };
 </script>
 
 <style scoped>
+.bg-lobby {
+  background-color: rgba(44, 44, 44, 0.5);
+}
+.game-luar {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.game-luar-background {
+  background-image: url("../assets/background-opa.png");
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  z-index: -1;
+  /* opacity: 0.6; */
+
+  background-repeat: no-repeat;
+  background-size: cover;
+  overflow: hidden;
+}
 .roombox-height {
   height: 60%;
 }

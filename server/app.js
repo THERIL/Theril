@@ -3,6 +3,7 @@ const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 const port = process.env.PORT || 3000;
 const cors = require("cors");
+const { json, urlencoded } = require("express");
 
 const {
   Game,
@@ -43,7 +44,6 @@ app.use(cors());
 
 let rooms = [],
   messages = [{ username: "tester", text: "ini text dummy" }],
-  playersToBe = [],
   players = [],
   tiles = [
     new LuxuryShop(false),
@@ -60,6 +60,22 @@ let objGame = {
   active: "",
   currentLocation: "",
 };
+
+const dialog = require("./dialog");
+
+app.use(json());
+app.use(urlencoded({ extended: false }));
+
+app.post("/", async (req, res) => {
+  try {
+    const { text } = req.body;
+    console.log(text);
+    const result = await dialog(text);
+    res.status(200).json(result.data.queryResult.fulfillmentText);
+  } catch (err) {
+    console.log(err);
+  }
+});
 
 io.on("connection", (socket) => {
   console.log("User connected: " + socket.id);
@@ -111,7 +127,10 @@ io.on("connection", (socket) => {
         1
       );
       console.log(rooms[index], "dari exit game karena menyerah");
-      io.to(rooms[index].users[0].id).emit("user-win", "You Win");
+      io.to(rooms[index].users[0].id).emit(
+        "user-win",
+        "Another player has leave the game, You Win"
+      );
     });
   });
 
@@ -122,8 +141,11 @@ io.on("connection", (socket) => {
         rooms[index].users.findIndex((user) => user.id == id),
         1
       );
-      rooms = [];
+      if (!rooms[index].users.length) {
+        rooms.splice(index, 1);
+      }
       io.emit("get-list-room", rooms);
+      io.emit("get-connected-users", users);
     });
   });
 
@@ -179,25 +201,25 @@ io.on("connection", (socket) => {
   socket.on("move", async (data, moveFrom, moveTo) => {
     let moveAction = await move(players, moveFrom, moveTo, objGame);
     players = moveAction.players;
-    io.in(data).emit("updated-game", moveAction.objGame);
+    io.in(data).emit("updated-game", moveAction.objGame, moveAction.x);
   });
 
   socket.on("market", async (data) => {
     let market = await marketAction(players, objGame);
     players = market.players;
-    io.in(data).emit("updated-game", market.objGame);
+    io.in(data).emit("updated-game", market.objGame, market.x);
   });
 
   socket.on("tea-house", async (data) => {
     let teaHouse = await teaHouseAction(players, objGame);
     players = teaHouse.players;
-    io.in(data).emit("updated-game", teaHouse.objGame);
+    io.in(data).emit("updated-game", teaHouse.objGame, teaHouse.x);
   });
 
   socket.on("ware-house", async (data) => {
     let wareHouse = await wareHouseAction(players, objGame);
     players = wareHouse.players;
-    io.in(data).emit("updated-game", wareHouse.objGame);
+    io.in(data).emit("updated-game", wareHouse.objGame, wareHouse.x);
   });
 
   socket.on("wain-wright", async (data) => {
@@ -209,7 +231,7 @@ io.on("connection", (socket) => {
         `${wainWright.winner[0].name} has collected 6 Diamonds!`
       );
     } else {
-      io.in(data).emit("updated-game", wainWright.objGame);
+      io.in(data).emit("updated-game", wainWright.objGame, wainWright.x);
     }
   });
 
@@ -222,14 +244,14 @@ io.on("connection", (socket) => {
         `${luxuryDiamond.winner[0].name} has collected 6 Diamonds!`
       );
     } else {
-      io.in(data).emit("updated-game", luxuryDiamond.objGame);
+      io.in(data).emit("updated-game", luxuryDiamond.objGame, luxuryDiamond.x);
     }
   });
 
   socket.on("luxury-item", async (data, item) => {
     let luxuryItem = await luxuryItemsAction(players, item, objGame);
     players = luxuryItem.players;
-    io.in(data).emit("updated-game", luxuryItem.objGame);
+    io.in(data).emit("updated-game", luxuryItem.objGame, luxuryItem.x);
   });
 
   socket.on("free", async (data, assistant) => {
@@ -247,11 +269,7 @@ io.on("connection", (socket) => {
         `${stealDiamond.winner[0].name} has collected 6 Diamonds!`
       );
     } else {
-      io.in(data).emit(
-        "updated-game",
-        stealDiamond.objGame,
-        stealDiamond.target
-      );
+      io.in(data).emit("updated-game", stealDiamond.objGame, stealDiamond.x);
     }
   });
 

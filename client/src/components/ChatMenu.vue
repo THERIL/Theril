@@ -1,10 +1,10 @@
 <template>
   <div class="h-full">
-    <div class="h-10p border-b bg-gray-800">
+    <div class="h-10p border-b bg-lobby">
       <h1 class="text-xl font-bold border-gray-100 text-gray-100">LOBBY CHAT</h1>
     </div>
     <!-- CHATBOX -->
-    <div id="chatbox" class="h-80p bg-gray-800 overflow-y-scroll">
+    <div id="chatbox" class="h-80p bg-lobby overflow-y-scroll">
       <div class="text-left" v-for="(message,index) in allMessages" :key="index">
         <p class="font-bold mt-2 text-gray-100 text-left">({{message.username}}):</p>
         <p class="text-gray-100">{{message.text}}</p>
@@ -77,6 +77,10 @@ export default {
 </script>
 
 <style>
+.bg-lobby {
+  background-color: rgba(44, 44, 44, 0.5);
+}
+
 .h-10p {
   height: 10%;
 }
