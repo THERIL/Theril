@@ -1,6 +1,6 @@
 <template>
   <div id="app" class="mx-auto">
-    <div id="nav">
+    <div class="hidden" id="nav">
       <router-link to="/" v-if="!user.name">Login</router-link>|
       <router-link to="/lobby">Lobby</router-link>|
       <router-link to="/test">test</router-link>|
@@ -30,8 +30,11 @@ export default {
 </script>
 
 <style scoped>
+@import url("https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap");
 #app {
-  width: 1366px;
-  height: 768px;
+  height: 100vh;
+  min-width: 1366px;
+  min-height: 768px;
+  font-family: "Play", sans-serif;
 }
 </style>

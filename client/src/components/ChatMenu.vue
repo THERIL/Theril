@@ -1,10 +1,10 @@
 <template>
   <div class="h-full">
-    <div class="h-10p bg-gray-800">
-      <h1 class="text-xl font-bold text-gray-100">LOBBY CHAT</h1>
+    <div class="h-10p border-b bg-lobby">
+      <h1 class="text-xl font-bold border-gray-100 text-gray-100">LOBBY CHAT</h1>
     </div>
     <!-- CHATBOX -->
-    <div class="h-80p overflow-y-scroll">
+    <div id="chatbox" class="h-80p bg-lobby overflow-y-scroll">
       <div class="text-left" v-for="(message,index) in allMessages" :key="index">
         <p class="font-bold mt-2 text-gray-100 text-left">({{message.username}}):</p>
         <p class="text-gray-100">{{message.text}}</p>
@@ -47,7 +47,19 @@ export default {
                   }
                   socket.emit('send-message', payload)
                   this.messageInput = '';
-            }
+            },
+            scrollDown: function () {
+              const el = document.getElementById('chatbox')
+              if (el) {
+                console.log(el)
+                el.scrollTop = el.scrollHeight
+              }
+            },
+      },
+      watch: {
+        allMessages: function() {
+          this.scrollDown()
+        }
       },
       created: function () {
             socket.on('recieve-message', (message) => {
@@ -60,11 +72,15 @@ export default {
                 this.allMessages.push(message)
               }
             })
-      }
+      },
 }
 </script>
 
 <style>
+.bg-lobby {
+  background-color: rgba(44, 44, 44, 0.5);
+}
+
 .h-10p {
   height: 10%;
 }

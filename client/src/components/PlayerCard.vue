@@ -1,112 +1,124 @@
 <template>
-  <div class="card bg-gray-500 bg-opacity-75 border-2 p-2 flex">
+  <div class="w-5/6 relative mt-6 bg-orange-800 bg-opacity-75 border-2 flex flex-col">
+    <!-- NAME HEADER -->
+    <div class="border-b-2 bg-blue-900">
+      <p class="text-gray-100 text-2xl">
+        <i class="fas fa-chess-king"></i>
+        {{player.name}}
+      </p>
+    </div>
+    <!-- AVATAR -->
+    <img
+      class="absolute top-0 right-0 -mt-5 -mr-5 rounded-full border-2"
+      src="https://dummyimage.com/64.jpg"
+      alt
+      width="64px"
+      height="64px"
+      srcset
+    />
+
     <!-- KIRI -->
-    <div id="kiri" class="w-4/6">
-      <div class="border-b-2 bg-blue-900">
-        <p class="text-gray-100 text-2xl">
-          <i class="fas fa-chess-king"></i>
-          {{player.name}}
-        </p>
-      </div>
-
-      <div class="flex flex-col">
+    <div class="flex">
+      <div id="kiri" class="w-4/6">
         <div class="flex flex-col">
-          <div class="flex">
-            <img
-              v-for="(n,i) in player.resources[0].amount"
-              :src="require(`../assets/apple.png`)"
-              :key="i"
-              width="24"
-              height="24"
-            />
-          </div>
-          <div class="flex">
-            <img
-              v-for="(n,i) in player.resources[1].amount"
-              :src="require(`../assets/clothes.png`)"
-              :key="i"
-              width="24"
-              height="24"
-            />
-          </div>
-          <div class="flex">
-            <img
-              v-for="(n,i) in player.resources[2].amount"
-              :src="require(`../assets/jewelry.png`)"
-              :key="i"
-              width="24"
-              height="24"
-            />
-          </div>
-        </div>
-
-        <div class="flex flex-col">
-          <div class="flex">
-            <i class="fa fa-level-up" aria-hidden="true"></i>
-            {{player.cart}}
-          </div>
-          <div class="flex">
-            <i class="fas fa-boxes"></i>
-            {{player.capacity}}
-          </div>
-          <div class="flex">
-            <img
-              v-for="(n,i) in playerAssis"
-              :src="require(`../assets/assistant.png`)"
-              :key="i"
-              width="24"
-              height="24"
-            />
+          <div class="flex flex-col ml-2 justify-evenly">
+            <div class="flex mt-4">
+              <div v-for="(n,i) in player.capacity" :key="i">
+                <img
+                  :class="[player.resources[0].amount<=i ? 'opacity-50' : 'opacity-100']"
+                  :src="require(`../assets/apple.png`)"
+                  :key="i"
+                  width="24"
+                  height="24"
+                />
+              </div>
+            </div>
+            <div class="flex mt-2">
+              <div v-for="(n,i) in player.capacity" :key="i">
+                <img
+                  :class="[player.resources[1].amount<=i? 'opacity-50' : 'opacity-100']"
+                  :src="require(`../assets/clothes.png`)"
+                  :key="i"
+                  width="24"
+                  height="24"
+                />
+              </div>
+            </div>
+            <div class="flex mt-2">
+              <div v-for="(n,i) in player.capacity" :key="i">
+                <img
+                  :class="[player.resources[2].amount<=i ? 'opacity-50' : 'opacity-100']"
+                  :src="require(`../assets/jewelry.png`)"
+                  :key="i"
+                  width="24"
+                  height="24"
+                />
+              </div>
+            </div>
+            <!-- <div class="flex mt-2">
+              <i class="fas fa-boxes"></i>
+              {{player.capacity}}
+            </div>-->
+            <div class="flex mt-2">
+              <div v-for="(n,i) in 2" :key="i">
+                <img
+                  :class="[playerAssis<=i ? 'opacity-50' : 'opacity-100']"
+                  :src="require(`../assets/assistant.png`)"
+                  :key="i"
+                  width="24"
+                  height="24"
+                />
+              </div>
+            </div>
+            <div class="flex items-center mt-2">
+              <p class="ml-2 text-gray-100 text-lg font-bold">Cart Lv: {{player.cart}}/4</p>
+            </div>
           </div>
         </div>
       </div>
-    </div>
-    <!-- END KIRI -->
+      <!-- END KIRI -->
 
-    <!-- START KANAN -->
-    <div id="kanan" class="w-2/6 border ml-2">
-      <div class="flex relative">
-        <!-- AVATAR -->
-        <img
-          class="absolute top-0 right-0 -mt-5 -mr-5 rounded-full border-2"
-          src="https://dummyimage.com/64.jpg"
-          alt
-          width="64px"
-          height="64px"
-          srcset
-        />
-
-        <!-- FLEX DIAMOND -->
-        <div class="w-1/2 flex flex-col">
-          <img
-            v-for="(n,i) in 6"
-            :class="[player.diamond<=i ? 'opacity-50' : 'opacity-100']"
-            :src="require(`../assets/diamond.png`)"
-            :key="i"
-            width="24"
-            height="24"
-          />
-        </div>
-
-        <!-- FLEX GOLD + MVSPEED -->
-        <div class="w-1/2 flex flex-col justify-end font-bold">
-          <!-- GOLD -->
-          <div class="flex">
-            <img :src="require(`../assets/gold.png`)" :key="i" width="24" height="24" />
-            <p>{{player.gold}}</p>
+      <!-- START KANAN -->
+      <div id="kanan" class="w-2/6 ml-2">
+        <div class="flex flex-col mt-4">
+          <!-- FLEX DIAMOND -->
+          <div class="w-full flex flex-wrap">
+            <div v-for="(n,i) in 6" :key="i" class="w-1/3">
+              <img
+                :class="[player.diamond<=i ? 'opacity-50' : 'opacity-100']"
+                :src="require(`../assets/diamond.png`)"
+                width="24"
+                height="24"
+              />
+            </div>
           </div>
-          <!-- MVSPEED -->
-          <div class="flex">
-            <p>
-              <i class="fas fa-shoe-prints"></i>
-              {{player.movement}}
-            </p>
+          <div class="flex flex-col">
+            <!-- GOLD -->
+            <div class="w-full flex items-center">
+              <img :src="require(`../assets/gold.png`)" width="32" height="32" />
+              <p class="text-gray-100 text-xl font-bold">{{player.gold}}</p>
+            </div>
+
+            <!-- MVSPEED -->
+            <div class="w-full mt-2 flex">
+              <div class="w-1/2" v-for="(n,i) in 2" :key="i">
+                <i
+                  :class="[player.movement<=i ? 'opacity-50' : 'opacity-100']"
+                  class="fas fa-shoe-prints text-gray-100"
+                ></i>
+              </div>
+            </div>
           </div>
+
+          <!-- FLEX GOLD + MVSPEED -->
+          <!-- <div class="w-1/2 flex flex-col justify-end font-bold">
+        
+          </div>-->
+          <!-- END GOLD + MVSPEED -->
         </div>
-        <!-- END GOLD + MVSPEED -->
       </div>
+      <!-- END KANAN -->
     </div>
-    <!-- END KANAN -->
   </div>
 </template>
 
