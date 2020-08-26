@@ -1,14 +1,24 @@
 <template>
-  <div class="game-luar flex justify-center">
-    <div class="game-container mx-auto flex">
+  <div class="game-luar">
+    <button @click="voice"> voice </button>
+    <PlayerInRoom/>
+    <!-- <div class="game-container mx-auto flex">
       <audio loop id="start" src="../assets/Battle_Music_1.mp3" type="audio/mpeg" />
       <div id="player" class="w-1/4">
         <PlayerCard :player="player" />
         <br />
         <br />
         <PlayerCard :player="player" />
+        <button
+            @click="getResource"
+            class="  text-green-900 btn-cus"
+          >
+            <audio id="get-resource" src="../assets/get-resource.mp3" type="audio/mpeg" />
+            GET RESOURCES
+          </button>
       </div>
       <div id="bord" class="w-3/4">
+      
         <div class="flex justify-end">
           <div>
             <button v-if="isSound" @click="startAudio" class="flex items-center mr-3">
@@ -55,7 +65,7 @@
           </button>
           <button
             @click="getResource"
-            class="px-4 py-2 m-2 bg-green-200 text-green-900 text-center rounded shadow"
+            class=" m-2 btn-cus text-green-900 text-center rounded shadow"
           >
             <audio id="get-resource" src="../assets/get-resource.mp3" type="audio/mpeg" />
             GET RESOURCES
@@ -73,18 +83,26 @@
           <TileCard v-for="(n,i) in 6" :key="i" :index="i" :player1="player1" :player2="player2" />
         </div>
       </div>
+    </div>-->
+    <!-- <button class="btn-cus">testttt</button> -->
+
+    <div class="container">
+      <div class="avatar floating"></div>
     </div>
   </div>
 </template>
 
 <script>
+import Artyom from "artyom.js";
 import PlayerCard from "../components/PlayerCard";
 import TileCard from "../components/TileCard";
+import PlayerInRoom from "../components/PlayerInRoom"
 export default {
   name: "Test",
   components: {
     PlayerCard,
     TileCard,
+    PlayerInRoom
   },
   data: function () {
     return {
@@ -92,12 +110,18 @@ export default {
         name: "Nicko",
       },
       isSound: true,
-      player1: '',
-      player2: '',
-      currentLocation: ''
+      player1: "",
+      player2: "",
+      currentLocation: "",
     };
   },
   methods: {
+    voice() {
+      const moveTo = 'Luxury Shop'
+      const Jarvis = new Artyom();
+
+      Jarvis.say(`Move to ${moveTo} !`);
+    },
     startAudio() {
       var audio = document.getElementById("start");
       audio.play();
@@ -127,22 +151,60 @@ export default {
       audio.play();
     },
     move1() {
-      this.player1++
-    }
+      this.player1++;
+    },
   },
   created() {},
   computed: {
-    locationIn () {
+    locationIn() {
       if (this.currentLocation) {
-        
       }
-      return 
-    }
-  }
+      return;
+    },
+  },
 };
 </script>
-
 <style>
+/* .avatar {
+	width: 150px;
+	height: 150px;
+	box-sizing: border-box;
+	border: 5px white solid;
+	border-radius: 50%;
+	overflow: hidden;
+	box-shadow: 0 5px 15px 0px rgba(0,0,0,0.6);
+	transform: translatey(0px);
+	animation: 6s ease-in-out infinite;
+	
+} */
+
+/* .avatar img { width: 100%; height: auto; } */
+</style>
+
+/* .btn-cus {
+  background-image: url("../assets/btn-1.png");
+  background-size: auto;
+  background-repeat: no-repeat;
+
+}
+
+.avatar {
+	width: 150px;
+	height: 150px;
+	box-sizing: border-box;
+	border: 5px white solid;
+	border-radius: 50%;
+	overflow: hidden;
+	box-shadow: 0 5px 15px 0px rgba(0,0,0,0.6);
+	transform: translatey(0px);
+	animation: float 6s ease-in-out infinite;
+	
+}
+
+.avatar img { 
+  width: 100%;
+  height: auto;
+} */
 /* .game-container {
   width: 1350px;
 
@@ -157,4 +219,3 @@ export default {
   background-size: cover;
   overflow: hidden;
 } */
-</style>

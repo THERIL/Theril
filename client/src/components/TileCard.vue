@@ -1,10 +1,10 @@
 <template>
-  <div class="w-1/3">
+  <div class="w-1/3 tile">
     <div
       @click="move"
       id="tile"
       class="m-2 relative bg-gray-900 opacity-75 hover:opacity-100 text-center font-bold rounded flex justify-between cursor-pointer"
-      style="padding-bottom:100%"
+      style="padding-bottom:75%"
     >
       <img
         class="absolute h-full w-full object-cover"
@@ -17,29 +17,26 @@
       <!-- <img :src="'../assets/tile-0'+(index+1)+'.png'" alt /> -->
       <!-- :style="{'background-image': 'url(' + require(`../assets/tile-0${index+1}.png`) + ')',  'background-size': 100% 'auto'}" -->
       <audio id="move" src="../assets/move.mp3" type="audio/mpeg" />
-      <div>
-        <div>
-          <i
+      <div class="icon">
+        <div class="player">
+          <div
             v-if="playerPos1 == `${index+1}`"
-            class="fa fa-user fa-3x icon text-yellow-900"
+            class="avatar floating bg-red-600"
             aria-hidden="true"
-          ></i>
-        </div>
-        <div>
-          <i
+          ></div>
+          <div
             v-if="playerPos2 == `${index+1}`"
-            class="fa fa-user fa-3x icon text-green-900"
+            class="avatar floating bg-blue-600"
             aria-hidden="true"
-          ></i>
-        </div>
-      </div>
-
-      <div>
-        <div v-for="(assistant, index) in assistants1" :key="index">
-          <Assistant :assistant="assistant" :tileName="tile.tileName" color="text-yellow-900" />
-        </div>
-        <div v-for="(assistant, index) in assistants2" :key="index+2">
-          <Assistant :assistant="assistant" :tileName="tile.tileName" color="text-green-900" />
+          ></div>
+        </div><br><br>
+        <div class="assis">
+          <div v-for="(assistant, index) in assistants1" :key="index">
+            <Assistant :assistant="assistant" :tileName="tile.tileName" color="text-red-900" />
+          </div>
+          <div v-for="(assistant, index) in assistants2" :key="index+2">
+            <Assistant :assistant="assistant" :tileName="tile.tileName" color="text-blue-900" />
+          </div>
         </div>
       </div>
     </div>
@@ -156,6 +153,10 @@ export default {
   z-index: -1;
 }
 
+.tile {
+  height: 50%;
+}
+
 .icon {
   position: absolute;
   margin-left: 15px;
@@ -163,5 +164,47 @@ export default {
 
 .garmin {
   margin-left: 15px;
+}
+
+.avatar {
+  width: 64px;
+  height: 64px;
+  box-sizing: border-box;
+  border: 2px white solid;
+  border-radius: 50%;
+  overflow: hidden;
+  box-shadow: 0 5px 15px 0px rgba(0, 0, 0, 0.6);
+  transform: translatey(0px);
+  animation: 6s ease-in-out infinite;
+}
+
+.bg-blue-600 {
+  margin-left: 80px;
+}
+
+.avatar img {
+  width: 100%;
+  height: auto;
+}
+
+.floating {
+  animation-name: floating;
+  animation-duration: 3s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
+  margin-left: 30px;
+  margin-top: 5px;
+}
+
+@keyframes floating {
+  from {
+    transform: translate(0, 0px);
+  }
+  65% {
+    transform: translate(0, 15px);
+  }
+  to {
+    transform: translate(0, -0px);
+  }
 }
 </style>

@@ -7,20 +7,48 @@ const createRoom = (data, rooms) => {
   return rooms;
 };
 
-const joinRoom = (data, rooms) => {
-  let index = rooms.findIndex((item) => item.name == data.roomName);
-  // rooms[index].users = [];
-  if (rooms[index].users.length === 2) {
-    rooms[index];
-    return rooms[index];
-    // socket.emit("errorFull", "Player Already full");
-    // io.emit("updated-room", rooms);
-  } else {
-    rooms[index].users.push(data.username);
-    return rooms[index];
-    // // console.log(rooms[index], "dari join room");
-    // io.sockets.in(data.roomName).emit("room-detail", rooms[index]);
+const userLogin = (users, id, name) => {
+  if (users.some((user) => user.id === id)) {
+    console.log("Splice user dengan id yang sama (Handle double-data)");
+    users.splice(
+      users.findIndex((user) => user.id === id),
+      1
+    );
   }
+  const user = {
+    name,
+    id,
+  };
+  users.push(user);
+  return user;
 };
 
-module.exports = { createRoom, joinRoom };
+const userLogout = (users, id, objGame, players, rooms) => {
+  if (users.some((user) => user.id === id)) {
+    users.splice(
+      users.findIndex((user) => user.id === id),
+      1
+    );
+    console.log("Splice user dengan id yang disconnect (Handle logout)");
+  }
+  if (!users.length) {
+    objGame = [];
+    players = [];
+    rooms = [];
+    users = [];
+  }
+  return { users, objGame, players, users, rooms };
+};
+
+const disconnect = (users, id) => {
+  if (users.some((user) => user.id === id)) {
+    console.log("Splice user dengan id yang disconnect (Handle disconnect)");
+    users.splice(
+      users.findIndex((user) => user.id === id),
+      1
+    );
+  }
+  console.log(`User ${id} disconnected.`);
+};
+
+module.exports = { createRoom, userLogin, userLogout, disconnect };

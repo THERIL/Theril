@@ -2,7 +2,7 @@
   <div class="h-full mx-auto">
     <div class="h-full p-5 bg-gray-700 flex flex-col border">
       <div class="w-full h-full flex">
-        <div class="w-2/6 h-full p-5 border">
+        <div class="w-2/6 h-full p-5 bg-gray-800">
           <div>
             <p class="text-left text-white text-2xl font-bold">{{user.name}}</p>
           </div>
@@ -17,15 +17,19 @@
             </div>
           </div>
         </div>
-        <div class="w-4/6 h-full p-5 border">
+        <div class="w-4/6 h-full p-5">
           <div class="roombox-height">
             <div class="flex justify-end p-5">
               <form @submit="createRoom">
-                <input class="px-2 py-1 border bg-gray-300" type="text" v-model="roomInput" />
+                <input
+                  class="px-2 py-1 border bg-gray-300 focus:outline-none"
+                  type="text"
+                  v-model="roomInput"
+                />
                 <button class="px-2 py-1 rounded font-bold bg-yellow-300" type="submit">CREATE ROOM</button>
               </form>
             </div>
-            <div class="flex flex-wrap h-60p overflow-y-scroll">
+            <div class="flex flex-wrap h-60p bg-gray-800 overflow-y-scroll">
               <RoomCard v-for="(room, idx) in rooms" :key="idx" :room="room" />
             </div>
           </div>
