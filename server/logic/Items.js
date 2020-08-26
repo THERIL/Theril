@@ -1,6 +1,6 @@
 class Item {
   constructor() {
-    this.price = 2;
+    this.price = 1;
   }
 }
 

@@ -29,7 +29,12 @@ const th = new TeaHouse(false);
 const p = new PoliceOffice(false);
 const ww = new WainWright(false);
 const wh = new Warehouse(false);
-
+player.gold = 5;
+// console.dir(player, { depth: null });
+console.log(th.throwDice(player));
+console.log(player.gold);
+// ls.transaction(player, "Shadow Hand");
+// console.dir(player, { depth: null });
 // console.time("Meow");
 
 // player.gold = 20;

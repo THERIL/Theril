@@ -28,9 +28,7 @@
           <!-- Modal content -->
           <div class>
             <span class="text-xl" @click="closeModal">&times;</span>
-            <p class="tracking-wider text-lg px-4 py-2">
-              {{ modalMessage.msg }}
-            </p>
+            <p class="tracking-wider text-lg px-4 py-2">{{ modalMessage.msg }}</p>
           </div>
         </div>
       </div>
@@ -42,11 +40,7 @@
       <!-- div player========================================================================== -->
 
       <div id="player" class="w-1/4 mt-4 flex flex-col">
-        <PlayerCard
-          v-for="(player, index) in game.players"
-          :key="index"
-          :player="player"
-        />
+        <PlayerCard v-for="(player, index) in game.players" :key="index" :player="player" />
         <br />
         <!-- div button========================================================================= -->
         <div id="button" class="mt-10">
@@ -58,34 +52,24 @@
               <button
                 class="w-1/2 mt-2 bg-red-800 text-gray-100 px-2 py-1 font-semibold"
                 @click="endTurn"
-              >
-                End Turn
-              </button>
+              >End Turn</button>
             </div>
 
-            <!-- <div>
+            <div class="hidden">
               <button
                 class="w-1/2 mt-2 bg-green-800 text-gray-100 px-2 py-1 font-semibold"
                 @click="changeCart"
-              >
-                Gold + 100
-              </button>
-            </div> -->
+              >Gold + 100</button>
+            </div>
             <!-- FREE ASSISTANTS -->
             <div v-if="status.length" class="flex">
-              <div
-                class="w-full"
-                v-for="(location, index) in pemain.assistants"
-                :key="index"
-              >
+              <div class="w-full" v-for="(location, index) in pemain.assistants" :key="index">
                 <button
                   v-if="pemain.currentLocation === location.workLocation"
                   :key="index"
                   class="w-1/2 mt-2 bg-green-800 text-gray-100 px-2 py-1 font-semibold"
                   @click="freeAsistance(location)"
-                >
-                  Free Assistant {{ index + 1 }}
-                </button>
+                >Free Assistant {{ index + 1 }}</button>
               </div>
             </div>
             <!-- DUPLICATE DIAMOND -->
@@ -99,18 +83,14 @@
               <button
                 class="w-1/2 mt-2 bg-red-800 text-gray-100 px-2 py-1 font-semibold"
                 @click="steal"
-              >
-                Duplicate Diamond
-              </button>
+              >Duplicate Diamond</button>
             </div>
             <div>
               <button
                 class="w-1/2 mt-2 bg-green-800 text-gray-100 px-2 py-1 font-semibold"
                 @click="horns"
                 v-if="pemain.items.filter((x) => x.name === 'Horns').length"
-              >
-                Use Horns
-              </button>
+              >Use Horns</button>
             </div>
           </div>
         </div>
@@ -121,9 +101,7 @@
         <div class="h-25p mx-auto">
           <div class="w-full h-full px-5 flex justify-between mx-auto">
             <div class="w-1/4 h-full flex flex-col justify-end">
-              <section
-                class="p-5 font-semibold bg-location bg-opacity-75 text-gray-100"
-              >
+              <section class="p-5 font-semibold bg-location bg-opacity-75 text-gray-100">
                 <h2>
                   Currently Playing:
                   <span class="font-bold">{{ activePlayer }}</span>
@@ -145,7 +123,7 @@
                     <i class="nes-octocat animate"></i>
                     <form @submit="submitForm">
                       <input class="ml-4 mt-10" type="text" v-model="text" />
-                      <input type="submit" value="Ask me!" />
+                      <input type="submit" value="Ask me!" class="ml-4" />
                     </form>
                   </div>
                 </div>
@@ -154,29 +132,16 @@
               <div class="flex justify-end">
                 <!-- EXIT AND VOLUME -->
                 <div>
-                  <button
-                    v-if="isSound"
-                    @click="startAudio"
-                    class="flex items-center mr-3"
-                  >
-                    <i
-                      class="fa text-gray-100 fa-volume-off fa-2x"
-                      aria-hidden="true"
-                    ></i>
+                  <button v-if="isSound" @click="startAudio" class="flex items-center">
+                    <i class="fa text-gray-100 fa-volume-off fa-2x" aria-hidden="true"></i>
                     <i class="fa text-gray-100 fa-times" aria-hidden="true"></i>
                   </button>
                   <button v-else @click="stopAudio">
-                    <i
-                      class="fa text-gray-100 fa-volume-up fa-2x"
-                      aria-hidden="true"
-                    ></i>
+                    <i class="fa text-gray-100 fa-volume-up fa-2x" aria-hidden="true"></i>
                   </button>
                 </div>
-                <button @click="exitGame">
-                  <i
-                    class="fa text-gray-100 fa-sign-out fa-2x mr-3"
-                    aria-hidden="true"
-                  ></i>
+                <button @click="exitGame" class="ml-5">
+                  <i class="fa text-gray-100 fa-sign-out fa-2x mr-3" aria-hidden="true"></i>
                 </button>
               </div>
             </div>
@@ -313,7 +278,6 @@ export default {
         data: chat,
       })
         .then(({ data }) => {
-          // context.emit("DIALOG_FLOW_CHAT", data);
           this.botChat = data;
           setTimeout(() => {
             this.botChat = "";
@@ -325,7 +289,6 @@ export default {
         .finally((_) => {
           this.text = "";
         });
-      // this.$store.dispacth("dialogFlow", chat);
     },
   },
   created() {

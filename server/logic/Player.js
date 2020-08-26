@@ -70,9 +70,12 @@ class Player {
       if (this.hasDone < 2) {
         let allowed = this.assistants.filter((assistant) => !assistant.onDuty);
         if (allowed.length) {
-          allowed[0].steal(target, value, value2);
+          let x = allowed[0].steal(target, value, value2);
           this.getStolenItems();
           this.hasDone += 1;
+          if (x.msg) {
+            return x;
+          }
         } else return { msg: "You dont have free assistant to do this" };
       } else return { msg: "It's not your turn" };
     } else return { msg: "Target doesn't have any diamond" };
@@ -99,7 +102,7 @@ class Assistant {
     this.potentialDuration = 6;
     this.jailedDuration = 0;
     this.onDuty = false;
-    this.stealChance = 0.25;
+    this.stealChance = 0.33;
     this.stolenItem = false;
     this.workLocation = "";
   }
@@ -114,10 +117,15 @@ class Assistant {
       target.diamond--;
       this.stolenItem = true;
     } else {
-      let isJailed = value2 > 0.25 ? false : true;
+      let isJailed = value2 > this.stealChance ? false : true;
       if (isJailed) {
         this.jailed = true;
+        this.onDuty = true;
         this.jailedDuration = this.potentialDuration;
+        this.workLocation = "Police Office";
+        return {
+          msg: "Your Assistant is caught duplicating and is sent to jail ",
+        };
       }
     }
   }

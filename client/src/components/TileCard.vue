@@ -8,12 +8,12 @@
     >
       <img
         class="absolute h-full w-full object-cover"
-        :src="require(`../assets/tile-0${index+1}.png`)"
+        :src="require(`../assets/tile-0${index + 1}.png`)"
         alt
       />
       <div
         class="w-full opacity-75 bg-gray-900 text-gray-100 text-2xl absolute bottom-0 hover:opacity-100"
-      >{{tile.tileName}}</div>
+      >{{ tile.tileName }}</div>
       <!-- <img :src="'../assets/tile-0'+(index+1)+'.png'" alt /> -->
       <!-- :style="{'background-image': 'url(' + require(`../assets/tile-0${index+1}.png`) + ')',  'background-size': 100% 'auto'}" -->
       <audio id="move" src="../assets/move.mp3" type="audio/mpeg" />
@@ -21,7 +21,7 @@
         <div class="player flex flex-col">
           <div class="flex">
             <div
-              v-if="playerPos1 == `${index+1}`"
+              v-if="playerPos1 == `${index + 1}`"
               class="avatar floating bg-red-600"
               aria-hidden="true"
             ></div>
@@ -31,11 +31,11 @@
           </div>
           <div class="flex">
             <div
-              v-if="playerPos2 == `${index+1}`"
+              v-if="playerPos2 == `${index + 1}`"
               class="avatar floating bg-blue-600"
               aria-hidden="true"
             ></div>
-            <div v-for="(assistant, index) in assistants2" :key="index+2" class="flex">
+            <div v-for="(assistant, index) in assistants2" :key="index + 2" class="flex">
               <Assistant :assistant="assistant" :tileName="tile.tileName" color="text-blue-600" />
             </div>
           </div>
@@ -46,15 +46,19 @@
     <!-- Button Police Office -->
     <div
       class="absolute top-0 mt-40 w-full"
-      v-if="tile.tileName === 'Police Office' && player.currentLocation === 'Police Office' && player.name === active"
+      v-if="
+        tile.tileName === 'Police Office' &&
+          player.currentLocation === 'Police Office' &&
+          player.name === active
+      "
     >
       <div class="w-full flex justify-center" v-if="jail.length">
         <button
           v-for="(assist, index) in jail"
-          :key="index"
           class="w-1/2 mt-2 bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
-          @click="bail"
-        >Assistant {{ index + 1 }}</button>
+          @click="bail(index)"
+          :key="index"
+        >Assistant {{ index + 1 }} (15 gold)</button>
       </div>
       <div v-else class="w-full flex justify-center">
         <p class="text-gray-100 font-bold">You dont have jailed assistant</p>
@@ -64,15 +68,32 @@
     <div class="absolute top-0 mt-40 w-full flex justify-center">
       <button
         class="bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
-        v-if="tile.tileName === 'Warehouse' && player.currentLocation === 'Warehouse' && player.name === active"
+        v-if="
+          tile.tileName === 'Warehouse' &&
+            player.currentLocation === 'Warehouse' &&
+            player.name === active && !checkFull
+
+        "
         @click="wareHouse"
       >Free Resources</button>
+      <div
+        v-else-if="tile.tileName === 'Warehouse' &&
+            player.currentLocation === 'Warehouse' &&
+            player.name === active && checkFull"
+        class="w-full flex justify-center"
+      >
+        <p class="text-gray-100 font-bold">Your cart is full</p>
+      </div>
     </div>
     <!--- button= market-->
     <div class="absolute top-0 mt-40 w-full flex justify-center">
       <button
         class="bg-yellow-800 text-gray-100 px-2 py-1 font-semibold"
-        v-if="tile.tileName === 'Market' && player.currentLocation === 'Market' && player.name === active"
+        v-if="
+          tile.tileName === 'Market' &&
+            player.currentLocation === 'Market' &&
+            player.name === active
+        "
         @click="market"
       >Sell</button>
     </div>
@@ -80,7 +101,11 @@
     <div class="absolute top-0 mt-40 w-full flex justify-center">
       <button
         class="bg-orange-800 rounded text-xs m-1 text-gray-100 px-2 py-1 font-semibold"
-        v-if="tile.tileName === 'Tea House' && player.currentLocation === 'Tea House' && player.name === active"
+        v-if="
+          tile.tileName === 'Tea House' &&
+            player.currentLocation === 'Tea House' &&
+            player.name === active
+        "
         @click="teaHouse"
       >Gamble</button>
     </div>
@@ -88,39 +113,68 @@
     <div class="absolute top-0 mt-40 w-full flex justify-center">
       <button
         class="bg-orange-800 rounded text-xs m-1 text-gray-100 px-2 py-1 font-semibold"
-        v-if="tile.tileName === 'Wain Wright' && player.currentLocation === 'Wain Wright' && player.name === active && player.cart < 4"
+        v-if="
+          tile.tileName === 'Wain Wright' &&
+            player.currentLocation === 'Wain Wright' &&
+            player.name === active &&
+            player.cart < 4
+        "
         @click="wainWright"
       >Upgrade Cart</button>
       <p
         class="font-semibold text-xs text-gray-100"
-        v-else-if="tile.tileName === 'Wain Wright' && player.currentLocation === 'Wain Wright' && player.cart >= 4"
+        v-else-if="
+          tile.tileName === 'Wain Wright' &&
+            player.currentLocation === 'Wain Wright' &&
+            player.cart >= 4
+        "
       >Your cart is already max level</p>
     </div>
     <!--- button= luxury shop-->
     <div class="absolute top-0 mt-40 w-full flex flex-wrap justify-center">
       <button
         class="bg-blue-800 rounded text-xs m-1 text-gray-100 px-2 py-1 font-semibold"
-        v-if="tile.tileName === 'Luxury Shop' && player.currentLocation === 'Luxury Shop' && player.name === active"
+        v-if="
+          tile.tileName === 'Luxury Shop' &&
+            player.currentLocation === 'Luxury Shop' &&
+            player.name === active
+        "
         @click="luxuryDiamond"
       >Buy Diamond</button>
       <button
         class="bg-blue-800 rounded text-xs m-1 text-gray-100 px-2 py-1 font-semibold"
-        v-if="tile.tileName === 'Luxury Shop' && player.currentLocation === 'Luxury Shop' && player.name === active"
+        v-if="
+          tile.tileName === 'Luxury Shop' &&
+            player.currentLocation === 'Luxury Shop' &&
+            player.name === active
+        "
         @click="luxuryItem('Strider')"
       >Buy Strider</button>
       <button
         class="bg-blue-800 rounded text-xs m-1 text-gray-100 px-2 py-1 font-semibold"
-        v-if="tile.tileName === 'Luxury Shop' && player.currentLocation === 'Luxury Shop' && player.name === active"
+        v-if="
+          tile.tileName === 'Luxury Shop' &&
+            player.currentLocation === 'Luxury Shop' &&
+            player.name === active
+        "
         @click="luxuryItem('Horns')"
       >Buy Horns</button>
       <button
         class="bg-blue-800 rounded text-xs m-1 text-gray-100 px-2 py-1 font-semibold"
-        v-if="tile.tileName === 'Luxury Shop' && player.currentLocation === 'Luxury Shop' && player.name === active"
+        v-if="
+          tile.tileName === 'Luxury Shop' &&
+            player.currentLocation === 'Luxury Shop' &&
+            player.name === active
+        "
         @click="luxuryItem('Golden Whistle')"
       >Buy Golden Whislte</button>
       <button
         class="bg-blue-800 rounded text-xs m-1 text-gray-100 px-2 py-1 font-semibold"
-        v-if="tile.tileName === 'Luxury Shop' && player.currentLocation === 'Luxury Shop' && player.name === active"
+        v-if="
+          tile.tileName === 'Luxury Shop' &&
+            player.currentLocation === 'Luxury Shop' &&
+            player.name === active
+        "
         @click="luxuryItem('Shadow Hand')"
       >Buy Shadow Hand</button>
     </div>
@@ -169,11 +223,14 @@ export default {
     "active",
     "assistants1",
     "assistants2",
-    "jail"
+    "jail",
   ],
   methods: {
     move() {
-      if (this.player.name === this.active && this.player.currentLocation !== this.tile.tileName ) {
+      if (
+        this.player.name === this.active &&
+        this.player.currentLocation !== this.tile.tileName
+      ) {
         var audio = document.getElementById("move");
         audio.play();
         this.$emit("clickMove");
@@ -183,7 +240,7 @@ export default {
       this.$emit("wareHouse");
     },
     bail(index) {
-      this.$emit("bail",index);
+      this.$emit("bail", index);
     },
     market() {
       this.$emit("market");
@@ -195,11 +252,11 @@ export default {
       this.$emit("wainWright");
     },
     luxuryDiamond() {
-      this.$emit("luxuryDiamond")
+      this.$emit("luxuryDiamond");
     },
     luxuryItem(type) {
-      this.$emit("luxuryItem", type)
-    }
+      this.$emit("luxuryItem", type);
+    },
   },
   created() {
     console.log(typeof index);
@@ -248,6 +305,13 @@ export default {
       } else if (this.player2.currentLocation == "Tea House") {
         return 6;
       }
+    },
+    checkFull() {
+      let fullChecked = this.player.resources.filter(
+        (x) => x.amount === this.player.capacity
+      );
+      console.log(fullChecked);
+      return fullChecked.length === 3 ? true : false;
     },
   },
 };

@@ -49,7 +49,8 @@ class LuxuryShop extends Tiles {
 
           if (
             targetItem.name === "Strider" ||
-            targetItem.name === "Golden Whistle"
+            targetItem.name === "Golden Whistle" ||
+            targetItem.name === "Shadow Hand"
           ) {
             targetItem.use(player);
           }
@@ -146,6 +147,7 @@ class TeaHouse extends Tiles {
     let dice = Array.from({ length: 3 }, (x, y) =>
       Math.ceil(Math.random() * 6)
     ).reduce((x, y) => x + y, 0);
+    console.log(dice);
     return dice;
   }
 
@@ -160,11 +162,11 @@ class TeaHouse extends Tiles {
           let diceAI = value2;
 
           if (dicePlayer > diceAI) {
-            player.gold += 5;
+            player.gold += Math.floor(player.gold / 3) + 5;
             player.hasDone += 1;
             return { msg: "You win" };
           } else if (dicePlayer < diceAI) {
-            player.gold -= 5;
+            player.gold -= Math.floor(player.gold / 3);
             player.hasDone += 1;
             return { msg: "You lose" };
           } else {
@@ -186,6 +188,7 @@ class PoliceOffice extends Tiles {
 
   arrest(assistant) {
     assistant.jailed = true;
+    assistant.onDuty = true;
     assistant.jailedDuration = assistant.potentialDuration;
   }
 
@@ -196,6 +199,8 @@ class PoliceOffice extends Tiles {
 
     if (!assitant.jailedDuration) {
       assitant.jailed = false;
+      assistant.workLocation = "";
+      assitant.onDuty = false;
     }
   }
 
@@ -203,9 +208,11 @@ class PoliceOffice extends Tiles {
     if (player.hasDone < 2) {
       if (player.gold >= this.bailPrice) {
         assistant.jailed = false;
+        assistant.onDuty = false;
         assistant.jailedDuration = 0;
         player.gold -= this.bailPrice;
         player.hasDone += 1;
+        assistant.workLocation = "";
       } else return { msg: "You don't have enough gold" };
     } else return { msg: "It's not your turn" };
   }
