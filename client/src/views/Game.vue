@@ -1,8 +1,30 @@
 <template>
   <div class="div game-luar flex justify-center">
     <div class="game-luar-background"></div>
+    <div v-if="isWin">
+      <div id="myModal" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+          <span class="close">&times;</span>
+          <p>{{winMessage}}</p>
+        </div>
+        <button @click="exit">Ok</button>
+      </div>
+    </div>
+    <div v-if="pemain.name === activePlayer">
+      <div v-if="stuck">
+        <div id="myModal" class="modal">
+          <!-- Modal content -->
+          <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>{{stuck.msg}}</p>
+          </div>
+        </div>
+      </div>
+    </div>
     <audio loop id="start" src="../assets/music-4.mp3" type="audio/mpeg" />
     <div class="div h-full mx-auto flex">
+      <button @click="exitGame">Exit</button>
       <!-- div player========================================================================== -->
 
       <div id="player" class="w-1/4 mt-4 flex flex-col">
@@ -12,12 +34,14 @@
         <div id="button" class="mt-10">
           <div v-if="pemain.name === activePlayer" class="flex flex-wrap p-4 justify-center">
             <div v-if="pemain.currentLocation === 'Police Office'">
-              <div v-for="(assist, index) in pemain.assistants" :key="index">
+              <div v-if="jail.length">
                 <button
+                  v-for="(assist, index) in jail"
+                  :key="index"
                   class="bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
-                  v-if="assist.jailed"
                 >Assistant {{ index + 1 }}</button>
               </div>
+              <p v-else>You dont have jailed assistant</p>
             </div>
             <button
               class="bg-red-800 text-gray-100 px-2 py-1 font-semibold"
@@ -65,15 +89,20 @@
             >Gamble</button>
             <button
               class="bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
-              v-if="pemain.currentLocation === 'Wain Wright'"
+              v-if="pemain.currentLocation === 'Wain Wright' && pemain.cart < 4"
               @click="wainWright"
             >Upgrade Cart</button>
+            <p
+              v-else-if="pemain.currentLocation === 'Wain Wright' && pemain.cart === 4"
+            >Your cart is already max level</p>
             <button
               class="bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
-              v-if="pemain.currentLocation === 'Warehouse'"
+              v-if="pemain.currentLocation === 'Warehouse' && pemain.resources.filter(x => x.amount !== pemain.capacity).length"
               @click="wareHouse"
             >Free Resources</button>
-
+            <p
+              v-else-if="pemain.currentLocation === 'Warehouse' && pemain.resources.filter(x => x.amount === pemain.capacity).length === 3"
+            >Your cart is already full</p>
             <div v-for="(location, index) in pemain.assistants" :key="index">
               <button
                 class="bg-green-800 text-gray-100 px-2 py-1 font-semibold"
@@ -86,18 +115,11 @@
               v-if="pemain.currentLocation === anotherPlayer.currentLocation && pemain.currentLocation && anotherPlayer.currentLocation"
             >
               <button @click="steal">Duplicate Diamond</button>
-
-              <div v-if="pemain.currentLocation === 'Police Office'">
-                <div v-for="(assistant,index) in jail" :key="index">
-                  <button
-                    class="bg-red-800 text-gray-100 px-2 py-1 font-semibold"
-                    v-if="jail.length"
-                    @click="bail(index)"
-                  >Bail {{ index+1 }}</button>
-                  <p v-else>You dont have jailed assistant</p>
-                </div>
-              </div>
             </div>
+            <button
+              @click="horns"
+              v-if="pemain.items.filter(x => x.name === 'Horns').length"
+            >Use Horns</button>
           </div>
         </div>
         <iframe
@@ -180,6 +202,9 @@ export default {
       anotherPlayer: {},
       jail: [],
       isSound: true,
+      isWin: false,
+      winMessage: "",
+      stuck: "",
     };
   },
   components: {
@@ -227,6 +252,10 @@ export default {
       socket.emit("free", this.room.name, assistant);
     },
     exit() {
+      socket.emit("exit-game-winner", this.room.name, this.user.id);
+      this.$router.push({ name: "Lobby" });
+    },
+    exitGame() {
       socket.emit("exit-game", this.room.name, this.user.id);
       this.$router.push({ name: "Lobby" });
     },
@@ -239,12 +268,12 @@ export default {
     bail(index) {
       socket.emit("bail", this.room.name, index);
     },
+    horns() {
+      socket.emit("horns", this.room.name);
+    },
   },
   created() {
     socket.on("inisiate-game", (data, game, tiles) => {
-      // console.log(data, "--------------");
-      console.log(game, ">>>>>>>>>>>>>>>");
-      // console.log(tiles, "<<<<<<<<<");
       let playerX = game.players.filter(
         (player) => player.id === this.user.id
       )[0];
@@ -261,7 +290,8 @@ export default {
       this.jail = playerX.assistants.filter((x) => x.jailed);
     });
 
-    socket.on("updated-game", (game) => {
+    socket.on("updated-game", (game, msg) => {
+      this.stuck = msg;
       this.game = game;
       let playerX = game.players.filter(
         (player) => player.id === this.user.id
@@ -282,13 +312,14 @@ export default {
     });
 
     socket.on("user-win", (data) => {
-      alert("Another player has leave the game, You Win");
-      socket.emit("exit-game-winner", this.room.name, this.user.id);
-      this.$router.push({ name: "Lobby" });
+      this.isWin = true;
+      this.winMessage = data;
+      // socket.emit("exit-game-winner", this.room.name, this.user.id);
+      // this.$router.push({ name: "Lobby" });
     });
-
     socket.on("show-winner", (msg) => {
-      alert(msg);
+      this.isWin = true;
+      this.winMessage = msg;
     });
   },
   computed: {
