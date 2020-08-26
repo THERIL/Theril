@@ -12,8 +12,8 @@
         <div class="bg-gray-200 rounded p-1">
           <span class="close">&times;</span>
           <p>{{ winMessage }}</p>
+          <button @click="exit">Ok</button>
         </div>
-        <button @click="exit">Ok</button>
       </div>
     </div>
 
@@ -28,7 +28,9 @@
           <!-- Modal content -->
           <div class>
             <span class="text-xl" @click="closeModal">&times;</span>
-            <p class="tracking-wider text-lg px-4 py-2">{{ modalMessage.msg }}</p>
+            <p class="tracking-wider text-lg px-4 py-2">
+              {{ modalMessage.msg }}
+            </p>
           </div>
         </div>
       </div>
@@ -36,11 +38,15 @@
 
     <audio loop id="start" src="../assets/music-4.mp3" type="audio/mpeg" />
     <div class="div h-full mx-auto flex">
-      <button @click="exitGame">Exit</button>
+      <!-- <button>Exit</button> -->
       <!-- div player========================================================================== -->
 
       <div id="player" class="w-1/4 mt-4 flex flex-col">
-        <PlayerCard v-for="(player, index) in game.players" :key="index" :player="player" />
+        <PlayerCard
+          v-for="(player, index) in game.players"
+          :key="index"
+          :player="player"
+        />
         <br />
         <!-- div button========================================================================= -->
         <div id="button" class="mt-10">
@@ -52,41 +58,59 @@
               <button
                 class="w-1/2 mt-2 bg-red-800 text-gray-100 px-2 py-1 font-semibold"
                 @click="endTurn"
-              >End Turn</button>
+              >
+                End Turn
+              </button>
             </div>
 
-            <div>
+            <!-- <div>
               <button
                 class="w-1/2 mt-2 bg-green-800 text-gray-100 px-2 py-1 font-semibold"
                 @click="changeCart"
-              >Gold + 100</button>
-            </div>
+              >
+                Gold + 100
+              </button>
+            </div> -->
             <!-- FREE ASSISTANTS -->
             <div v-if="status.length" class="flex">
-              <div class="w-full" v-for="(location, index) in pemain.assistants" :key="index">
+              <div
+                class="w-full"
+                v-for="(location, index) in pemain.assistants"
+                :key="index"
+              >
                 <button
                   v-if="pemain.currentLocation === location.workLocation"
                   :key="index"
                   class="w-1/2 mt-2 bg-green-800 text-gray-100 px-2 py-1 font-semibold"
                   @click="freeAsistance(location)"
-                >Free Assistant {{ index + 1 }}</button>
+                >
+                  Free Assistant {{ index + 1 }}
+                </button>
               </div>
             </div>
             <!-- DUPLICATE DIAMOND -->
             <div
-              v-if="pemain.currentLocation === anotherPlayer.currentLocation && pemain.currentLocation && anotherPlayer.currentLocation"
+              v-if="
+                pemain.currentLocation === anotherPlayer.currentLocation &&
+                  pemain.currentLocation &&
+                  anotherPlayer.currentLocation
+              "
             >
               <button
                 class="w-1/2 mt-2 bg-red-800 text-gray-100 px-2 py-1 font-semibold"
                 @click="steal"
-              >Duplicate Diamond</button>
+              >
+                Duplicate Diamond
+              </button>
             </div>
             <div>
               <button
                 class="w-1/2 mt-2 bg-green-800 text-gray-100 px-2 py-1 font-semibold"
                 @click="horns"
-                v-if="pemain.items.filter(x => x.name === 'Horns').length"
-              >Use Horns</button>
+                v-if="pemain.items.filter((x) => x.name === 'Horns').length"
+              >
+                Use Horns
+              </button>
             </div>
           </div>
         </div>
@@ -97,7 +121,9 @@
         <div class="h-25p mx-auto">
           <div class="w-full h-full px-5 flex justify-between mx-auto">
             <div class="w-1/4 h-full flex flex-col justify-end">
-              <section class="p-5 font-semibold bg-location bg-opacity-75 text-gray-100">
+              <section
+                class="p-5 font-semibold bg-location bg-opacity-75 text-gray-100"
+              >
                 <h2>
                   Currently Playing:
                   <span class="font-bold">{{ activePlayer }}</span>
@@ -128,16 +154,29 @@
               <div class="flex justify-end">
                 <!-- EXIT AND VOLUME -->
                 <div>
-                  <button v-if="isSound" @click="startAudio" class="flex items-center mr-3">
-                    <i class="fa text-gray-100 fa-volume-off fa-2x" aria-hidden="true"></i>
+                  <button
+                    v-if="isSound"
+                    @click="startAudio"
+                    class="flex items-center mr-3"
+                  >
+                    <i
+                      class="fa text-gray-100 fa-volume-off fa-2x"
+                      aria-hidden="true"
+                    ></i>
                     <i class="fa text-gray-100 fa-times" aria-hidden="true"></i>
                   </button>
                   <button v-else @click="stopAudio">
-                    <i class="fa text-gray-100 fa-volume-up fa-2x" aria-hidden="true"></i>
+                    <i
+                      class="fa text-gray-100 fa-volume-up fa-2x"
+                      aria-hidden="true"
+                    ></i>
                   </button>
                 </div>
-                <button @click="exit">
-                  <i class="fa text-gray-100 fa-sign-out fa-2x mr-3" aria-hidden="true"></i>
+                <button @click="exitGame">
+                  <i
+                    class="fa text-gray-100 fa-sign-out fa-2x mr-3"
+                    aria-hidden="true"
+                  ></i>
                 </button>
               </div>
             </div>
@@ -218,7 +257,7 @@ export default {
       socket.emit("updated-data", this.room);
     },
     closeModal() {
-      this.modalMessage = ''
+      this.modalMessage = "";
     },
 
     move(moveFrom, moveTo) {
@@ -270,14 +309,14 @@ export default {
       const chat = { text: this.text };
       axios({
         method: "post",
-        url: "http://localhost:3000",
+        url: "https://theril.herokuapp.com",
         data: chat,
       })
         .then(({ data }) => {
           // context.emit("DIALOG_FLOW_CHAT", data);
           this.botChat = data;
           setTimeout(() => {
-            this.botChat = ""
+            this.botChat = "";
           }, 20000);
         })
         .catch((err) => {
