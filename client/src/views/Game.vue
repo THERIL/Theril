@@ -12,8 +12,8 @@
         <div class="bg-gray-200 rounded p-1">
           <span class="close">&times;</span>
           <p>{{ winMessage }}</p>
+          <button @click="exit">Ok</button>
         </div>
-        <button @click="exit">Ok</button>
       </div>
     </div>
 
@@ -218,7 +218,7 @@ export default {
       socket.emit("updated-data", this.room);
     },
     closeModal() {
-      this.modalMessage = ''
+      this.modalMessage = "";
     },
 
     move(moveFrom, moveTo) {
@@ -277,7 +277,7 @@ export default {
           // context.emit("DIALOG_FLOW_CHAT", data);
           this.botChat = data;
           setTimeout(() => {
-            this.botChat = ""
+            this.botChat = "";
           }, 20000);
         })
         .catch((err) => {
