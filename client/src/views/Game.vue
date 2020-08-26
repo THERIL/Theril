@@ -3,12 +3,16 @@
     <div class="game-luar-background"></div>
 
     <!-- MODAL -->
+    <form @submit="submitForm">
+      <input type="text" v-model="text" />
+    </form>
+
     <div v-if="isWin">
       <div id="myModal" class="modal">
         <!-- Modal content -->
         <div class="modal-content">
           <span class="close">&times;</span>
-          <p>{{winMessage}}</p>
+          <p>{{ winMessage }}</p>
         </div>
         <button @click="exit">Ok</button>
       </div>
@@ -19,7 +23,7 @@
           <!-- Modal content -->
           <div class="modal-content">
             <span class="close">&times;</span>
-            <p>{{stuck.msg}}</p>
+            <p>{{ stuck.msg }}</p>
           </div>
         </div>
       </div>
@@ -78,8 +82,7 @@
           <div class="w-full px-5 flex justify-between h-10p mx-auto">
             <div class="w-1/2 bg-gray-400 rounded">
               <section class="p-5 font-bold">
-                <h4>MARKET</h4>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione porro nisi delectus laudantium aspernatur beatae expedita doloribus facere vitae dolor.</p>
+                <p>{{ botChat }}</p>
               </section>
             </div>
 
@@ -87,7 +90,7 @@
               <section class="p-5 font-bold">
                 <h2>Currently Playing: {{ activePlayer }}</h2>
                 <h2>Your Location: {{ pemain.currentLocation }}</h2>
-                <h3 v-if="game.message">{{game.message}}</h3>
+                <h3 v-if="game.message">{{ game.message }}</h3>
               </section>
             </div>
           </div>
@@ -122,6 +125,8 @@
 import socket from "../config/socket";
 import PlayerCard from "../components/PlayerCard";
 import TileCard from "../components/TileCard";
+import { mapGetters } from "vuex";
+import axios from "axios";
 export default {
   data() {
     return {
@@ -139,6 +144,8 @@ export default {
       isWin: false,
       winMessage: "",
       stuck: "",
+      text: "",
+      botChat: "",
     };
   },
   components: {
@@ -204,6 +211,28 @@ export default {
     },
     horns() {
       socket.emit("horns", this.room.name);
+    },
+    submitForm(event) {
+      event.preventDefault();
+      const chat = { text: this.text };
+      console.log(chat);
+      axios({
+        method: "post",
+        url: "http://localhost:3000",
+        data: chat,
+      })
+        .then(({ data }) => {
+          console.log(data);
+          // context.emit("DIALOG_FLOW_CHAT", data);
+          this.botChat = data;
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally((_) => {
+          this.text = "";
+        });
+      // this.$store.dispacth("dialogFlow", chat);
     },
   },
   created() {

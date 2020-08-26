@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import socket from "../config/socket.js";
+import axios from "axios";
 // import Artyom from "artyom.js";
 
 Vue.use(Vuex);
@@ -8,7 +9,7 @@ Vue.use(Vuex);
 export default new Vuex.Store({
   state: {
     user: {},
-    players: [],
+    chat: "",
   },
   mutations: {
     SET_USER(state, payload) {
@@ -21,14 +22,28 @@ export default new Vuex.Store({
       };
       socket.emit("join-room", payload);
     },
-    GAME_DATA(state, game) {
-      state.players = game;
+    DIALOG_FLOW_CHAT(state, text) {
+      state.chat = text;
     },
   },
   actions: {
+    dialogFlow(context, text) {
+      axios({
+        method: "post",
+        url: "http://localhost:3000",
+        data: text,
+      })
+        .then(({ data }) => {
+          context.emit("DIALOG_FLOW_CHAT", data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    },
   },
   getters: {
     user: (state) => state.user,
+    chat: (state) => state.chat,
   },
   modules: {},
 });

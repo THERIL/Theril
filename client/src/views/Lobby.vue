@@ -59,12 +59,12 @@ export default {
     ChatMenu,
     RoomCard,
   },
-  data: function() {
+  data: function () {
     return {
       roomInput: "",
       id: "",
       rooms: [],
-      connectedUsers: []
+      connectedUsers: [],
     };
   },
   methods: {
@@ -82,7 +82,7 @@ export default {
     },
   },
   computed: mapGetters(["user"]),
-  created: function() {
+  created: function () {
     if (!this.$store.state.user.name) {
       this.$router.push("/");
     }
@@ -94,22 +94,16 @@ export default {
     socket.on("get-username", (user) => {
       this.$store.commit("SET_USER", user);
     });
-    socket.on('get-connected-users', (users) => {
-      this.connectedUsers = users
-    })
+    socket.on("get-connected-users", (users) => {
+      this.connectedUsers = users;
+    });
     socket.emit("get-all-room");
     socket.on("get-list-room", (data) => {
       this.rooms = data;
     });
-
     socket.on("updated-room", (data) => {
       this.rooms = data;
     });
-    // socket.on("user-win", (data) => {
-    //   // console.log(data.users);
-    //   // // alert("You Win bgst");
-    //   this.$router.push({ name: "Lobby" });
-    // });
   },
 };
 </script>
