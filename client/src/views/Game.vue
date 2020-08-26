@@ -81,6 +81,7 @@
         <div class="mx-auto">
           <div class="w-full px-5 flex justify-between h-10p mx-auto">
             <div class="w-1/2 bg-gray-400 rounded">
+              <i class="nes-octocat animate"></i>
               <section class="p-5 font-bold">
                 <p>{{ botChat }}</p>
               </section>
