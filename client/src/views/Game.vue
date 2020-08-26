@@ -5,105 +5,79 @@
     <div class="div h-full mx-auto flex">
       <!-- div player========================================================================== -->
 
-      <div id="player" class="w-1/4 flex flex-col justify-center">
-        <PlayerCard
-          v-for="(player, index) in game.players"
-          :key="index"
-          :player="player"
-        />
+      <div id="player" class="w-1/4 mt-4 flex flex-col">
+        <PlayerCard v-for="(player, index) in game.players" :key="index" :player="player" />
         <br />
         <!-- div button========================================================================= -->
         <div id="button" class="mt-10">
-          <div
-            v-if="pemain.name === activePlayer"
-            class="flex flex-wrap p-4 justify-center"
-          >
+          <div v-if="pemain.name === activePlayer" class="flex flex-wrap p-4 justify-center">
             <div v-if="pemain.currentLocation === 'Police Office'">
-              <div v-for="(assist, index) in pemain.assistants" :key="index">
+              <div v-if="jail.length">
                 <button
+                  v-for="(assist, index) in jail"
+                  :key="index"
                   class="bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
-                  v-if="assist.jailed"
-                >
-                  Assistant {{ index + 1 }}
-                </button>
+                >Assistant {{ index + 1 }}</button>
               </div>
+              <p v-else>You dont have jailed assistant</p>
             </div>
             <button
               class="bg-red-800 text-gray-100 px-2 py-1 font-semibold"
               v-if="status.length === 2"
               @click="endTurn"
-            >
-              End Turn
-            </button>
+            >End Turn</button>
             <button
               class="bg-green-800 text-gray-100 px-2 py-1 font-semibold"
               @click="changeCart"
-            >
-              change value
-            </button>
+            >change value</button>
             <button
               class="bg-yellow-800 text-gray-100 px-2 py-1 font-semibold"
               v-if="pemain.currentLocation === 'Market'"
               @click="market"
-            >
-              Sell
-            </button>
+            >Sell</button>
             <button
               class="bg-blue-800 text-gray-100 px-2 py-1 font-semibold"
               v-if="pemain.currentLocation === 'Luxury Shop'"
               @click="luxuryDiamond"
-            >
-              Buy Diamond
-            </button>
+            >Buy Diamond</button>
             <button
               class="bg-blue-800 text-gray-100 px-2 py-1 font-semibold"
               v-if="pemain.currentLocation === 'Luxury Shop'"
               @click="luxuryItem('Strider')"
-            >
-              Buy Strider
-            </button>
+            >Buy Strider</button>
             <button
               class="bg-blue-800 text-gray-100 px-2 py-1 font-semibold"
               v-if="pemain.currentLocation === 'Luxury Shop'"
               @click="luxuryItem('Horns')"
-            >
-              Buy Horns
-            </button>
+            >Buy Horns</button>
             <button
               class="bg-blue-800 text-gray-100 px-2 py-1 font-semibold"
               v-if="pemain.currentLocation === 'Luxury Shop'"
               @click="luxuryItem('Golden Whistle')"
-            >
-              Buy Golden Whislte
-            </button>
+            >Buy Golden Whislte</button>
             <button
               class="bg-blue-800 text-gray-100 px-2 py-1 font-semibold"
               v-if="pemain.currentLocation === 'Luxury Shop'"
               @click="luxuryItem('Shadow Hand')"
-            >
-              Buy Shadow Hand
-            </button>
+            >Buy Shadow Hand</button>
             <button
               class="bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
               v-if="pemain.currentLocation === 'Tea House'"
               @click="teaHouse"
-            >
-              Gamble
-            </button>
-            <button
-              class="bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
-              v-if="pemain.currentLocation === 'Wain Wright'"
-              @click="wainWright"
-            >
-              Upgrade Cart
-            </button>
+            >Gamble</button>
+            <div v-if="pemain.currentLocation === 'Wain Wright'">
+              <button
+                v-if="pemain.cart < 4"
+                class="bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
+                @click="wainWright"
+              >Upgrade Cart</button>
+              <p v-else>Your cart is already at max level</p>
+            </div>
             <button
               class="bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
               v-if="pemain.currentLocation === 'Warehouse'"
               @click="wareHouse"
-            >
-              Free Resources
-            </button>
+            >Free Resources</button>
 
             <div v-for="(location, index) in pemain.assistants" :key="index">
               <button
@@ -113,9 +87,7 @@
                     pemain.currentLocation === location.workLocation
                 "
                 @click="freeAsistance(location)"
-              >
-                Free Assistant {{ index + 1 }}
-              </button>
+              >Free Assistant {{ index + 1 }}</button>
             </div>
             <div
               class="bg-red-800 text-gray-100 px-2 py-1 font-semibold"
@@ -126,55 +98,35 @@
               "
             >
               <button @click="steal">Duplicate Diamond</button>
-
-              <div v-if="pemain.currentLocation === 'Police Office'">
-                <div v-for="(assistant, index) in jail" :key="index">
-                  <button
-                    class="bg-red-800 text-gray-100 px-2 py-1 font-semibold"
-                    v-if="jail.length"
-                    @click="bail(index)"
-                  >
-                    Bail {{ index + 1 }}
-                  </button>
-                  <p v-else>You dont have jailed assistant</p>
-                </div>
-              </div>
             </div>
           </div>
         </div>
+        <iframe
+          allow="microphone;"
+          width="350"
+          height="430"
+          src="https://console.dialogflow.com/api-client/demo/embedded/ec1c8deb-b60b-4f58-b2e9-1f499c604a14"
+        ></iframe>
       </div>
       <!-- div board========================================================================= -->
       <div id="bord" class="w-3/4">
         <div class="flex justify-end">
           <div>
-            <button
-              v-if="isSound"
-              @click="startAudio"
-              class="flex items-center mr-3"
-            >
-              <i
-                class="fa text-gray-100 fa-volume-off fa-2x"
-                aria-hidden="true"
-              ></i>
+            <button v-if="isSound" @click="startAudio" class="flex items-center mr-3">
+              <i class="fa text-gray-100 fa-volume-off fa-2x" aria-hidden="true"></i>
               <i class="fa text-gray-100 fa-times" aria-hidden="true"></i>
             </button>
             <button v-else @click="stopAudio">
-              <i
-                class="fa text-gray-100 fa-volume-up fa-2x"
-                aria-hidden="true"
-              ></i>
+              <i class="fa text-gray-100 fa-volume-up fa-2x" aria-hidden="true"></i>
             </button>
           </div>
           <button @click="exit">
-            <i
-              class="fa text-gray-100 fa-sign-out fa-2x mr-3"
-              aria-hidden="true"
-            ></i>
+            <i class="fa text-gray-100 fa-sign-out fa-2x mr-3" aria-hidden="true"></i>
           </button>
         </div>
         <!-- div current location========================================================================= -->
         <div class="mx-auto">
-          <div class="w-full flex h-10p mx-auto">
+          <div class="w-full px-5 flex justify-between h-10p mx-auto">
             <div class="w-1/2 bg-gray-400 rounded">
               <section class="p-5 font-bold">
                 <h4>MARKET</h4>
@@ -186,7 +138,7 @@
               </section>
             </div>
 
-            <div class="w-1/3 mx-auto bg-gray-400 rounded">
+            <div class="w-1/3 bg-gray-400 rounded">
               <section class="p-5 font-bold">
                 <h2>Currently Playing: {{ activePlayer }}</h2>
                 <h2>Your Location: {{ pemain.currentLocation }}</h2>

@@ -30,7 +30,9 @@ export default {
 </script>
 
 <style scoped>
+@import url("https://fonts.googleapis.com/css2?family=Play:wght@400;700&display=swap");
 #app {
   height: 100vh;
+  font-family: "Play", sans-serif;
 }
 </style>

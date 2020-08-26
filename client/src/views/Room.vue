@@ -1,7 +1,11 @@
+  
 <template>
   <div class="div game-luar flex justify-center items-center">
     <div class="absolute bottom-0">
-      <button class="mb-8 ml-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full" @click="leaveRoom">Leave Room</button>
+      <button
+        class="mb-8 ml-5 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full"
+        @click="leaveRoom"
+      >Leave Room</button>
     </div>
     <div class="game-luar-background"></div>
     <!-- <div class="mx-auto flex flex-col justify-center items-center"> -->
@@ -95,12 +99,10 @@ export default {
   right: 0;
   z-index: -20;
   /* opacity: 0.6; */
-
   background-repeat: no-repeat;
   background-size: cover;
   overflow: hidden;
 }
-
 .btn-str {
   background-image: url("../assets/btn-1.png");
   background-size: 100%;
