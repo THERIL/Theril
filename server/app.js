@@ -3,6 +3,7 @@ const server = require("http").createServer(app);
 const io = require("socket.io")(server);
 const port = process.env.PORT || 3000;
 const cors = require("cors");
+const { json, urlencoded } = require("express");
 
 const {
   Game,
@@ -60,6 +61,22 @@ let objGame = {
   active: "",
   currentLocation: "",
 };
+
+const dialog = require("./dialog");
+
+app.use(json());
+app.use(urlencoded({ extended: false }));
+
+app.post("/", async (req, res) => {
+  try {
+    const { text } = req.body;
+    console.log(text);
+    const result = await dialog(text);
+    res.status(200).json(result.data.queryResult.fulfillmentText);
+  } catch (err) {
+    console.log(err);
+  }
+});
 
 io.on("connection", (socket) => {
   console.log("User connected: " + socket.id);

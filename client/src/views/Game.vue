@@ -1,12 +1,15 @@
 <template>
   <div class="div game-luar flex justify-center">
     <div class="game-luar-background"></div>
+    <form @submit="submitForm">
+      <input type="text" v-model="text" />
+    </form>
     <div v-if="isWin">
       <div id="myModal" class="modal">
         <!-- Modal content -->
         <div class="modal-content">
           <span class="close">&times;</span>
-          <p>{{winMessage}}</p>
+          <p>{{ winMessage }}</p>
         </div>
         <button @click="exit">Ok</button>
       </div>
@@ -17,7 +20,7 @@
           <!-- Modal content -->
           <div class="modal-content">
             <span class="close">&times;</span>
-            <p>{{stuck.msg}}</p>
+            <p>{{ stuck.msg }}</p>
           </div>
         </div>
       </div>
@@ -28,18 +31,27 @@
       <!-- div player========================================================================== -->
 
       <div id="player" class="w-1/4 mt-4 flex flex-col">
-        <PlayerCard v-for="(player, index) in game.players" :key="index" :player="player" />
+        <PlayerCard
+          v-for="(player, index) in game.players"
+          :key="index"
+          :player="player"
+        />
         <br />
         <!-- div button========================================================================= -->
         <div id="button" class="mt-10">
-          <div v-if="pemain.name === activePlayer" class="flex flex-wrap p-4 justify-center">
+          <div
+            v-if="pemain.name === activePlayer"
+            class="flex flex-wrap p-4 justify-center"
+          >
             <div v-if="pemain.currentLocation === 'Police Office'">
               <div v-if="jail.length">
                 <button
                   v-for="(assist, index) in jail"
                   :key="index"
                   class="bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
-                >Assistant {{ index + 1 }}</button>
+                >
+                  Assistant {{ index + 1 }}
+                </button>
               </div>
               <p v-else>You dont have jailed assistant</p>
             </div>
@@ -47,79 +59,126 @@
               class="bg-red-800 text-gray-100 px-2 py-1 font-semibold"
               v-if="status.length === 2"
               @click="endTurn"
-            >End Turn</button>
+            >
+              End Turn
+            </button>
             <button
               class="bg-green-800 text-gray-100 px-2 py-1 font-semibold"
               @click="changeCart"
-            >change value</button>
+            >
+              change value
+            </button>
             <button
               class="bg-yellow-800 text-gray-100 px-2 py-1 font-semibold"
               v-if="pemain.currentLocation === 'Market'"
               @click="market"
-            >Sell</button>
+            >
+              Sell
+            </button>
             <button
               class="bg-blue-800 text-gray-100 px-2 py-1 font-semibold"
               v-if="pemain.currentLocation === 'Luxury Shop'"
               @click="luxuryDiamond"
-            >Buy Diamond</button>
+            >
+              Buy Diamond
+            </button>
             <button
               class="bg-blue-800 text-gray-100 px-2 py-1 font-semibold"
               v-if="pemain.currentLocation === 'Luxury Shop'"
               @click="luxuryItem('Strider')"
-            >Buy Strider</button>
+            >
+              Buy Strider
+            </button>
             <button
               class="bg-blue-800 text-gray-100 px-2 py-1 font-semibold"
               v-if="pemain.currentLocation === 'Luxury Shop'"
               @click="luxuryItem('Horns')"
-            >Buy Horns</button>
+            >
+              Buy Horns
+            </button>
             <button
               class="bg-blue-800 text-gray-100 px-2 py-1 font-semibold"
               v-if="pemain.currentLocation === 'Luxury Shop'"
               @click="luxuryItem('Golden Whistle')"
-            >Buy Golden Whislte</button>
+            >
+              Buy Golden Whislte
+            </button>
             <button
               class="bg-blue-800 text-gray-100 px-2 py-1 font-semibold"
               v-if="pemain.currentLocation === 'Luxury Shop'"
               @click="luxuryItem('Shadow Hand')"
-            >Buy Shadow Hand</button>
+            >
+              Buy Shadow Hand
+            </button>
             <button
               class="bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
               v-if="pemain.currentLocation === 'Tea House'"
               @click="teaHouse"
-            >Gamble</button>
+            >
+              Gamble
+            </button>
             <button
               class="bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
               v-if="pemain.currentLocation === 'Wain Wright' && pemain.cart < 4"
               @click="wainWright"
-            >Upgrade Cart</button>
+            >
+              Upgrade Cart
+            </button>
             <p
-              v-else-if="pemain.currentLocation === 'Wain Wright' && pemain.cart === 4"
-            >Your cart is already max level</p>
+              v-else-if="
+                pemain.currentLocation === 'Wain Wright' && pemain.cart === 4
+              "
+            >
+              Your cart is already max level
+            </p>
             <button
               class="bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
-              v-if="pemain.currentLocation === 'Warehouse' && pemain.resources.filter(x => x.amount !== pemain.capacity).length"
+              v-if="
+                pemain.currentLocation === 'Warehouse' &&
+                  pemain.resources.filter((x) => x.amount !== pemain.capacity)
+                    .length
+              "
               @click="wareHouse"
-            >Free Resources</button>
+            >
+              Free Resources
+            </button>
             <p
-              v-else-if="pemain.currentLocation === 'Warehouse' && pemain.resources.filter(x => x.amount === pemain.capacity).length === 3"
-            >Your cart is already full</p>
+              v-else-if="
+                pemain.currentLocation === 'Warehouse' &&
+                  pemain.resources.filter((x) => x.amount === pemain.capacity)
+                    .length === 3
+              "
+            >
+              Your cart is already full
+            </p>
             <div v-for="(location, index) in pemain.assistants" :key="index">
               <button
                 class="bg-green-800 text-gray-100 px-2 py-1 font-semibold"
-                v-if="status.length && pemain.currentLocation === location.workLocation"
+                v-if="
+                  status.length &&
+                    pemain.currentLocation === location.workLocation
+                "
                 @click="freeAsistance(location)"
-              >Free Assistant {{ index + 1 }}</button>
+              >
+                Free Assistant {{ index + 1 }}
+              </button>
             </div>
             <div
               class="bg-red-800 text-gray-100 px-2 py-1 font-semibold"
-              v-if="pemain.currentLocation === anotherPlayer.currentLocation && pemain.currentLocation && anotherPlayer.currentLocation"
+              v-if="
+                pemain.currentLocation === anotherPlayer.currentLocation &&
+                  pemain.currentLocation &&
+                  anotherPlayer.currentLocation
+              "
             >
               <button @click="steal">Duplicate Diamond</button>
             </div>
             <button
               @click="horns"
-              v-if="pemain.items.filter(x => x.name === 'Horns').length"
-            >Use Horns</button>
+              v-if="pemain.items.filter((x) => x.name === 'Horns').length"
+            >
+              Use Horns
+            </button>
           </div>
         </div>
         <iframe
@@ -133,16 +192,29 @@
       <div id="bord" class="w-3/4">
         <div class="flex justify-end">
           <div>
-            <button v-if="isSound" @click="startAudio" class="flex items-center mr-3">
-              <i class="fa text-gray-100 fa-volume-off fa-2x" aria-hidden="true"></i>
+            <button
+              v-if="isSound"
+              @click="startAudio"
+              class="flex items-center mr-3"
+            >
+              <i
+                class="fa text-gray-100 fa-volume-off fa-2x"
+                aria-hidden="true"
+              ></i>
               <i class="fa text-gray-100 fa-times" aria-hidden="true"></i>
             </button>
             <button v-else @click="stopAudio">
-              <i class="fa text-gray-100 fa-volume-up fa-2x" aria-hidden="true"></i>
+              <i
+                class="fa text-gray-100 fa-volume-up fa-2x"
+                aria-hidden="true"
+              ></i>
             </button>
           </div>
           <button @click="exit">
-            <i class="fa text-gray-100 fa-sign-out fa-2x mr-3" aria-hidden="true"></i>
+            <i
+              class="fa text-gray-100 fa-sign-out fa-2x mr-3"
+              aria-hidden="true"
+            ></i>
           </button>
         </div>
         <!-- div current location========================================================================= -->
@@ -150,8 +222,9 @@
           <div class="w-full px-5 flex justify-between h-10p mx-auto">
             <div class="w-1/2 bg-gray-400 rounded">
               <section class="p-5 font-bold">
-                <h4>MARKET</h4>
-                <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Ratione porro nisi delectus laudantium aspernatur beatae expedita doloribus facere vitae dolor.</p>
+                <p>
+                  {{ botChat }}
+                </p>
               </section>
             </div>
 
@@ -159,7 +232,7 @@
               <section class="p-5 font-bold">
                 <h2>Currently Playing: {{ activePlayer }}</h2>
                 <h2>Your Location: {{ pemain.currentLocation }}</h2>
-                <h3 v-if="game.message">{{game.message}}</h3>
+                <h3 v-if="game.message">{{ game.message }}</h3>
               </section>
             </div>
           </div>
@@ -188,6 +261,8 @@
 import socket from "../config/socket";
 import PlayerCard from "../components/PlayerCard";
 import TileCard from "../components/TileCard";
+import { mapGetters } from "vuex";
+import axios from "axios";
 export default {
   data() {
     return {
@@ -205,6 +280,8 @@ export default {
       isWin: false,
       winMessage: "",
       stuck: "",
+      text: "",
+      botChat: "",
     };
   },
   components: {
@@ -270,6 +347,28 @@ export default {
     },
     horns() {
       socket.emit("horns", this.room.name);
+    },
+    submitForm(event) {
+      event.preventDefault();
+      const chat = { text: this.text };
+      console.log(chat);
+      axios({
+        method: "post",
+        url: "http://localhost:3000",
+        data: chat,
+      })
+        .then(({ data }) => {
+          console.log(data);
+          // context.emit("DIALOG_FLOW_CHAT", data);
+          this.botChat = data;
+        })
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally((_) => {
+          this.text = "";
+        });
+      // this.$store.dispacth("dialogFlow", chat);
     },
   },
   created() {
