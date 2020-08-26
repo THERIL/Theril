@@ -1,5 +1,5 @@
 <template>
-  <div class="w-1/3 tile">
+  <div class="w-1/3 tile relative">
     <div
       @click="move"
       id="tile"
@@ -18,27 +18,90 @@
       <!-- :style="{'background-image': 'url(' + require(`../assets/tile-0${index+1}.png`) + ')',  'background-size': 100% 'auto'}" -->
       <audio id="move" src="../assets/move.mp3" type="audio/mpeg" />
       <div class="icon">
-        <div class="player">
-          <div
-            v-if="playerPos1 == `${index+1}`"
-            class="avatar floating bg-red-600"
-            aria-hidden="true"
-          ></div>
-          <div
-            v-if="playerPos2 == `${index+1}`"
-            class="avatar floating bg-blue-600"
-            aria-hidden="true"
-          ></div>
-        </div><br><br>
-        <div class="assis">
-          <div v-for="(assistant, index) in assistants1" :key="index">
-            <Assistant :assistant="assistant" :tileName="tile.tileName" color="text-red-900" />
+        <div class="player flex flex-col">
+          <div class="flex">
+            <div
+              v-if="playerPos1 == `${index+1}`"
+              class="avatar floating bg-red-600"
+              aria-hidden="true"
+            ></div>
+            <div v-for="(assistant, index) in assistants1" :key="index" class="flex">
+              <Assistant :assistant="assistant" :tileName="tile.tileName" color="text-red-900" />
+            </div>
           </div>
-          <div v-for="(assistant, index) in assistants2" :key="index+2">
-            <Assistant :assistant="assistant" :tileName="tile.tileName" color="text-blue-900" />
+          <div class="flex">
+            <div
+              v-if="playerPos2 == `${index+1}`"
+              class="avatar floating bg-blue-600"
+              aria-hidden="true"
+            ></div>
+            <div v-for="(assistant, index) in assistants2" :key="index+2" class="flex">
+              <Assistant :assistant="assistant" :tileName="tile.tileName" color="text-blue-900" />
+            </div>
           </div>
         </div>
       </div>
+    </div>
+    <!--- button============================================================== -->
+    <!--- button= warehouse-->
+    <div class="absolute top-0 mt-40 w-full flex justify-center">
+      <button
+        class="bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
+        v-if="tile.tileName === 'Warehouse' && player.currentLocation === 'Warehouse'"
+        @click="wareHouse"
+      >Free Resources</button>
+    </div>
+    <!--- button= market-->
+    <div class="absolute top-0 mt-40 w-full flex justify-center">
+      <button
+        class="bg-yellow-800 text-gray-100 px-2 py-1 font-semibold"
+        v-if="tile.tileName === 'Market' && player.currentLocation === 'Market'"
+        @click="market"
+      >Sell</button>
+    </div>
+    <!--- button= teaHouse-->
+    <div class="absolute top-0 mt-40 w-full flex justify-center">
+      <button
+        class="bg-orange-800 rounded text-xs m-1 text-gray-100 px-2 py-1 font-semibold"
+        v-if="tile.tileName === 'Tea House' && player.currentLocation === 'Tea House'"
+        @click="teaHouse"
+      >Gamble</button>
+    </div>
+    <!--- button= wainWright-->
+    <div class="absolute top-0 mt-40 w-full flex justify-center">
+      <button
+        class="bg-orange-800 rounded text-xs m-1 text-gray-100 px-2 py-1 font-semibold"
+        v-if="tile.tileName === 'Wain Wright' && player.currentLocation === 'Wain Wright'"
+        @click="wainWright"
+      >Upgrade Cart</button>
+    </div>
+    <!--- button= luxury shop-->
+    <div class="absolute top-0 mt-40 w-full flex flex-wrap justify-center">
+      <button
+        class="bg-blue-800 rounded text-xs m-1 text-gray-100 px-2 py-1 font-semibold"
+        v-if="tile.tileName === 'Luxury Shop' && player.currentLocation === 'Luxury Shop'"
+        @click="luxuryDiamond"
+      >Buy Diamond</button>
+      <button
+        class="bg-blue-800 rounded text-xs m-1 text-gray-100 px-2 py-1 font-semibold"
+        v-if="tile.tileName === 'Luxury Shop' && player.currentLocation === 'Luxury Shop'"
+        @click="luxuryItem('Strider')"
+      >Buy Strider</button>
+      <button
+        class="bg-blue-800 rounded text-xs m-1 text-gray-100 px-2 py-1 font-semibold"
+        v-if="tile.tileName === 'Luxury Shop' && player.currentLocation === 'Luxury Shop'"
+        @click="luxuryItem('Horns')"
+      >Buy Horns</button>
+      <button
+        class="bg-blue-800 rounded text-xs m-1 text-gray-100 px-2 py-1 font-semibold"
+        v-if="tile.tileName === 'Luxury Shop' && player.currentLocation === 'Luxury Shop'"
+        @click="luxuryItem('Golden Whistle')"
+      >Buy Golden Whislte</button>
+      <button
+        class="bg-blue-800 rounded text-xs m-1 text-gray-100 px-2 py-1 font-semibold"
+        v-if="tile.tileName === 'Luxury Shop' && player.currentLocation === 'Luxury Shop'"
+        @click="luxuryItem('Shadow Hand')"
+      >Buy Shadow Hand</button>
     </div>
   </div>
 </template>
@@ -94,6 +157,24 @@ export default {
         this.$emit("clickMove");
       }
     },
+    wareHouse() {
+      this.$emit("wareHouse");
+    },
+    market() {
+      this.$emit("market");
+    },
+    teaHouse() {
+      this.$emit("teaHouse");
+    },
+    wainWright() {
+      this.$emit("wainWright");
+    },
+    luxuryDiamond() {
+      this.$emit("luxuryDiamond")
+    },
+    luxuryItem(type) {
+      this.$emit("luxuryItem", type)
+    }
   },
   created() {
     console.log(typeof index);
@@ -150,7 +231,7 @@ export default {
 <style>
 .tile-bg {
   background-size: 100% auto;
-  z-index: -1;
+  z-index: -5;
 }
 
 .tile {
@@ -192,8 +273,8 @@ export default {
   animation-duration: 3s;
   animation-iteration-count: infinite;
   animation-timing-function: ease-in-out;
-  margin-left: 30px;
-  margin-top: 5px;
+  margin-left: 20px;
+  margin-top: 20px;
 }
 
 @keyframes floating {

@@ -27,7 +27,7 @@ export default {
   animation-duration: 3s;
   animation-iteration-count: infinite;
   animation-timing-function: ease-in-out;
-  margin-left: 30px;
+  margin-left: 15px;
   margin-top: 15px;
 }
 

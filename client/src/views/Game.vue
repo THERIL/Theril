@@ -28,12 +28,12 @@
               class="bg-green-800 text-gray-100 px-2 py-1 font-semibold"
               @click="changeCart"
             >change value</button>
-            <button
+            <!-- <button
               class="bg-yellow-800 text-gray-100 px-2 py-1 font-semibold"
               v-if="pemain.currentLocation === 'Market'"
               @click="market"
-            >Sell</button>
-            <button
+            >Sell</button>-->
+            <!-- <button
               class="bg-blue-800 text-gray-100 px-2 py-1 font-semibold"
               v-if="pemain.currentLocation === 'Luxury Shop'"
               @click="luxuryDiamond"
@@ -57,22 +57,22 @@
               class="bg-blue-800 text-gray-100 px-2 py-1 font-semibold"
               v-if="pemain.currentLocation === 'Luxury Shop'"
               @click="luxuryItem('Shadow Hand')"
-            >Buy Shadow Hand</button>
-            <button
+            >Buy Shadow Hand</button> -->
+            <!-- <button
               class="bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
               v-if="pemain.currentLocation === 'Tea House'"
               @click="teaHouse"
-            >Gamble</button>
-            <button
+            >Gamble</button>-->
+            <!-- <button
               class="bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
               v-if="pemain.currentLocation === 'Wain Wright'"
               @click="wainWright"
-            >Upgrade Cart</button>
-            <button
+            >Upgrade Cart</button> -->
+            <!-- <button
               class="bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
               v-if="pemain.currentLocation === 'Warehouse'"
               @click="wareHouse"
-            >Free Resources</button>
+            >Free Resources</button>-->
 
             <div v-for="(location, index) in pemain.assistants" :key="index">
               <button
@@ -149,6 +149,12 @@
             :key="index"
             :index="index"
             @clickMove="move(pemain.currentLocation, tile)"
+            @wareHouse="wareHouse"
+            @market="market"
+            @teaHouse="teaHouse"
+            @wainWright="wainWright"
+            @luxuryDiamond="luxuryDiamond"
+            @luxuryItem="luxuryItem"
             :tile="tile"
             :player="pemain"
             :player2="anotherPlayer"
