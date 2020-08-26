@@ -1,6 +1,6 @@
 <template>
   <div id="app" class="mx-auto">
-    <div id="nav">
+    <div class="hidden" id="nav">
       <router-link to="/" v-if="!user.name">Login</router-link>|
       <router-link to="/lobby">Lobby</router-link>|
       <router-link to="/test">test</router-link>|

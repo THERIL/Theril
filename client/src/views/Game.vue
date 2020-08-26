@@ -3,9 +3,6 @@
     <div class="game-luar-background"></div>
 
     <!-- MODAL -->
-    <form @submit="submitForm">
-      <input type="text" v-model="text" />
-    </form>
 
     <div v-if="isWin">
       <div id="myModal" class="modal">
@@ -58,46 +55,87 @@
               class="bg-green-800 text-gray-100 px-2 py-1 font-semibold"
               @click="changeCart"
             >change value</button>
+            <!-- FREE ASSISTANTS -->
+            <div v-for="(location, index) in pemain.assistants" :key="index">
+              <button
+                class="bg-green-800 text-gray-100 px-2 py-1 font-semibold"
+                v-if="status.length && pemain.currentLocation === location.workLocation"
+                @click="freeAsistance(location)"
+              >Free Assistant {{ index + 1 }}</button>
+            </div>
+            <!-- DUPLICATE DIAMOND -->
+            <div
+              v-if="pemain.currentLocation === anotherPlayer.currentLocation && pemain.currentLocation && anotherPlayer.currentLocation"
+            >
+              <button
+                class="bg-red-800 text-gray-100 px-2 py-1 font-semibold"
+                @click="steal"
+              >Duplicate Diamond</button>
+            </div>
+            <div>
+              <button
+                class="bg-green-800 text-gray-100 px-2 py-1 font-semibold"
+                @click="horns"
+                v-if="pemain.items.filter(x => x.name === 'Horns').length"
+              >Use Horns</button>
+            </div>
           </div>
         </div>
       </div>
       <!-- div board========================================================================= -->
       <div id="bord" class="w-3/4">
-        <div class="flex justify-end">
-          <div>
-            <button v-if="isSound" @click="startAudio" class="flex items-center mr-3">
-              <i class="fa text-gray-100 fa-volume-off fa-2x" aria-hidden="true"></i>
-              <i class="fa text-gray-100 fa-times" aria-hidden="true"></i>
-            </button>
-            <button v-else @click="stopAudio">
-              <i class="fa text-gray-100 fa-volume-up fa-2x" aria-hidden="true"></i>
-            </button>
-          </div>
-          <button @click="exit">
-            <i class="fa text-gray-100 fa-sign-out fa-2x mr-3" aria-hidden="true"></i>
-          </button>
-        </div>
         <!-- div current location========================================================================= -->
-        <div class="mx-auto">
-          <div class="w-full px-5 flex justify-between h-10p mx-auto">
-            <div class="w-1/2 bg-gray-400 rounded">
-              <i class="nes-octocat animate"></i>
-              <section class="p-5 font-bold">
-                <p>{{ botChat }}</p>
+        <div class="h-25p mx-auto">
+          <div class="w-full h-full px-5 flex justify-between mx-auto">
+            <div class="w-1/4 h-full flex flex-col justify-end">
+              <section class="p-5 font-semibold bg-location bg-opacity-75 text-gray-100">
+                <h2>
+                  Currently Playing:
+                  <span class="font-bold">{{ activePlayer }}</span>
+                </h2>
+                <h2>
+                  Your Location:
+                  <span class="font-bold">{{ pemain.currentLocation }}</span>
+                </h2>
+                <h3 v-if="game.message">{{ game.message }}</h3>
               </section>
             </div>
 
-            <div class="w-1/3 bg-gray-400 rounded">
-              <section class="p-5 font-bold">
-                <h2>Currently Playing: {{ activePlayer }}</h2>
-                <h2>Your Location: {{ pemain.currentLocation }}</h2>
-                <h3 v-if="game.message">{{ game.message }}</h3>
+            <div class="w-3/4 relative flex flex-col">
+              <section class="absolute nes-balloon from-left font-bold">
+                <p class="text-xs">{{ botChat }}</p>
+                <!-- OCTOCAT -->
+                <div class="absolute left-0 mt-10">
+                  <div class="flex">
+                    <i class="nes-octocat animate"></i>
+                    <form @submit="submitForm">
+                      <input class="ml-4 mt-10" type="text" v-model="text" />
+                      <input type="submit" value="Ask me!" />
+                    </form>
+                  </div>
+                </div>
               </section>
+
+              <div class="flex justify-end">
+                <!-- EXIT AND VOLUME -->
+                <div>
+                  <button v-if="isSound" @click="startAudio" class="flex items-center mr-3">
+                    <i class="fa text-gray-100 fa-volume-off fa-2x" aria-hidden="true"></i>
+                    <i class="fa text-gray-100 fa-times" aria-hidden="true"></i>
+                  </button>
+                  <button v-else @click="stopAudio">
+                    <i class="fa text-gray-100 fa-volume-up fa-2x" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <button @click="exit">
+                  <i class="fa text-gray-100 fa-sign-out fa-2x mr-3" aria-hidden="true"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
         <!-- div tiles========================================================================= -->
-        <div id="tiles" class="flex flex-wrap h-80p">
+        <div id="tiles" class="flex flex-wrap h-70p">
           <TileCard
             v-for="(tile, index) in tiles"
             :key="index"
@@ -216,16 +254,17 @@ export default {
     submitForm(event) {
       event.preventDefault();
       const chat = { text: this.text };
-      console.log(chat);
       axios({
         method: "post",
         url: "http://localhost:3000",
         data: chat,
       })
         .then(({ data }) => {
-          console.log(data);
           // context.emit("DIALOG_FLOW_CHAT", data);
           this.botChat = data;
+          setTimeout(() => {
+            this.botChat = ""
+          }, 20000);
         })
         .catch((err) => {
           console.log(err);
@@ -303,16 +342,19 @@ export default {
 </script>
 
 <style scoped>
+.bg-location {
+  background-color: rgba(44, 44, 44, 0.5);
+}
 .garmin {
   margin-right: 15px;
 }
 
-.h-10p {
-  height: 10%;
+.h-25p {
+  height: 25%;
 }
 
-.h-80p {
-  height: 80%;
+.h-70p {
+  height: 70%;
 }
 
 .game-luar {

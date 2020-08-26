@@ -71,9 +71,13 @@
     <div class="absolute top-0 mt-40 w-full flex justify-center">
       <button
         class="bg-orange-800 rounded text-xs m-1 text-gray-100 px-2 py-1 font-semibold"
-        v-if="tile.tileName === 'Wain Wright' && player.currentLocation === 'Wain Wright' && player.name === active"
+        v-if="tile.tileName === 'Wain Wright' && player.currentLocation === 'Wain Wright' && player.name === active && player.cart < 4"
         @click="wainWright"
       >Upgrade Cart</button>
+      <p
+        class="font-semibold text-xs text-gray-100"
+        v-else-if="tile.tileName === 'Wain Wright' && player.currentLocation === 'Wain Wright' && player.cart >= 4"
+      >Your cart is already max level</p>
     </div>
     <!--- button= luxury shop-->
     <div class="absolute top-0 mt-40 w-full flex flex-wrap justify-center">
