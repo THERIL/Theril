@@ -43,7 +43,7 @@ const {
 app.use(cors());
 
 let rooms = [],
-  messages = [{ username: "tester", text: "ini text dummy" }],
+  messages = [],
   playersToBe = [],
   players = [],
   tiles = [
