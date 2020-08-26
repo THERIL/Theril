@@ -2,32 +2,38 @@
   <div class="div game-luar flex justify-center">
     <div class="game-luar-background"></div>
 
-    <!-- MODAL -->
-    <form @submit="submitForm">
-      <input type="text" v-model="text" />
-    </form>
+    <!-- MODAL WIN -->
 
     <div v-if="isWin">
-      <div id="myModal" class="modal">
+      <div
+        class="h-screen w-screen absolute bg-gray-800 bg-opacity-50 z-50 flex justify-center items-center"
+      >
         <!-- Modal content -->
-        <div class="modal-content">
+        <div class="bg-gray-200 rounded p-1">
           <span class="close">&times;</span>
           <p>{{ winMessage }}</p>
         </div>
         <button @click="exit">Ok</button>
       </div>
     </div>
+
+    <!-- MODAL MESSAGE -->
     <div v-if="pemain.name === activePlayer">
-      <div v-if="stuck">
-        <div id="myModal" class="modal">
+      <div
+        class="h-screen w-screen absolute bg-gray-800 bg-opacity-50 z-50 flex justify-center items-center"
+        @click="closeModal"
+        v-if="modalMessage"
+      >
+        <div class="bg-gray-200 rounded p-1">
           <!-- Modal content -->
-          <div class="modal-content">
-            <span class="close">&times;</span>
-            <p>{{ stuck.msg }}</p>
+          <div class>
+            <span class="text-xl" @click="closeModal">&times;</span>
+            <p class="tracking-wider text-lg px-4 py-2">{{ modalMessage.msg }}</p>
           </div>
         </div>
       </div>
     </div>
+
     <audio loop id="start" src="../assets/music-4.mp3" type="audio/mpeg" />
     <div class="div h-full mx-auto flex">
       <button @click="exitGame">Exit</button>
@@ -38,66 +44,107 @@
         <br />
         <!-- div button========================================================================= -->
         <div id="button" class="mt-10">
-          <div v-if="pemain.name === activePlayer" class="flex flex-wrap p-4 justify-center">
-            <div v-if="pemain.currentLocation === 'Police Office'">
-              <div v-if="jail.length">
-                <button
-                  v-for="(assist, index) in jail"
-                  :key="index"
-                  class="bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
-                >Assistant {{ index + 1 }}</button>
-              </div>
-              <p v-else>You dont have jailed assistant</p>
+          <div
+            v-if="pemain.name === activePlayer"
+            class="flex flex-col flex-wrap p-4 justify-center"
+          >
+            <div>
+              <button
+                class="w-1/2 mt-2 bg-red-800 text-gray-100 px-2 py-1 font-semibold"
+                @click="endTurn"
+              >End Turn</button>
             </div>
-            <button
-              class="bg-red-800 text-gray-100 px-2 py-1 font-semibold"
-              v-if="status.length === 2"
-              @click="endTurn"
-            >End Turn</button>
-            <button
-              class="bg-green-800 text-gray-100 px-2 py-1 font-semibold"
-              @click="changeCart"
-            >change value</button>
+
+            <div>
+              <button
+                class="w-1/2 mt-2 bg-green-800 text-gray-100 px-2 py-1 font-semibold"
+                @click="changeCart"
+              >Gold + 100</button>
+            </div>
+            <!-- FREE ASSISTANTS -->
+            <div v-if="status.length" class="flex">
+              <div class="w-full" v-for="(location, index) in pemain.assistants" :key="index">
+                <button
+                  v-if="pemain.currentLocation === location.workLocation"
+                  :key="index"
+                  class="w-1/2 mt-2 bg-green-800 text-gray-100 px-2 py-1 font-semibold"
+                  @click="freeAsistance(location)"
+                >Free Assistant {{ index + 1 }}</button>
+              </div>
+            </div>
+            <!-- DUPLICATE DIAMOND -->
+            <div
+              v-if="pemain.currentLocation === anotherPlayer.currentLocation && pemain.currentLocation && anotherPlayer.currentLocation"
+            >
+              <button
+                class="w-1/2 mt-2 bg-red-800 text-gray-100 px-2 py-1 font-semibold"
+                @click="steal"
+              >Duplicate Diamond</button>
+            </div>
+            <div>
+              <button
+                class="w-1/2 mt-2 bg-green-800 text-gray-100 px-2 py-1 font-semibold"
+                @click="horns"
+                v-if="pemain.items.filter(x => x.name === 'Horns').length"
+              >Use Horns</button>
+            </div>
           </div>
         </div>
       </div>
       <!-- div board========================================================================= -->
       <div id="bord" class="w-3/4">
-        <div class="flex justify-end">
-          <div>
-            <button v-if="isSound" @click="startAudio" class="flex items-center mr-3">
-              <i class="fa text-gray-100 fa-volume-off fa-2x" aria-hidden="true"></i>
-              <i class="fa text-gray-100 fa-times" aria-hidden="true"></i>
-            </button>
-            <button v-else @click="stopAudio">
-              <i class="fa text-gray-100 fa-volume-up fa-2x" aria-hidden="true"></i>
-            </button>
-          </div>
-          <button @click="exit">
-            <i class="fa text-gray-100 fa-sign-out fa-2x mr-3" aria-hidden="true"></i>
-          </button>
-        </div>
         <!-- div current location========================================================================= -->
-        <div class="mx-auto">
-          <div class="w-full px-5 flex justify-between h-10p mx-auto">
-            <div class="w-1/2 bg-gray-400 rounded">
-              <i class="nes-octocat animate"></i>
-              <section class="p-5 font-bold">
-                <p>{{ botChat }}</p>
+        <div class="h-25p mx-auto">
+          <div class="w-full h-full px-5 flex justify-between mx-auto">
+            <div class="w-1/4 h-full flex flex-col justify-end">
+              <section class="p-5 font-semibold bg-location bg-opacity-75 text-gray-100">
+                <h2>
+                  Currently Playing:
+                  <span class="font-bold">{{ activePlayer }}</span>
+                </h2>
+                <h2>
+                  Your Location:
+                  <span class="font-bold">{{ pemain.currentLocation }}</span>
+                </h2>
+                <h3 v-if="game.message">{{ game.message }}</h3>
               </section>
             </div>
 
-            <div class="w-1/3 bg-gray-400 rounded">
-              <section class="p-5 font-bold">
-                <h2>Currently Playing: {{ activePlayer }}</h2>
-                <h2>Your Location: {{ pemain.currentLocation }}</h2>
-                <h3 v-if="game.message">{{ game.message }}</h3>
+            <div class="w-3/4 relative flex flex-col">
+              <section class="absolute nes-balloon from-left font-bold">
+                <p class="text-xs">{{ botChat }}</p>
+                <!-- OCTOCAT -->
+                <div class="absolute left-0 mt-10">
+                  <div class="flex">
+                    <i class="nes-octocat animate"></i>
+                    <form @submit="submitForm">
+                      <input class="ml-4 mt-10" type="text" v-model="text" />
+                      <input type="submit" value="Ask me!" />
+                    </form>
+                  </div>
+                </div>
               </section>
+
+              <div class="flex justify-end">
+                <!-- EXIT AND VOLUME -->
+                <div>
+                  <button v-if="isSound" @click="startAudio" class="flex items-center mr-3">
+                    <i class="fa text-gray-100 fa-volume-off fa-2x" aria-hidden="true"></i>
+                    <i class="fa text-gray-100 fa-times" aria-hidden="true"></i>
+                  </button>
+                  <button v-else @click="stopAudio">
+                    <i class="fa text-gray-100 fa-volume-up fa-2x" aria-hidden="true"></i>
+                  </button>
+                </div>
+                <button @click="exit">
+                  <i class="fa text-gray-100 fa-sign-out fa-2x mr-3" aria-hidden="true"></i>
+                </button>
+              </div>
             </div>
           </div>
         </div>
         <!-- div tiles========================================================================= -->
-        <div id="tiles" class="flex flex-wrap h-80p">
+        <div id="tiles" class="flex flex-wrap h-70p">
           <TileCard
             v-for="(tile, index) in tiles"
             :key="index"
@@ -109,12 +156,14 @@
             @wainWright="wainWright"
             @luxuryDiamond="luxuryDiamond"
             @luxuryItem="luxuryItem"
+            @bail="bail"
             :tile="tile"
             :player="pemain"
             :player2="anotherPlayer"
             :active="activePlayer"
             :assistants1="pemain.assistants"
             :assistants2="anotherPlayer.assistants"
+            :jail="jail"
           />
         </div>
       </div>
@@ -144,7 +193,7 @@ export default {
       isSound: true,
       isWin: false,
       winMessage: "",
-      stuck: "",
+      modalMessage: "",
       text: "",
       botChat: "",
     };
@@ -167,6 +216,9 @@ export default {
     },
     changeCart() {
       socket.emit("updated-data", this.room);
+    },
+    closeModal() {
+      this.modalMessage = ''
     },
 
     move(moveFrom, moveTo) {
@@ -216,16 +268,17 @@ export default {
     submitForm(event) {
       event.preventDefault();
       const chat = { text: this.text };
-      console.log(chat);
       axios({
         method: "post",
         url: "http://localhost:3000",
         data: chat,
       })
         .then(({ data }) => {
-          console.log(data);
           // context.emit("DIALOG_FLOW_CHAT", data);
           this.botChat = data;
+          setTimeout(() => {
+            this.botChat = ""
+          }, 20000);
         })
         .catch((err) => {
           console.log(err);
@@ -255,7 +308,7 @@ export default {
     });
 
     socket.on("updated-game", (game, msg) => {
-      this.stuck = msg;
+      this.modalMessage = msg;
       this.game = game;
       let playerX = game.players.filter(
         (player) => player.id === this.user.id
@@ -303,16 +356,19 @@ export default {
 </script>
 
 <style scoped>
+.bg-location {
+  background-color: rgba(44, 44, 44, 0.5);
+}
 .garmin {
   margin-right: 15px;
 }
 
-.h-10p {
-  height: 10%;
+.h-25p {
+  height: 25%;
 }
 
-.h-80p {
-  height: 80%;
+.h-70p {
+  height: 70%;
 }
 
 .game-luar {

@@ -43,6 +43,23 @@
       </div>
     </div>
     <!--- button============================================================== -->
+    <!-- Button Police Office -->
+    <div
+      class="absolute top-0 mt-40 w-full"
+      v-if="tile.tileName === 'Police Office' && player.currentLocation === 'Police Office' && player.name === active"
+    >
+      <div class="w-full flex justify-center" v-if="jail.length">
+        <button
+          v-for="(assist, index) in jail"
+          :key="index"
+          class="w-1/2 mt-2 bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
+          @click="bail"
+        >Assistant {{ index + 1 }}</button>
+      </div>
+      <div v-else class="w-full flex justify-center">
+        <p class="text-gray-100 font-bold">You dont have jailed assistant</p>
+      </div>
+    </div>
     <!--- button= warehouse-->
     <div class="absolute top-0 mt-40 w-full flex justify-center">
       <button
@@ -71,9 +88,13 @@
     <div class="absolute top-0 mt-40 w-full flex justify-center">
       <button
         class="bg-orange-800 rounded text-xs m-1 text-gray-100 px-2 py-1 font-semibold"
-        v-if="tile.tileName === 'Wain Wright' && player.currentLocation === 'Wain Wright' && player.name === active"
+        v-if="tile.tileName === 'Wain Wright' && player.currentLocation === 'Wain Wright' && player.name === active && player.cart < 4"
         @click="wainWright"
       >Upgrade Cart</button>
+      <p
+        class="font-semibold text-xs text-gray-100"
+        v-else-if="tile.tileName === 'Wain Wright' && player.currentLocation === 'Wain Wright' && player.cart >= 4"
+      >Your cart is already max level</p>
     </div>
     <!--- button= luxury shop-->
     <div class="absolute top-0 mt-40 w-full flex flex-wrap justify-center">
@@ -148,6 +169,7 @@ export default {
     "active",
     "assistants1",
     "assistants2",
+    "jail"
   ],
   methods: {
     move() {
@@ -159,6 +181,9 @@ export default {
     },
     wareHouse() {
       this.$emit("wareHouse");
+    },
+    bail(index) {
+      this.$emit("bail",index);
     },
     market() {
       this.$emit("market");

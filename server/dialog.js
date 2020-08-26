@@ -16,7 +16,7 @@ const balikanData = async (text) => {
       headers: {
         "Content-Type": "application/json; charset=utf-8",
         Authorization:
-          "Bearer ya29.c.Ko8B2QcYlp--vqY1gFUCwG_qMLpav6jsmzxOy5ULPran_2yC7C41-OeWNhfsJKBGLWEMMdz-RkQGs72M25KYt1bZtA_D8AeeMhOzMn9D5m4doRrU7g1bDovHEui4f-RoSGmd-hnHnqHA_QEe26ap4DhLP7bl9s1CTya66PbNRu03LWChlkPpd5FVNSmlpx4XEiE",
+          "Bearer ya29.c.Ko8B2QfRIWKnY6zLC7fE2GEUsr69l9r5XnygzK3gsoKHk39-L8imvB91YFDn-Ju6D-DCwBNwoqfQfPJGH2nLxf2NHCtgJzAfHV-PJPFIwSar6y3MxEZB5Sxde4ZT8mjseTxxpjBAIyHy6oBTmcIgKe-VR9RcYgPESxve4WBwo8fijdovo6iC1Ert7QcuQfiYGCU",
       },
     };
     const result = await Axios(config);
