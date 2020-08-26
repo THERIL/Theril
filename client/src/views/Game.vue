@@ -5,7 +5,7 @@
     <div class="div h-full mx-auto flex">
       <!-- div player========================================================================== -->
 
-      <div id="player" class="w-1/4 flex flex-col justify-center">
+      <div id="player" class="w-1/4 mt-4 flex flex-col">
         <PlayerCard v-for="(player, index) in game.players" :key="index" :player="player" />
         <br />
         <!-- div button========================================================================= -->
@@ -100,6 +100,12 @@
             </div>
           </div>
         </div>
+        <iframe
+          allow="microphone;"
+          width="350"
+          height="430"
+          src="https://console.dialogflow.com/api-client/demo/embedded/ec1c8deb-b60b-4f58-b2e9-1f499c604a14"
+        ></iframe>
       </div>
       <!-- div board========================================================================= -->
       <div id="bord" class="w-3/4">
@@ -119,7 +125,7 @@
         </div>
         <!-- div current location========================================================================= -->
         <div class="mx-auto">
-          <div class="w-full flex h-10p mx-auto">
+          <div class="w-full px-5 flex justify-between h-10p mx-auto">
             <div class="w-1/2 bg-gray-400 rounded">
               <section class="p-5 font-bold">
                 <h4>MARKET</h4>
@@ -127,7 +133,7 @@
               </section>
             </div>
 
-            <div class="w-1/3 mx-auto bg-gray-400 rounded">
+            <div class="w-1/3 bg-gray-400 rounded">
               <section class="p-5 font-bold">
                 <h2>Currently Playing: {{ activePlayer }}</h2>
                 <h2>Your Location: {{ pemain.currentLocation }}</h2>

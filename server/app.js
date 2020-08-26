@@ -146,6 +146,7 @@ io.on("connection", (socket) => {
         io.emit("updated-room", rooms);
       } else {
         rooms[index].users.push(data.username);
+        io.emit("updated-room", rooms);
         io.sockets.in(data.roomName).emit("room-detail", rooms[index]);
       }
     });
