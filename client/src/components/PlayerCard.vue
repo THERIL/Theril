@@ -68,7 +68,7 @@
             </div>
             <div class="flex items-center mt-2">
               <i class="fa fa-level-up text-gray-100" aria-hidden="true"></i>
-              <p class="ml-2 text-gray-100 text-lg font-bold">{{player.cart}}/6</p>
+              <p class="ml-2 text-gray-100 text-lg font-bold">Cart Lv: {{player.cart}}/4</p>
             </div>
           </div>
         </div>
@@ -77,7 +77,7 @@
 
       <!-- START KANAN -->
       <div id="kanan" class="w-2/6 ml-2">
-        <div class="flex mt-4">
+        <div class="flex flex-col mt-4">
           <!-- FLEX DIAMOND -->
           <div class="w-full flex flex-wrap">
             <div v-for="(n,i) in 6" :key="i" class="w-1/3">
