@@ -1,6 +1,7 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import socket from "../config/socket.js";
+// import Artyom from "artyom.js";
 
 Vue.use(Vuex);
 
@@ -24,7 +25,8 @@ export default new Vuex.Store({
       state.players = game;
     },
   },
-  actions: {},
+  actions: {
+  },
   getters: {
     user: (state) => state.user,
   },
