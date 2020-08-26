@@ -43,6 +43,23 @@
       </div>
     </div>
     <!--- button============================================================== -->
+    <!-- Button Police Office -->
+    <div
+      class="absolute top-0 mt-40 w-full"
+      v-if="tile.tileName === 'Police Office' && player.currentLocation === 'Police Office' && player.name === active"
+    >
+      <div class="w-full flex justify-center" v-if="jail.length">
+        <button
+          v-for="(assist, index) in jail"
+          :key="index"
+          class="w-1/2 mt-2 bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
+          @click="bail"
+        >Assistant {{ index + 1 }}</button>
+      </div>
+      <div v-else class="w-full flex justify-center">
+        <p class="text-gray-100 font-bold">You dont have jailed assistant</p>
+      </div>
+    </div>
     <!--- button= warehouse-->
     <div class="absolute top-0 mt-40 w-full flex justify-center">
       <button
@@ -152,6 +169,7 @@ export default {
     "active",
     "assistants1",
     "assistants2",
+    "jail"
   ],
   methods: {
     move() {
@@ -163,6 +181,9 @@ export default {
     },
     wareHouse() {
       this.$emit("wareHouse");
+    },
+    bail(index) {
+      this.$emit("bail",index);
     },
     market() {
       this.$emit("market");

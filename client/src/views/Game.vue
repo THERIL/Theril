@@ -2,29 +2,38 @@
   <div class="div game-luar flex justify-center">
     <div class="game-luar-background"></div>
 
-    <!-- MODAL -->
+    <!-- MODAL WIN -->
 
     <div v-if="isWin">
-      <div id="myModal" class="modal">
+      <div
+        class="h-screen w-screen absolute bg-gray-800 bg-opacity-50 z-50 flex justify-center items-center"
+      >
         <!-- Modal content -->
-        <div class="modal-content">
+        <div class="bg-gray-200 rounded p-1">
           <span class="close">&times;</span>
           <p>{{ winMessage }}</p>
         </div>
         <button @click="exit">Ok</button>
       </div>
     </div>
+
+    <!-- MODAL MESSAGE -->
     <div v-if="pemain.name === activePlayer">
-      <div v-if="stuck">
-        <div id="myModal" class="modal">
+      <div
+        class="h-screen w-screen absolute bg-gray-800 bg-opacity-50 z-50 flex justify-center items-center"
+        @click="closeModal"
+        v-if="modalMessage"
+      >
+        <div class="bg-gray-200 rounded p-1">
           <!-- Modal content -->
-          <div class="modal-content">
-            <span class="close">&times;</span>
-            <p>{{ stuck.msg }}</p>
+          <div class>
+            <span class="text-xl" @click="closeModal">&times;</span>
+            <p class="tracking-wider text-lg px-4 py-2">{{ modalMessage.msg }}</p>
           </div>
         </div>
       </div>
     </div>
+
     <audio loop id="start" src="../assets/music-4.mp3" type="audio/mpeg" />
     <div class="div h-full mx-auto flex">
       <button @click="exitGame">Exit</button>
@@ -35,46 +44,46 @@
         <br />
         <!-- div button========================================================================= -->
         <div id="button" class="mt-10">
-          <div v-if="pemain.name === activePlayer" class="flex flex-wrap p-4 justify-center">
-            <div v-if="pemain.currentLocation === 'Police Office'">
-              <div v-if="jail.length">
-                <button
-                  v-for="(assist, index) in jail"
-                  :key="index"
-                  class="bg-orange-800 text-gray-100 px-2 py-1 font-semibold"
-                >Assistant {{ index + 1 }}</button>
-              </div>
-              <p v-else>You dont have jailed assistant</p>
-            </div>
-            <button
-              class="bg-red-800 text-gray-100 px-2 py-1 font-semibold"
-              v-if="status.length === 2"
-              @click="endTurn"
-            >End Turn</button>
-            <button
-              class="bg-green-800 text-gray-100 px-2 py-1 font-semibold"
-              @click="changeCart"
-            >change value</button>
-            <!-- FREE ASSISTANTS -->
-            <div v-for="(location, index) in pemain.assistants" :key="index">
+          <div
+            v-if="pemain.name === activePlayer"
+            class="flex flex-col flex-wrap p-4 justify-center"
+          >
+            <div>
               <button
-                class="bg-green-800 text-gray-100 px-2 py-1 font-semibold"
-                v-if="status.length && pemain.currentLocation === location.workLocation"
-                @click="freeAsistance(location)"
-              >Free Assistant {{ index + 1 }}</button>
+                class="w-1/2 mt-2 bg-red-800 text-gray-100 px-2 py-1 font-semibold"
+                @click="endTurn"
+              >End Turn</button>
+            </div>
+
+            <div>
+              <button
+                class="w-1/2 mt-2 bg-green-800 text-gray-100 px-2 py-1 font-semibold"
+                @click="changeCart"
+              >Gold + 100</button>
+            </div>
+            <!-- FREE ASSISTANTS -->
+            <div v-if="status.length" class="flex">
+              <div class="w-full" v-for="(location, index) in pemain.assistants" :key="index">
+                <button
+                  v-if="pemain.currentLocation === location.workLocation"
+                  :key="index"
+                  class="w-1/2 mt-2 bg-green-800 text-gray-100 px-2 py-1 font-semibold"
+                  @click="freeAsistance(location)"
+                >Free Assistant {{ index + 1 }}</button>
+              </div>
             </div>
             <!-- DUPLICATE DIAMOND -->
             <div
               v-if="pemain.currentLocation === anotherPlayer.currentLocation && pemain.currentLocation && anotherPlayer.currentLocation"
             >
               <button
-                class="bg-red-800 text-gray-100 px-2 py-1 font-semibold"
+                class="w-1/2 mt-2 bg-red-800 text-gray-100 px-2 py-1 font-semibold"
                 @click="steal"
               >Duplicate Diamond</button>
             </div>
             <div>
               <button
-                class="bg-green-800 text-gray-100 px-2 py-1 font-semibold"
+                class="w-1/2 mt-2 bg-green-800 text-gray-100 px-2 py-1 font-semibold"
                 @click="horns"
                 v-if="pemain.items.filter(x => x.name === 'Horns').length"
               >Use Horns</button>
@@ -147,12 +156,14 @@
             @wainWright="wainWright"
             @luxuryDiamond="luxuryDiamond"
             @luxuryItem="luxuryItem"
+            @bail="bail"
             :tile="tile"
             :player="pemain"
             :player2="anotherPlayer"
             :active="activePlayer"
             :assistants1="pemain.assistants"
             :assistants2="anotherPlayer.assistants"
+            :jail="jail"
           />
         </div>
       </div>
@@ -182,7 +193,7 @@ export default {
       isSound: true,
       isWin: false,
       winMessage: "",
-      stuck: "",
+      modalMessage: "",
       text: "",
       botChat: "",
     };
@@ -205,6 +216,9 @@ export default {
     },
     changeCart() {
       socket.emit("updated-data", this.room);
+    },
+    closeModal() {
+      this.modalMessage = ''
     },
 
     move(moveFrom, moveTo) {
@@ -294,7 +308,7 @@ export default {
     });
 
     socket.on("updated-game", (game, msg) => {
-      this.stuck = msg;
+      this.modalMessage = msg;
       this.game = game;
       let playerX = game.players.filter(
         (player) => player.id === this.user.id

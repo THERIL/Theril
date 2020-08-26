@@ -22,11 +22,13 @@
     </div>
 
     <div class="mt-8 flex justify-center">
-      <button
-        class="font-semibold btn-str text-xl p-3"
-        @click="startGame"
-        v-if="room.users[0].id == id && room.users.length === 2"
-      >START GAME</button>
+      <div v-if="room.users.length">
+        <button
+          class="font-semibold btn-str text-xl p-3"
+          @click="startGame"
+          v-if="room.users[0].id == id && room.users.length === 2"
+        >START GAME</button>
+      </div>
     </div>
   </div>
 </template>
@@ -41,7 +43,10 @@ export default {
   },
   data: function () {
     return {
-      room: {},
+      room: {
+        name: '',
+        users: []
+      },
     };
   },
   created: function () {
@@ -49,7 +54,7 @@ export default {
       this.room = room;
     });
     socket.on("start-game", () => {
-      this.$router.push(`/game/${this.room.name}`);
+      if(this.$route.name !== "Game") this.$router.push(`/game/${this.room.name}`);
     });
     socket.on("errorFull", (message) => {
       this.$router.push({ name: "Lobby" });
