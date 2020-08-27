@@ -62,7 +62,6 @@ class Player {
   checkCart() {
     if (this.cart === 4) {
       this.diamond += 1;
-      this.diamond += 4;
     }
   }
 
