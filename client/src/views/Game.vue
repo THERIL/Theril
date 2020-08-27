@@ -208,13 +208,13 @@ export default {
   },
   methods: {
     startAudio() {
-      var audio = document.getElementById("start");
+      let audio = document.getElementById("start");
       audio.play();
-      audio.volume = 0.05;
+      audio.volume = 0.75;
       this.isSound = false;
     },
     stopAudio() {
-      var audio = document.getElementById("start");
+      let audio = document.getElementById("start");
       audio.pause();
       this.isSound = true;
     },

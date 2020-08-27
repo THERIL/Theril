@@ -6,7 +6,8 @@ const player4 = new Player("asdasd");
 const player5 = new Player("324234234");
 const player6 = new Player("657567567");
 
-const { LuxuryShop, Market } = require("../logic/Tiles");
+const LuxuryShop = require("../logic/LuxuryShop");
+const Market = require("../logic/Market");
 const ls = new LuxuryShop();
 const m = new Market();
 

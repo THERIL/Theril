@@ -1,4 +1,4 @@
-const { Market } = require("../logic/Tiles");
+const Market = require("../logic/Market");
 const m = new Market();
 
 const Player = require("../logic/Player");

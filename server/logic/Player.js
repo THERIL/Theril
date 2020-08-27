@@ -73,9 +73,9 @@ class Player {
           let x = allowed[0].steal(target, value, value2);
           this.getStolenItems();
           this.hasDone += 1;
-          if (x.msg) {
+          if (x) {
             return x;
-          }
+          } else return;
         } else return { msg: "You dont have free assistant to do this" };
       } else return { msg: "It's not your turn" };
     } else return { msg: "Target doesn't have any diamond" };

@@ -1,4 +1,4 @@
-const { TeaHouse } = require("../logic/Tiles");
+const TeaHouse = require("../logic/TeaHouse");
 const Game = require("../logic/Turns");
 const g = new Game();
 const g2 = new Game();
@@ -49,12 +49,12 @@ describe("Tea House", () => {
   });
 
   it("case: player win gamble", (done) => {
-    expect(player2.gold).toBe(13);
+    expect(player2.gold).toBe(15);
     done();
   });
 
   it("case: player lose gamble", (done) => {
-    expect(player4.gold).toBe(3);
+    expect(player4.gold).toBe(6);
     done();
   });
 

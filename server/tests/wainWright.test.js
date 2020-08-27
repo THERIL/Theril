@@ -1,4 +1,4 @@
-const { WainWright } = require("../logic/Tiles");
+const WainWright = require("../logic/WainWright");
 const ww = new WainWright();
 
 const Player = require("../logic/Player");
