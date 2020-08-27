@@ -1,12 +1,12 @@
 <template>
   <div class="h-full">
-    <div class="h-10p border-b bg-lobby">
-      <h1 class="text-xl font-bold border-gray-100 text-gray-100 ml-4">LOBBY CHAT</h1>
+    <div class="bg-lobby p-4">
+      <h1 class="text-xl font-bold border-gray-100 text-gray-100 border-b-2">LOBBY CHAT</h1>
     </div>
     <!-- CHATBOX -->
     <div id="chatbox" class="h-80p bg-lobby overflow-y-scroll">
       <div class="text-left ml-4" v-for="(message,index) in allMessages" :key="index">
-        <p class="font-bold mt-2 text-gray-100 text-left">({{message.username}}):</p>
+        <p class="font-bold mt-1 mb-0 text-gray-100 text-left">({{message.username}}):</p>
         <p class="text-gray-100">{{message.text}}</p>
       </div>
     </div>

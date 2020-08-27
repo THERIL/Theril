@@ -1,10 +1,8 @@
 <template>
-  <div
-    class="w-5/6 relative mt-6 bg-orange-800 bg-opacity-75 border-2 flex flex-col"
-  >
+  <div class="w-5/6 relative mt-6 bg-orange-800 bg-opacity-75 border-2 flex flex-col">
     <!-- NAME HEADER -->
     <div class="border-b-2 bg-blue-900">
-      <p class="text-gray-100 text-2xl">
+      <p class="text-gray-100 text-2xl ml-4">
         <i class="fas fa-chess-king"></i>
         {{ player.name }}
       </p>
@@ -85,9 +83,7 @@
               </div>
             </div>
             <div class="flex items-center mt-2">
-              <p class="ml-2 text-gray-100 text-lg font-bold">
-                Cart Lv: {{ player.cart }}/4
-              </p>
+              <p class="ml-2 text-gray-100 text-lg font-bold">Cart Lv: {{ player.cart }}/4</p>
             </div>
           </div>
         </div>
@@ -111,11 +107,7 @@
           <div class="flex flex-col">
             <!-- GOLD -->
             <div class="w-full flex items-center">
-              <img
-                :src="require(`../assets/gold.png`)"
-                width="32"
-                height="32"
-              />
+              <img :src="require(`../assets/gold.png`)" width="32" height="32" />
               <p class="text-gray-100 text-xl font-bold">{{ player.gold }}</p>
             </div>
 

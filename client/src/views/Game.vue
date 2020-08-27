@@ -9,7 +9,7 @@
         class="h-screen w-screen absolute bg-gray-800 bg-opacity-50 z-50 flex justify-center items-center"
       >
         <!-- Modal content -->
-        <div class="bg-gray-200 rounded p-1">
+        <div class="bg-gray-200 rounded p-5">
           <span class="close">&times;</span>
           <p>{{ winMessage }}</p>
           <button @click="exit">Ok</button>
@@ -24,7 +24,7 @@
         @click="closeModal"
         v-if="modalMessage"
       >
-        <div class="bg-gray-200 rounded p-1">
+        <div class="bg-gray-200 rounded p-5">
           <!-- Modal content -->
           <div class>
             <span class="text-xl" @click="closeModal">&times;</span>
@@ -39,11 +39,11 @@
       <!-- <button>Exit</button> -->
       <!-- div player========================================================================== -->
 
-      <div id="player" class="w-1/4 mt-4 flex flex-col">
+      <div id="player" class="w-1/4 mt-4 flex flex-col px-4">
         <PlayerCard v-for="(player, index) in game.players" :key="index" :player="player" />
         <br />
         <!-- div button========================================================================= -->
-        <div id="button" class="mt-10">
+        <div id="button" class="mt-6">
           <div
             v-if="pemain.name === activePlayer"
             class="flex flex-col flex-wrap p-4 justify-center"
@@ -115,7 +115,7 @@
             </div>
 
             <div class="w-3/4 relative flex flex-col">
-              <section class="absolute nes-balloon from-left font-bold">
+              <section class="absolute nes-balloon from-left font-semibold">
                 <p class="text-xs">{{ botChat }}</p>
                 <!-- OCTOCAT -->
                 <div class="absolute left-0 mt-10">
@@ -123,7 +123,11 @@
                     <i class="nes-octocat animate"></i>
                     <form @submit="submitForm">
                       <input class="ml-4 mt-10" type="text" v-model="text" />
-                      <input type="submit" value="Ask me!" class="ml-4" />
+                      <input
+                        type="submit"
+                        value="Ask me!"
+                        class="ml-4 bg-gray-200 px-4 py-2 font-bold"
+                      />
                     </form>
                   </div>
                 </div>

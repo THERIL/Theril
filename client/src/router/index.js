@@ -5,6 +5,7 @@ import Login from "../views/Login.vue";
 import Room from "../views/Room.vue";
 import Game from "../views/Game.vue";
 import Test from "../views/Test.vue";
+import Reset from "../views/Reset.vue";
 
 Vue.use(VueRouter);
 
@@ -34,7 +35,11 @@ const routes = [
     name: "Test",
     component: Test,
   },
-
+  {
+    path: "/reset",
+    name: "Reset",
+    component: Reset,
+  },
   {
     path: "/board/:name",
     name: "Board",

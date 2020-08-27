@@ -99,6 +99,10 @@ io.on("connection", (socket) => {
     rooms = [];
   });
 
+  socket.on("clear-message", () => {
+    messages = [];
+  });
+
   socket.on("logout", async () => {
     let logout = await userLogout(users, socket.id, objGame, players, rooms);
     users = logout.users;
@@ -130,6 +134,8 @@ io.on("connection", (socket) => {
         "user-win",
         "Another player has leave the game, You Win"
       );
+      io.emit("get-connected-users", users);
+      socket.emit("recieve-message", messages);
     });
   });
 
@@ -145,6 +151,7 @@ io.on("connection", (socket) => {
       }
       io.emit("get-list-room", rooms);
       io.emit("get-connected-users", users);
+      socket.emit("recieve-message", messages);
     });
   });
 
