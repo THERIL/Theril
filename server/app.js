@@ -6,8 +6,6 @@ const cors = require("cors");
 const { json, urlencoded } = require("express");
 
 const {
-  Game,
-  Player,
   Market,
   LuxuryShop,
   PoliceOffice,
@@ -43,7 +41,8 @@ const {
 app.use(cors());
 
 let rooms = [],
-  messages = [{ username: "tester", text: "ini text dummy" }],
+  messages = [],
+  playersToBe = [],
   players = [],
   tiles = [
     new LuxuryShop(false),

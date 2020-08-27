@@ -11,14 +11,12 @@ const {
 
 const { itemArr, luxItemArr } = require("../logic/Module");
 
-const {
-  LuxuryShop,
-  Market,
-  PoliceOffice,
-  TeaHouse,
-  WainWright,
-  Warehouse,
-} = require("../logic/Tiles");
+const LuxuryShop = require("../logic/LuxuryShop");
+const Market = require("../logic/Market");
+const PoliceOffice = require("../logic/PoliceOffice");
+const TeaHouse = require("../logic/TeaHouse");
+const WainWright = require("../logic/WainWright");
+const Warehouse = require("../logic/Warehouse");
 
 module.exports = {
   Game,

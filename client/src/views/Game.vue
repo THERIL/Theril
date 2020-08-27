@@ -36,7 +36,7 @@
 
     <audio loop id="start" src="../assets/music-4.mp3" type="audio/mpeg" />
     <div class="div h-full mx-auto flex">
-      <button @click="exitGame">Exit</button>
+      <!-- <button>Exit</button> -->
       <!-- div player========================================================================== -->
 
       <div id="player" class="w-1/4 mt-4 flex flex-col">
@@ -55,7 +55,7 @@
               >End Turn</button>
             </div>
 
-            <div>
+            <div class="hidden">
               <button
                 class="w-1/2 mt-2 bg-green-800 text-gray-100 px-2 py-1 font-semibold"
                 @click="changeCart"
@@ -74,7 +74,11 @@
             </div>
             <!-- DUPLICATE DIAMOND -->
             <div
-              v-if="pemain.currentLocation === anotherPlayer.currentLocation && pemain.currentLocation && anotherPlayer.currentLocation"
+              v-if="
+                pemain.currentLocation === anotherPlayer.currentLocation &&
+                  pemain.currentLocation &&
+                  anotherPlayer.currentLocation
+              "
             >
               <button
                 class="w-1/2 mt-2 bg-red-800 text-gray-100 px-2 py-1 font-semibold"
@@ -85,7 +89,7 @@
               <button
                 class="w-1/2 mt-2 bg-green-800 text-gray-100 px-2 py-1 font-semibold"
                 @click="horns"
-                v-if="pemain.items.filter(x => x.name === 'Horns').length"
+                v-if="pemain.items.filter((x) => x.name === 'Horns').length"
               >Use Horns</button>
             </div>
           </div>
@@ -119,7 +123,7 @@
                     <i class="nes-octocat animate"></i>
                     <form @submit="submitForm">
                       <input class="ml-4 mt-10" type="text" v-model="text" />
-                      <input type="submit" value="Ask me!" />
+                      <input type="submit" value="Ask me!" class="ml-4" />
                     </form>
                   </div>
                 </div>
@@ -128,7 +132,7 @@
               <div class="flex justify-end">
                 <!-- EXIT AND VOLUME -->
                 <div>
-                  <button v-if="isSound" @click="startAudio" class="flex items-center mr-3">
+                  <button v-if="isSound" @click="startAudio" class="flex items-center">
                     <i class="fa text-gray-100 fa-volume-off fa-2x" aria-hidden="true"></i>
                     <i class="fa text-gray-100 fa-times" aria-hidden="true"></i>
                   </button>
@@ -136,7 +140,7 @@
                     <i class="fa text-gray-100 fa-volume-up fa-2x" aria-hidden="true"></i>
                   </button>
                 </div>
-                <button @click="exit">
+                <button @click="exitGame" class="ml-5">
                   <i class="fa text-gray-100 fa-sign-out fa-2x mr-3" aria-hidden="true"></i>
                 </button>
               </div>
@@ -270,11 +274,10 @@ export default {
       const chat = { text: this.text };
       axios({
         method: "post",
-        url: "http://localhost:3000",
+        url: "https://theril.herokuapp.com",
         data: chat,
       })
         .then(({ data }) => {
-          // context.emit("DIALOG_FLOW_CHAT", data);
           this.botChat = data;
           setTimeout(() => {
             this.botChat = "";
@@ -286,7 +289,6 @@ export default {
         .finally((_) => {
           this.text = "";
         });
-      // this.$store.dispacth("dialogFlow", chat);
     },
   },
   created() {

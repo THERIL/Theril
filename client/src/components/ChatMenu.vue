@@ -1,11 +1,11 @@
 <template>
   <div class="h-full">
     <div class="h-10p border-b bg-lobby">
-      <h1 class="text-xl font-bold border-gray-100 text-gray-100">LOBBY CHAT</h1>
+      <h1 class="text-xl font-bold border-gray-100 text-gray-100 ml-4">LOBBY CHAT</h1>
     </div>
     <!-- CHATBOX -->
     <div id="chatbox" class="h-80p bg-lobby overflow-y-scroll">
-      <div class="text-left" v-for="(message,index) in allMessages" :key="index">
+      <div class="text-left ml-4" v-for="(message,index) in allMessages" :key="index">
         <p class="font-bold mt-2 text-gray-100 text-left">({{message.username}}):</p>
         <p class="text-gray-100">{{message.text}}</p>
       </div>
@@ -26,54 +26,52 @@
 </template>
 
 <script>
-import socket from '../config/socket.js'
-
+import socket from "../config/socket.js";
 
 export default {
-      name: 'ChatMenu',
-      data: function() {
-            return {
-                  messageInput: '',
-                  allMessages: []
-            }
-      },
-      props: ['user','connectedUsers'],
-      methods: {
-            sendMessage: function (event) {
-                  event.preventDefault();
-                  const payload= {
-                        username: this.user.name,
-                        text: this.messageInput
-                  }
-                  socket.emit('send-message', payload)
-                  this.messageInput = '';
-            },
-            scrollDown: function () {
-              const el = document.getElementById('chatbox')
-              if (el) {
-                console.log(el)
-                el.scrollTop = el.scrollHeight
-              }
-            },
-      },
-      watch: {
-        allMessages: function() {
-          this.scrollDown()
-        }
-      },
-      created: function () {
-            socket.on('recieve-message', (message) => {
-              if(Array.isArray(message)){
-              message.forEach(item => {
-                this.allMessages.push(item);
-              })
-              }
-              else{
-                this.allMessages.push(message)
-              }
-            })
-      },
-}
+  name: "ChatMenu",
+  data: function () {
+    return {
+      messageInput: "",
+      allMessages: [],
+    };
+  },
+  props: ["user", "connectedUsers"],
+  methods: {
+    sendMessage: function (event) {
+      event.preventDefault();
+      const payload = {
+        username: this.user.name,
+        text: this.messageInput,
+      };
+      socket.emit("send-message", payload);
+      this.messageInput = "";
+    },
+    scrollDown: function () {
+      const el = document.getElementById("chatbox");
+      if (el) {
+        console.log(el);
+        el.scrollTop = el.scrollHeight;
+      }
+    },
+  },
+  watch: {
+    allMessages: function () {
+      this.scrollDown();
+    },
+  },
+  created: function () {
+    socket.on("recieve-message", (message) => {
+      if (Array.isArray(message)) {
+        message.forEach((item) => {
+          this.allMessages.push(item);
+        });
+      } else {
+        this.allMessages.push(message);
+      }
+    });
+  },
+};
 </script>
 
 <style>

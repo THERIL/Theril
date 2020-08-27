@@ -1,4 +1,4 @@
-const { LuxuryShop } = require("../logic/Tiles");
+const LuxuryShop = require("../logic/LuxuryShop");
 const { Horns, ShadowHand } = require("../logic/LuxuryItems");
 const ls = new LuxuryShop();
 
@@ -131,9 +131,9 @@ describe("item testing", () => {
     expect(player.assistants[1].onDuty).toBeFalsy();
     done();
   });
-  test("Shadow Hand should increase assistants steal chance to 50%", (done) => {
-    expect(player.assistants[0].stealChance).toBeCloseTo(0.5);
-    expect(player.assistants[1].stealChance).toBeCloseTo(0.5);
+  test("Shadow Hand should double assistants steal chance", (done) => {
+    expect(player.assistants[0].stealChance).toBeCloseTo(0.66);
+    expect(player.assistants[1].stealChance).toBeCloseTo(0.66);
     done();
   });
 });

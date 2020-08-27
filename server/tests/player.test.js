@@ -6,7 +6,8 @@ const player2 = new Player("Hehe");
 const player3 = new Player("Wuehehe");
 const player4 = new Player("546456");
 const player5 = new Player("4576457");
-const { LuxuryShop, Market } = require("../logic/Tiles");
+const LuxuryShop = require("../logic/LuxuryShop");
+const Market = require("../logic/Market");
 const ls = new LuxuryShop();
 const m = new Market();
 
@@ -94,7 +95,7 @@ describe("game starts", () => {
       potentialDuration: 6,
       jailedDuration: 0,
       onDuty: false,
-      stealChance: 0.25,
+      stealChance: 0.33,
       stolenItem: false,
       workLocation: "",
     });
@@ -115,7 +116,7 @@ describe("game starts", () => {
     expect(player.resources).toContainEqual({
       amount: 1,
       isFull: false,
-      type: { name: "Food", price: 2 },
+      type: { name: "Food", price: 1 },
     });
     done();
   });
@@ -124,7 +125,7 @@ describe("game starts", () => {
     expect(player.resources).toContainEqual({
       amount: 1,
       isFull: false,
-      type: { name: "Clothing", price: 2 },
+      type: { name: "Clothing", price: 1 },
     });
     done();
   });
@@ -133,7 +134,7 @@ describe("game starts", () => {
     expect(player.resources).toContainEqual({
       amount: 1,
       isFull: false,
-      type: { name: "Jewelry", price: 2 },
+      type: { name: "Jewelry", price: 1 },
     });
     done();
   });
@@ -225,7 +226,7 @@ describe("assistants", () => {
   });
 
   test("should have steal chance", (done) => {
-    expect(assist.stealChance).toBeCloseTo(0.25);
+    expect(assist.stealChance).toBeCloseTo(0.33);
     done();
   });
 

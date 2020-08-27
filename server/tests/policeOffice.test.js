@@ -1,4 +1,4 @@
-const { PoliceOffice } = require("../logic/Tiles");
+const PoliceOffice = require("../logic/PoliceOffice");
 const p = new PoliceOffice();
 
 const Player = require("../logic/Player");

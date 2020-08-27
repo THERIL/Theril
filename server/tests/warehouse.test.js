@@ -1,4 +1,4 @@
-const { Warehouse } = require("../logic/Tiles");
+const Warehouse = require("../logic/Warehouse");
 const w = new Warehouse();
 
 const Player = require("../logic/Player");

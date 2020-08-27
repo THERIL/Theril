@@ -35,7 +35,7 @@ class ShadowHand extends LuxuryItems {
 
   use(player) {
     for (let i = 0; i < player.assistants.length; i++) {
-      player.assistants[i].stealChance = 0.5;
+      player.assistants[i].stealChance *= 2;
     }
   }
 }
